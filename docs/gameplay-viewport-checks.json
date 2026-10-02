@@ -1,0 +1,106 @@
+[
+  {
+    "centerClipped": [],
+    "clipped": [],
+    "overflow": false,
+    "portraitFallback": false,
+    "properties": 23,
+    "specials": 13,
+    "tiles": 36,
+    "viewport": [
+      568,
+      320
+    ]
+  },
+  {
+    "centerClipped": [],
+    "clipped": [],
+    "overflow": false,
+    "portraitFallback": false,
+    "properties": 23,
+    "specials": 13,
+    "tiles": 36,
+    "viewport": [
+      667,
+      375
+    ]
+  },
+  {
+    "centerClipped": [],
+    "clipped": [],
+    "overflow": false,
+    "portraitFallback": false,
+    "properties": 23,
+    "specials": 13,
+    "tiles": 36,
+    "viewport": [
+      740,
+      360
+    ]
+  },
+  {
+    "centerClipped": [],
+    "clipped": [],
+    "overflow": false,
+    "portraitFallback": false,
+    "properties": 23,
+    "specials": 13,
+    "tiles": 36,
+    "viewport": [
+      844,
+      390
+    ]
+  },
+  {
+    "centerClipped": [],
+    "clipped": [],
+    "overflow": false,
+    "portraitFallback": false,
+    "properties": 23,
+    "specials": 13,
+    "tiles": 36,
+    "viewport": [
+      932,
+      430
+    ]
+  },
+  {
+    "centerClipped": [],
+    "clipped": [],
+    "overflow": false,
+    "portraitFallback": false,
+    "properties": 23,
+    "specials": 13,
+    "tiles": 36,
+    "viewport": [
+      1024,
+      768
+    ]
+  },
+  {
+    "centerClipped": [],
+    "clipped": [],
+    "overflow": false,
+    "portraitFallback": false,
+    "properties": 23,
+    "specials": 13,
+    "tiles": 36,
+    "viewport": [
+      1440,
+      900
+    ]
+  },
+  {
+    "centerClipped": [],
+    "clipped": [],
+    "overflow": false,
+    "portraitFallback": true,
+    "properties": 23,
+    "specials": 13,
+    "tiles": 36,
+    "viewport": [
+      390,
+      844
+    ]
+  }
+]

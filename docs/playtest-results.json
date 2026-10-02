@@ -1,0 +1,271 @@
+{
+  "strategy": "Test fixture only: buy when affordable, upgrade while keeping 200 Tr reserve; travel to unowned/own assets; use insurance; liquidate first available property.",
+  "summaries": [
+    {
+      "players": 2,
+      "completed": 10,
+      "total": 10,
+      "minTurns": 52,
+      "medianTurns": 152.5,
+      "maxTurns": 302
+    },
+    {
+      "players": 3,
+      "completed": 10,
+      "total": 10,
+      "minTurns": 140,
+      "medianTurns": 207.5,
+      "maxTurns": 447
+    },
+    {
+      "players": 4,
+      "completed": 10,
+      "total": 10,
+      "minTurns": 168,
+      "medianTurns": 215.5,
+      "maxTurns": 333
+    }
+  ],
+  "games": [
+    {
+      "players": 2,
+      "seed": 1,
+      "rounds": 42,
+      "turns": 83,
+      "actions": 1215,
+      "winner": "player-2"
+    },
+    {
+      "players": 2,
+      "seed": 2,
+      "rounds": 92,
+      "turns": 183,
+      "actions": 2546,
+      "winner": "player-2"
+    },
+    {
+      "players": 2,
+      "seed": 3,
+      "rounds": 94,
+      "turns": 187,
+      "actions": 2521,
+      "winner": "player-2"
+    },
+    {
+      "players": 2,
+      "seed": 4,
+      "rounds": 151,
+      "turns": 302,
+      "actions": 4083,
+      "winner": "player-1"
+    },
+    {
+      "players": 2,
+      "seed": 5,
+      "rounds": 59,
+      "turns": 117,
+      "actions": 1613,
+      "winner": "player-2"
+    },
+    {
+      "players": 2,
+      "seed": 6,
+      "rounds": 82,
+      "turns": 164,
+      "actions": 2264,
+      "winner": "player-1"
+    },
+    {
+      "players": 2,
+      "seed": 7,
+      "rounds": 26,
+      "turns": 52,
+      "actions": 725,
+      "winner": "player-1"
+    },
+    {
+      "players": 2,
+      "seed": 8,
+      "rounds": 71,
+      "turns": 141,
+      "actions": 1944,
+      "winner": "player-2"
+    },
+    {
+      "players": 2,
+      "seed": 9,
+      "rounds": 116,
+      "turns": 232,
+      "actions": 3179,
+      "winner": "player-1"
+    },
+    {
+      "players": 2,
+      "seed": 10,
+      "rounds": 56,
+      "turns": 112,
+      "actions": 1520,
+      "winner": "player-1"
+    },
+    {
+      "players": 3,
+      "seed": 1,
+      "rounds": 68,
+      "turns": 186,
+      "actions": 2575,
+      "winner": "player-3"
+    },
+    {
+      "players": 3,
+      "seed": 2,
+      "rounds": 68,
+      "turns": 197,
+      "actions": 2641,
+      "winner": "player-3"
+    },
+    {
+      "players": 3,
+      "seed": 3,
+      "rounds": 85,
+      "turns": 230,
+      "actions": 3095,
+      "winner": "player-1"
+    },
+    {
+      "players": 3,
+      "seed": 4,
+      "rounds": 63,
+      "turns": 186,
+      "actions": 2463,
+      "winner": "player-1"
+    },
+    {
+      "players": 3,
+      "seed": 5,
+      "rounds": 79,
+      "turns": 207,
+      "actions": 2891,
+      "winner": "player-3"
+    },
+    {
+      "players": 3,
+      "seed": 6,
+      "rounds": 50,
+      "turns": 140,
+      "actions": 1850,
+      "winner": "player-1"
+    },
+    {
+      "players": 3,
+      "seed": 7,
+      "rounds": 209,
+      "turns": 447,
+      "actions": 6015,
+      "winner": "player-1"
+    },
+    {
+      "players": 3,
+      "seed": 8,
+      "rounds": 97,
+      "turns": 221,
+      "actions": 3044,
+      "winner": "player-2"
+    },
+    {
+      "players": 3,
+      "seed": 9,
+      "rounds": 86,
+      "turns": 208,
+      "actions": 2838,
+      "winner": "player-3"
+    },
+    {
+      "players": 3,
+      "seed": 10,
+      "rounds": 81,
+      "turns": 229,
+      "actions": 3103,
+      "winner": "player-3"
+    },
+    {
+      "players": 4,
+      "seed": 1,
+      "rounds": 108,
+      "turns": 333,
+      "actions": 4454,
+      "winner": "player-3"
+    },
+    {
+      "players": 4,
+      "seed": 2,
+      "rounds": 56,
+      "turns": 196,
+      "actions": 2735,
+      "winner": "player-3"
+    },
+    {
+      "players": 4,
+      "seed": 3,
+      "rounds": 57,
+      "turns": 194,
+      "actions": 2626,
+      "winner": "player-3"
+    },
+    {
+      "players": 4,
+      "seed": 4,
+      "rounds": 62,
+      "turns": 174,
+      "actions": 2393,
+      "winner": "player-3"
+    },
+    {
+      "players": 4,
+      "seed": 5,
+      "rounds": 73,
+      "turns": 228,
+      "actions": 3158,
+      "winner": "player-4"
+    },
+    {
+      "players": 4,
+      "seed": 6,
+      "rounds": 68,
+      "turns": 229,
+      "actions": 3259,
+      "winner": "player-1"
+    },
+    {
+      "players": 4,
+      "seed": 7,
+      "rounds": 102,
+      "turns": 308,
+      "actions": 4232,
+      "winner": "player-2"
+    },
+    {
+      "players": 4,
+      "seed": 8,
+      "rounds": 81,
+      "turns": 212,
+      "actions": 2928,
+      "winner": "player-1"
+    },
+    {
+      "players": 4,
+      "seed": 9,
+      "rounds": 66,
+      "turns": 219,
+      "actions": 3097,
+      "winner": "player-3"
+    },
+    {
+      "players": 4,
+      "seed": 10,
+      "rounds": 56,
+      "turns": 168,
+      "actions": 2317,
+      "winner": "player-1"
+    }
+  ]
+}

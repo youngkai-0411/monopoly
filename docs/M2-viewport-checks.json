@@ -1,0 +1,186 @@
+{
+  "initialChecks": [
+    {
+      "actionHeights": [
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      "centerClipped": [],
+      "clipped": [],
+      "pageOverflow": false,
+      "portraitFallback": false,
+      "properties": 23,
+      "specials": 13,
+      "tiles": 36,
+      "viewport": [
+        568,
+        320
+      ]
+    },
+    {
+      "actionHeights": [
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      "centerClipped": [
+        "TỶ PHÚVIỆT NAM",
+        "🎲 ĐỔ XÚC XẮC"
+      ],
+      "clipped": [],
+      "pageOverflow": false,
+      "portraitFallback": false,
+      "properties": 23,
+      "specials": 13,
+      "tiles": 36,
+      "viewport": [
+        667,
+        375
+      ]
+    },
+    {
+      "actionHeights": [
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      "centerClipped": [
+        "TỶ PHÚVIỆT NAM",
+        "🎲 ĐỔ XÚC XẮC"
+      ],
+      "clipped": [],
+      "pageOverflow": false,
+      "portraitFallback": false,
+      "properties": 23,
+      "specials": 13,
+      "tiles": 36,
+      "viewport": [
+        740,
+        360
+      ]
+    },
+    {
+      "actionHeights": [
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      "centerClipped": [],
+      "clipped": [],
+      "pageOverflow": false,
+      "portraitFallback": false,
+      "properties": 23,
+      "specials": 13,
+      "tiles": 36,
+      "viewport": [
+        844,
+        390
+      ]
+    },
+    {
+      "actionHeights": [
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      "centerClipped": [],
+      "clipped": [],
+      "pageOverflow": false,
+      "portraitFallback": false,
+      "properties": 23,
+      "specials": 13,
+      "tiles": 36,
+      "viewport": [
+        932,
+        430
+      ]
+    },
+    {
+      "actionHeights": [
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      "centerClipped": [],
+      "clipped": [],
+      "pageOverflow": false,
+      "portraitFallback": false,
+      "properties": 23,
+      "specials": 13,
+      "tiles": 36,
+      "viewport": [
+        1024,
+        768
+      ]
+    },
+    {
+      "actionHeights": [
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      "centerClipped": [],
+      "clipped": [],
+      "pageOverflow": false,
+      "portraitFallback": false,
+      "properties": 23,
+      "specials": 13,
+      "tiles": 36,
+      "viewport": [
+        1440,
+        900
+      ]
+    },
+    {
+      "actionHeights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "centerClipped": [],
+      "clipped": [],
+      "pageOverflow": false,
+      "portraitFallback": true,
+      "properties": 23,
+      "specials": 13,
+      "tiles": 36,
+      "viewport": [
+        390,
+        844
+      ]
+    }
+  ],
+  "centerFixVerification": [
+    {
+      "centerClipped": [],
+      "viewport": [
+        667,
+        375
+      ]
+    },
+    {
+      "centerClipped": [],
+      "viewport": [
+        740,
+        360
+      ]
+    }
+  ]
+}

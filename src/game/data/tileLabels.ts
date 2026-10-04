@@ -1,0 +1,1 @@
+export const TILE_LABELS:Record<string,string>={START:'Bắt đầu',CHANCE:'Cơ Hội',LIFE:'Cuộc Sống',TAX:'Thuế',JAIL:'Nhà tù / Thăm tù',REST:'Nghỉ ngơi',GO_TO_JAIL:'Đi tù',RAILROAD:'Ga tàu',UTILITY:'Tiện ích'};

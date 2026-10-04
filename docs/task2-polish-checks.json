@@ -1,0 +1,1557 @@
+{
+  "testedAt": "2026-10-04T05:39:27.042Z",
+  "environment": "Desktop Chrome with mobile viewport/touch emulation; not a physical phone benchmark.",
+  "events": [
+    {
+      "card": "v2-chance-01",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-02",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-03",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-04",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-05",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-06",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-07",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-08",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-09",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-10",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-11",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-12",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-13",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-14",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-15",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-16",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-01",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-02",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-03",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-04",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-05",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-06",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-07",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-08",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-09",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-10",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-11",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-12",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-13",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-14",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-15",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-life-16",
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-01",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-02",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-03",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-04",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-05",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-06",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-07",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-08",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-09",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-10",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-11",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-12",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-13",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-14",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-15",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-16",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-01",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-02",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-03",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-04",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-05",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-06",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-07",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-08",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-09",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-10",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-11",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-12",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-13",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-14",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-15",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-life-16",
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-01",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-02",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-03",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-04",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-05",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-06",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-07",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-08",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-09",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-10",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-11",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-12",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-13",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-14",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-15",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-16",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-01",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-02",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-03",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-04",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-05",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-06",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-07",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-08",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-09",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-10",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-11",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-12",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-13",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-14",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-15",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-life-16",
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-01",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-02",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-03",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-04",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-05",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-06",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-07",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-08",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-09",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-10",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-11",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-12",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-13",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-14",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-15",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-16",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-01",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-02",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-03",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-04",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-05",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-06",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-07",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-08",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-09",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-10",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-11",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-12",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-13",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-14",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-15",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-life-16",
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-01",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-02",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-03",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-04",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-05",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-06",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-07",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-08",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-09",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-10",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-11",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-12",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-13",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-14",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-15",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-16",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-01",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-02",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-03",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-04",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-05",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-06",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-07",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-08",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-09",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-10",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-11",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-12",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-13",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-14",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-15",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-life-16",
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-01",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-02",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-03",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-04",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-05",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-06",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-07",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-08",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-09",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-10",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-11",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-12",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-13",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-14",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-15",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-16",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-01",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-02",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-03",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-04",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-05",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-06",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-07",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-08",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-09",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-10",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-11",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-12",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-13",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-14",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-15",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-life-16",
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-01",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-02",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-03",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-04",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-05",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-06",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-07",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-08",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-09",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-10",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-11",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-12",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-13",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-14",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-15",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-chance-16",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-01",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-02",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-03",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-04",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-05",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-06",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-07",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-08",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-09",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-10",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-11",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-12",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-13",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-14",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-15",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    },
+    {
+      "card": "v2-life-16",
+      "width": 667,
+      "height": 375,
+      "passed": true
+    }
+  ],
+  "surfaces": [
+    {
+      "width": 844,
+      "height": 390,
+      "passed": true
+    },
+    {
+      "width": 852,
+      "height": 393,
+      "passed": true
+    },
+    {
+      "width": 896,
+      "height": 414,
+      "passed": true
+    },
+    {
+      "width": 915,
+      "height": 412,
+      "passed": true
+    },
+    {
+      "width": 932,
+      "height": 430,
+      "passed": true
+    },
+    {
+      "width": 568,
+      "height": 320,
+      "passed": true
+    },
+    {
+      "width": 667,
+      "height": 375,
+      "passed": true
+    }
+  ],
+  "fontCases": [
+    {
+      "mode": "slow",
+      "gameplayNotBlocked": true,
+      "pageErrors": []
+    },
+    {
+      "mode": "failed",
+      "gameplayNotBlocked": true,
+      "pageErrors": []
+    },
+    {
+      "mode": "unmount",
+      "gameplayNotBlocked": true,
+      "pageErrors": []
+    }
+  ],
+  "errors": [],
+  "typography": {
+    "family": "\"Be Vietnam Pro\", Arial, sans-serif",
+    "weights": [
+      true,
+      true,
+      true
+    ],
+    "hudName": "14px",
+    "hudMoney": "12px",
+    "colors": [
+      "rgb(238, 107, 115)",
+      "rgb(89, 186, 250)",
+      "rgb(115, 215, 160)",
+      "rgb(255, 212, 106)"
+    ],
+    "refreshes": "1"
+  },
+  "atlas": {
+    "vertices": 160,
+    "indices": 240,
+    "uvInRange": true,
+    "size": 1344,
+    "group": [
+      139,
+      90,
+      43,
+      255
+    ],
+    "darkPixelsInName": 843
+  },
+  "contrast": [
+    {
+      "name": "primary",
+      "foreground": "#254b4c",
+      "background": "#fff9e9",
+      "ratio": 9.13
+    },
+    {
+      "name": "secondary",
+      "foreground": "#48675e",
+      "background": "#fff9e9",
+      "ratio": 5.92
+    },
+    {
+      "name": "secondary-on-secondary",
+      "foreground": "#48675e",
+      "background": "#edf2e4",
+      "ratio": 5.45
+    },
+    {
+      "name": "selected",
+      "foreground": "#fff9e9",
+      "background": "#285d59",
+      "ratio": 7.13
+    },
+    {
+      "name": "danger",
+      "foreground": "#973f31",
+      "background": "#ffe5d0",
+      "ratio": 5.66
+    },
+    {
+      "name": "action-light",
+      "foreground": "#382800",
+      "background": "#ffdb7d",
+      "ratio": 10.66
+    },
+    {
+      "name": "action-deep",
+      "foreground": "#382800",
+      "background": "#edb435",
+      "ratio": 7.6
+    }
+  ],
+  "compositeContrast": [
+    {
+      "surface": "hud",
+      "underlay": "#b4ded7",
+      "composite": "#f5f5e6",
+      "ratio": 5.65
+    },
+    {
+      "surface": "hud",
+      "underlay": "#8bc678",
+      "composite": "#eff2d9",
+      "ratio": 5.44
+    },
+    {
+      "surface": "hud",
+      "underlay": "#285d59",
+      "composite": "#e1e3d5",
+      "ratio": 4.78
+    },
+    {
+      "surface": "context",
+      "underlay": "#b4ded7",
+      "composite": "#fdf8e8",
+      "ratio": 5.85
+    },
+    {
+      "surface": "context",
+      "underlay": "#8bc678",
+      "composite": "#fcf7e6",
+      "ratio": 5.8
+    },
+    {
+      "surface": "context",
+      "underlay": "#285d59",
+      "composite": "#f9f4e5",
+      "ratio": 5.66
+    }
+  ],
+  "remounts": [
+    {
+      "iteration": 1,
+      "canvases": 1,
+      "refreshes": 1
+    },
+    {
+      "iteration": 2,
+      "canvases": 1,
+      "refreshes": 1
+    },
+    {
+      "iteration": 3,
+      "canvases": 1,
+      "refreshes": 1
+    }
+  ],
+  "longHUD": [
+    {
+      "width": 84,
+      "scroll": 84,
+      "text": "1.234.567 Tr"
+    },
+    {
+      "width": 84,
+      "scroll": 84,
+      "text": "1.234.567 Tr"
+    },
+    {
+      "width": 84,
+      "scroll": 84,
+      "text": "1.234.567 Tr"
+    },
+    {
+      "width": 84,
+      "scroll": 84,
+      "text": "1.234.567 Tr"
+    }
+  ],
+  "externalRequests": []
+}

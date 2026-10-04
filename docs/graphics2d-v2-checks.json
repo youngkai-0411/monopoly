@@ -1,0 +1,28 @@
+{
+  "testedAt": "2026-10-04T05:45:17.623Z",
+  "url": "http://127.0.0.1:5173/?graphics=2",
+  "note": "Historical art study only; real gameplay is covered by game:check.",
+  "viewports": [
+    {
+      "width": 568,
+      "height": 320,
+      "tiles": 40,
+      "scroll": false
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "tiles": 40,
+      "scroll": false
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "tiles": 40,
+      "scroll": false
+    }
+  ],
+  "diceMovement": true,
+  "contextFallback": true,
+  "errors": []
+}

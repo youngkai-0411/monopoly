@@ -1,31 +1,109 @@
+import design from '../../../docs/classic-vietnam-v2.json';
 import type { PropertyDefinition } from '../types/domain';
 
-const p = (id: string, name: string, shortName: string, landmark: string, groupId: string, price: number, baseRent: number, upgradeCost: number): PropertyDefinition =>
-  ({ id, name, shortName, landmark, groupId, price, baseRent, upgradeCost });
-
-// Economy values are V1 balance placeholders and intentionally data-driven.
-export const PROPERTIES: PropertyDefinition[] = [
-  p('ca-mau','Cà Mau','C.Mau','Mũi Cà Mau','mien-tay',160,20,100),
-  p('can-tho','Cần Thơ','C.Thơ','Bến Ninh Kiều','mien-tay',180,22,100),
-  p('phu-quoc','Phú Quốc','P.Quốc','Biển Phú Quốc','mien-tay',220,26,120),
-  p('binh-thuan','Bình Thuận','B.Thuận','Mũi Né','phuong-nam',220,26,120),
-  p('vung-tau','Vũng Tàu','V.Tàu','Tượng Chúa Kitô','phuong-nam',240,28,120),
-  p('tp-hcm','Hồ Chí Minh','TP.HCM','Landmark 81','phuong-nam',320,40,160),
-  p('buon-ma-thuot','Buôn Ma Thuột','BMT','Thác Dray Nur','cao-nguyen',200,24,110),
-  p('gia-lai','Gia Lai','G.Lai','Biển Hồ','cao-nguyen',210,25,110),
-  p('da-lat','Đà Lạt','Đ.Lạt','Hồ Xuân Hương','cao-nguyen',250,30,130),
-  p('nha-trang','Nha Trang','N.Trang','Biển Nha Trang','duyen-hai',260,32,140),
-  p('quy-nhon','Quy Nhơn','Q.Nhơn','Kỳ Co','duyen-hai',280,35,140),
-  p('quang-ngai','Quảng Ngãi','Q.Ngãi','Lý Sơn','duyen-hai',300,38,150),
-  p('da-nang','Đà Nẵng','Đ.Nẵng','Cầu Rồng','di-san',300,38,150),
-  p('hoi-an','Hội An','H.An','Chùa Cầu','di-san',280,35,140),
-  p('hue','Huế','Huế','Đại Nội','di-san',290,36,145),
-  p('quang-binh','Quảng Bình','Q.Bình','Phong Nha – Kẻ Bàng','mien-trung-bac',260,32,135),
-  p('ha-tinh','Hà Tĩnh','H.Tĩnh','Biển Thiên Cầm','mien-trung-bac',240,29,125),
-  p('nghe-an','Nghệ An','N.An','Cửa Lò','mien-trung-bac',270,33,135),
-  p('thanh-hoa','Thanh Hóa','T.Hóa','Thành Nhà Hồ','mien-bac',260,32,135),
-  p('ninh-binh','Ninh Bình','N.Bình','Tràng An','mien-bac',290,36,145),
-  p('lao-cai','Lào Cai','L.Cai','Fansipan / Sa Pa','mien-bac',300,38,150),
-  p('hai-phong','Hải Phòng','H.Phòng','Nhà hát lớn Hải Phòng','do-thi',320,40,160),
-  p('ha-noi','Hà Nội','H.Nội','Hồ Gươm','do-thi',360,45,180),
-];
+// Display metadata retained from V1. Prices and rent tables come from the design manifest.
+const landmarks: Record<string, { shortName: string; landmark: string }> = {
+  "ca-mau": {
+    "shortName": "C.Mau",
+    "landmark": "Mũi Cà Mau"
+  },
+  "can-tho": {
+    "shortName": "C.Thơ",
+    "landmark": "Bến Ninh Kiều"
+  },
+  "phu-quoc": {
+    "shortName": "P.Quốc",
+    "landmark": "Biển Phú Quốc"
+  },
+  "binh-thuan": {
+    "shortName": "B.Thuận",
+    "landmark": "Mũi Né"
+  },
+  "vung-tau": {
+    "shortName": "V.Tàu",
+    "landmark": "Tượng Chúa Kitô"
+  },
+  "tp-hcm": {
+    "shortName": "TP.HCM",
+    "landmark": "Landmark 81"
+  },
+  "buon-ma-thuot": {
+    "shortName": "BMT",
+    "landmark": "Thác Dray Nur"
+  },
+  "gia-lai": {
+    "shortName": "G.Lai",
+    "landmark": "Biển Hồ"
+  },
+  "da-lat": {
+    "shortName": "Đ.Lạt",
+    "landmark": "Hồ Xuân Hương"
+  },
+  "nha-trang": {
+    "shortName": "N.Trang",
+    "landmark": "Biển Nha Trang"
+  },
+  "quy-nhon": {
+    "shortName": "Q.Nhơn",
+    "landmark": "Kỳ Co"
+  },
+  "quang-ngai": {
+    "shortName": "Q.Ngãi",
+    "landmark": "Lý Sơn"
+  },
+  "da-nang": {
+    "shortName": "Đ.Nẵng",
+    "landmark": "Cầu Rồng"
+  },
+  "hoi-an": {
+    "shortName": "H.An",
+    "landmark": "Chùa Cầu"
+  },
+  "hue": {
+    "shortName": "Huế",
+    "landmark": "Đại Nội"
+  },
+  "quang-binh": {
+    "shortName": "Q.Bình",
+    "landmark": "Phong Nha – Kẻ Bàng"
+  },
+  "ha-tinh": {
+    "shortName": "H.Tĩnh",
+    "landmark": "Biển Thiên Cầm"
+  },
+  "nghe-an": {
+    "shortName": "N.An",
+    "landmark": "Cửa Lò"
+  },
+  "thanh-hoa": {
+    "shortName": "T.Hóa",
+    "landmark": "Thành Nhà Hồ"
+  },
+  "ninh-binh": {
+    "shortName": "N.Bình",
+    "landmark": "Tràng An"
+  },
+  "lao-cai": {
+    "shortName": "L.Cai",
+    "landmark": "Fansipan / Sa Pa"
+  },
+  "hai-phong": {
+    "shortName": "H.Phòng",
+    "landmark": "Nhà hát lớn Hải Phòng"
+  },
+  "ha-noi": {
+    "shortName": "H.Nội",
+    "landmark": "Hồ Gươm"
+  }
+};
+export const PROPERTIES: PropertyDefinition[] = design.assets.map(asset => {
+  const common = { id: asset.id, name: asset.name, price: asset.price,
+    shortName: landmarks[asset.id]?.shortName ?? asset.name,
+    landmark: landmarks[asset.id]?.landmark ?? (asset.kind === 'RAILROAD' ? 'Kết nối hành trình Việt Nam' : 'Dịch vụ thiết yếu'),
+    baseRent: asset.rentByLevel?.[0] ?? 0, upgradeCost: asset.houseCost ?? 0 };
+  if (asset.kind === 'LAND') return { ...common, kind: 'LAND', groupId: asset.groupId!, rentByLevel: asset.rentByLevel! };
+  if (asset.kind === 'RAILROAD') return { ...common, kind: 'RAILROAD', rentByOwnedCount: asset.rentByOwnedCount! };
+  if (asset.kind === 'UTILITY') return { ...common, kind: 'UTILITY', rentMultiplierByOwnedCount: asset.rentMultiplierByOwnedCount! };
+  throw new Error('Unknown asset kind');
+});
+export const ASSET_BY_ID = new Map(PROPERTIES.map(asset => [asset.id, asset]));

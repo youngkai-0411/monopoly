@@ -1,0 +1,835 @@
+{
+  "schemaVersion": 1,
+  "id": "classic-vietnam-v2",
+  "status": "IMPLEMENTED",
+  "runtimeEnabled": true,
+  "createdAt": "2026-10-04",
+  "reference": {
+    "edition": "Hasbro Monopoly Classic C1009, 2017 instructions",
+    "url": "https://instructions.hasbro.com/api/download/C1009_en-nz_monopoly-classic-game.pdf",
+    "note": "Reference for structure and core mechanics. Vietnamese asset names and the complete numeric land table are this project’s implementation baseline, not a verified transcription of all official title deeds."
+  },
+  "economy": {
+    "unit": "Tr",
+    "scale": 1,
+    "startingMoney": 1500,
+    "passStartReward": 200,
+    "jailFine": 50,
+    "jailMaxAttempts": 3,
+    "maxConsecutiveDoubles": 3,
+    "landLevelCount": 6,
+    "undevelopedSetRentMultiplier": 2,
+    "buildingBank": {
+      "houses": 32,
+      "hotels": 12
+    },
+    "sellBuildingRate": 0.5,
+    "railroadRent": [
+      25,
+      50,
+      100,
+      200
+    ],
+    "utilityRentMultipliers": [
+      4,
+      10
+    ],
+    "utilityDiceSource": "NEW_RENT_ROLL",
+    "balanceStatus": "SOFTWARE_PLAYTESTED_GROUP_STRATEGY_GREEDY_LIMITATION"
+  },
+  "geometry": {
+    "startCorner": "BOTTOM_RIGHT",
+    "direction": "CLOCKWISE",
+    "cornerIndices": [
+      0,
+      10,
+      20,
+      30
+    ],
+    "normalTilesBetweenCorners": 9,
+    "normalTileWidth": 1,
+    "normalTileDepth": 1.6,
+    "cornerSize": 1.6,
+    "boardOuterSize": 12.2,
+    "note": "World units chosen for the prototype. Conventional 11 positions per side, not an equal-cell 11x11 grid."
+  },
+  "groups": [
+    {
+      "id": "mien-tay",
+      "name": "Miền Tây",
+      "colorName": "Nâu",
+      "color": "#8B5A2B",
+      "assetIds": [
+        "ca-mau",
+        "can-tho"
+      ]
+    },
+    {
+      "id": "phuong-nam",
+      "name": "Phương Nam",
+      "colorName": "Xanh nhạt",
+      "color": "#87CEEB",
+      "assetIds": [
+        "binh-thuan",
+        "vung-tau",
+        "tp-hcm"
+      ]
+    },
+    {
+      "id": "cao-nguyen",
+      "name": "Cao Nguyên",
+      "colorName": "Hồng",
+      "color": "#D95AA5",
+      "assetIds": [
+        "buon-ma-thuot",
+        "gia-lai",
+        "da-lat"
+      ]
+    },
+    {
+      "id": "duyen-hai",
+      "name": "Duyên Hải",
+      "colorName": "Cam",
+      "color": "#F59E0B",
+      "assetIds": [
+        "nha-trang",
+        "quy-nhon",
+        "quang-ngai"
+      ]
+    },
+    {
+      "id": "di-san",
+      "name": "Di Sản",
+      "colorName": "Đỏ",
+      "color": "#DC2626",
+      "assetIds": [
+        "da-nang",
+        "hoi-an",
+        "hue"
+      ]
+    },
+    {
+      "id": "mien-trung-bac",
+      "name": "Miền Trung Bắc",
+      "colorName": "Vàng",
+      "color": "#FACC15",
+      "assetIds": [
+        "quang-binh",
+        "ha-tinh",
+        "nghe-an"
+      ]
+    },
+    {
+      "id": "mien-bac",
+      "name": "Miền Bắc",
+      "colorName": "Xanh lá",
+      "color": "#16A34A",
+      "assetIds": [
+        "thanh-hoa",
+        "ninh-binh",
+        "lao-cai"
+      ]
+    },
+    {
+      "id": "do-thi",
+      "name": "Đô Thị",
+      "colorName": "Xanh đậm",
+      "color": "#1D4ED8",
+      "assetIds": [
+        "hai-phong",
+        "ha-noi"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "id": "ca-mau",
+      "name": "Cà Mau",
+      "kind": "LAND",
+      "groupId": "mien-tay",
+      "price": 60,
+      "houseCost": 50,
+      "hotelCost": 50,
+      "rentByLevel": [
+        2,
+        10,
+        30,
+        90,
+        160,
+        250
+      ]
+    },
+    {
+      "id": "can-tho",
+      "name": "Cần Thơ",
+      "kind": "LAND",
+      "groupId": "mien-tay",
+      "price": 60,
+      "houseCost": 50,
+      "hotelCost": 50,
+      "rentByLevel": [
+        4,
+        20,
+        60,
+        180,
+        320,
+        450
+      ]
+    },
+    {
+      "id": "binh-thuan",
+      "name": "Bình Thuận",
+      "kind": "LAND",
+      "groupId": "phuong-nam",
+      "price": 100,
+      "houseCost": 50,
+      "hotelCost": 50,
+      "rentByLevel": [
+        6,
+        30,
+        90,
+        270,
+        400,
+        550
+      ]
+    },
+    {
+      "id": "vung-tau",
+      "name": "Vũng Tàu",
+      "kind": "LAND",
+      "groupId": "phuong-nam",
+      "price": 100,
+      "houseCost": 50,
+      "hotelCost": 50,
+      "rentByLevel": [
+        6,
+        30,
+        90,
+        270,
+        400,
+        550
+      ]
+    },
+    {
+      "id": "tp-hcm",
+      "name": "Hồ Chí Minh",
+      "kind": "LAND",
+      "groupId": "phuong-nam",
+      "price": 120,
+      "houseCost": 50,
+      "hotelCost": 50,
+      "rentByLevel": [
+        8,
+        40,
+        100,
+        300,
+        450,
+        600
+      ]
+    },
+    {
+      "id": "buon-ma-thuot",
+      "name": "Buôn Ma Thuột",
+      "kind": "LAND",
+      "groupId": "cao-nguyen",
+      "price": 140,
+      "houseCost": 100,
+      "hotelCost": 100,
+      "rentByLevel": [
+        10,
+        50,
+        150,
+        450,
+        625,
+        750
+      ]
+    },
+    {
+      "id": "gia-lai",
+      "name": "Gia Lai",
+      "kind": "LAND",
+      "groupId": "cao-nguyen",
+      "price": 140,
+      "houseCost": 100,
+      "hotelCost": 100,
+      "rentByLevel": [
+        10,
+        50,
+        150,
+        450,
+        625,
+        750
+      ]
+    },
+    {
+      "id": "da-lat",
+      "name": "Đà Lạt",
+      "kind": "LAND",
+      "groupId": "cao-nguyen",
+      "price": 160,
+      "houseCost": 100,
+      "hotelCost": 100,
+      "rentByLevel": [
+        12,
+        60,
+        180,
+        500,
+        700,
+        900
+      ]
+    },
+    {
+      "id": "nha-trang",
+      "name": "Nha Trang",
+      "kind": "LAND",
+      "groupId": "duyen-hai",
+      "price": 180,
+      "houseCost": 100,
+      "hotelCost": 100,
+      "rentByLevel": [
+        14,
+        70,
+        200,
+        550,
+        750,
+        950
+      ]
+    },
+    {
+      "id": "quy-nhon",
+      "name": "Quy Nhơn",
+      "kind": "LAND",
+      "groupId": "duyen-hai",
+      "price": 180,
+      "houseCost": 100,
+      "hotelCost": 100,
+      "rentByLevel": [
+        14,
+        70,
+        200,
+        550,
+        750,
+        950
+      ]
+    },
+    {
+      "id": "quang-ngai",
+      "name": "Quảng Ngãi",
+      "kind": "LAND",
+      "groupId": "duyen-hai",
+      "price": 200,
+      "houseCost": 100,
+      "hotelCost": 100,
+      "rentByLevel": [
+        16,
+        80,
+        220,
+        600,
+        800,
+        1000
+      ]
+    },
+    {
+      "id": "da-nang",
+      "name": "Đà Nẵng",
+      "kind": "LAND",
+      "groupId": "di-san",
+      "price": 220,
+      "houseCost": 150,
+      "hotelCost": 150,
+      "rentByLevel": [
+        18,
+        90,
+        250,
+        700,
+        875,
+        1050
+      ]
+    },
+    {
+      "id": "hoi-an",
+      "name": "Hội An",
+      "kind": "LAND",
+      "groupId": "di-san",
+      "price": 220,
+      "houseCost": 150,
+      "hotelCost": 150,
+      "rentByLevel": [
+        18,
+        90,
+        250,
+        700,
+        875,
+        1050
+      ]
+    },
+    {
+      "id": "hue",
+      "name": "Huế",
+      "kind": "LAND",
+      "groupId": "di-san",
+      "price": 240,
+      "houseCost": 150,
+      "hotelCost": 150,
+      "rentByLevel": [
+        20,
+        100,
+        300,
+        750,
+        925,
+        1100
+      ]
+    },
+    {
+      "id": "quang-binh",
+      "name": "Quảng Bình",
+      "kind": "LAND",
+      "groupId": "mien-trung-bac",
+      "price": 260,
+      "houseCost": 150,
+      "hotelCost": 150,
+      "rentByLevel": [
+        22,
+        110,
+        330,
+        800,
+        975,
+        1150
+      ]
+    },
+    {
+      "id": "ha-tinh",
+      "name": "Hà Tĩnh",
+      "kind": "LAND",
+      "groupId": "mien-trung-bac",
+      "price": 260,
+      "houseCost": 150,
+      "hotelCost": 150,
+      "rentByLevel": [
+        22,
+        110,
+        330,
+        800,
+        975,
+        1150
+      ]
+    },
+    {
+      "id": "nghe-an",
+      "name": "Nghệ An",
+      "kind": "LAND",
+      "groupId": "mien-trung-bac",
+      "price": 280,
+      "houseCost": 150,
+      "hotelCost": 150,
+      "rentByLevel": [
+        24,
+        120,
+        360,
+        850,
+        1025,
+        1200
+      ]
+    },
+    {
+      "id": "thanh-hoa",
+      "name": "Thanh Hóa",
+      "kind": "LAND",
+      "groupId": "mien-bac",
+      "price": 300,
+      "houseCost": 200,
+      "hotelCost": 200,
+      "rentByLevel": [
+        26,
+        130,
+        390,
+        900,
+        1100,
+        1275
+      ]
+    },
+    {
+      "id": "ninh-binh",
+      "name": "Ninh Bình",
+      "kind": "LAND",
+      "groupId": "mien-bac",
+      "price": 300,
+      "houseCost": 200,
+      "hotelCost": 200,
+      "rentByLevel": [
+        26,
+        130,
+        390,
+        900,
+        1100,
+        1275
+      ]
+    },
+    {
+      "id": "lao-cai",
+      "name": "Lào Cai",
+      "kind": "LAND",
+      "groupId": "mien-bac",
+      "price": 320,
+      "houseCost": 200,
+      "hotelCost": 200,
+      "rentByLevel": [
+        28,
+        150,
+        450,
+        1000,
+        1200,
+        1400
+      ]
+    },
+    {
+      "id": "hai-phong",
+      "name": "Hải Phòng",
+      "kind": "LAND",
+      "groupId": "do-thi",
+      "price": 350,
+      "houseCost": 200,
+      "hotelCost": 200,
+      "rentByLevel": [
+        35,
+        175,
+        500,
+        1100,
+        1300,
+        1500
+      ]
+    },
+    {
+      "id": "ha-noi",
+      "name": "Hà Nội",
+      "kind": "LAND",
+      "groupId": "do-thi",
+      "price": 400,
+      "houseCost": 200,
+      "hotelCost": 200,
+      "rentByLevel": [
+        50,
+        200,
+        600,
+        1400,
+        1700,
+        2000
+      ]
+    },
+    {
+      "id": "ga-sai-gon",
+      "name": "Ga Sài Gòn",
+      "kind": "RAILROAD",
+      "price": 200,
+      "rentByOwnedCount": [
+        25,
+        50,
+        100,
+        200
+      ]
+    },
+    {
+      "id": "ga-nha-trang",
+      "name": "Ga Nha Trang",
+      "kind": "RAILROAD",
+      "price": 200,
+      "rentByOwnedCount": [
+        25,
+        50,
+        100,
+        200
+      ]
+    },
+    {
+      "id": "ga-da-nang",
+      "name": "Ga Đà Nẵng",
+      "kind": "RAILROAD",
+      "price": 200,
+      "rentByOwnedCount": [
+        25,
+        50,
+        100,
+        200
+      ]
+    },
+    {
+      "id": "ga-ha-noi",
+      "name": "Ga Hà Nội",
+      "kind": "RAILROAD",
+      "price": 200,
+      "rentByOwnedCount": [
+        25,
+        50,
+        100,
+        200
+      ]
+    },
+    {
+      "id": "dien-luc",
+      "name": "Công ty Điện lực",
+      "kind": "UTILITY",
+      "price": 150,
+      "rentMultiplierByOwnedCount": [
+        4,
+        10
+      ]
+    },
+    {
+      "id": "cap-nuoc",
+      "name": "Công ty Cấp nước",
+      "kind": "UTILITY",
+      "price": 150,
+      "rentMultiplierByOwnedCount": [
+        4,
+        10
+      ]
+    }
+  ],
+  "board": [
+    {
+      "index": 0,
+      "kind": "START",
+      "name": "Bắt đầu"
+    },
+    {
+      "index": 1,
+      "kind": "LAND",
+      "assetId": "ca-mau"
+    },
+    {
+      "index": 2,
+      "kind": "LIFE",
+      "name": "Cuộc Sống"
+    },
+    {
+      "index": 3,
+      "kind": "LAND",
+      "assetId": "can-tho"
+    },
+    {
+      "index": 4,
+      "kind": "TAX",
+      "name": "Thuế thu nhập",
+      "amount": 200
+    },
+    {
+      "index": 5,
+      "kind": "RAILROAD",
+      "assetId": "ga-sai-gon"
+    },
+    {
+      "index": 6,
+      "kind": "LAND",
+      "assetId": "binh-thuan"
+    },
+    {
+      "index": 7,
+      "kind": "CHANCE",
+      "name": "Cơ Hội"
+    },
+    {
+      "index": 8,
+      "kind": "LAND",
+      "assetId": "vung-tau"
+    },
+    {
+      "index": 9,
+      "kind": "LAND",
+      "assetId": "tp-hcm"
+    },
+    {
+      "index": 10,
+      "kind": "JAIL",
+      "name": "Nhà tù / Thăm tù"
+    },
+    {
+      "index": 11,
+      "kind": "LAND",
+      "assetId": "buon-ma-thuot"
+    },
+    {
+      "index": 12,
+      "kind": "UTILITY",
+      "assetId": "dien-luc"
+    },
+    {
+      "index": 13,
+      "kind": "LAND",
+      "assetId": "gia-lai"
+    },
+    {
+      "index": 14,
+      "kind": "LAND",
+      "assetId": "da-lat"
+    },
+    {
+      "index": 15,
+      "kind": "RAILROAD",
+      "assetId": "ga-nha-trang"
+    },
+    {
+      "index": 16,
+      "kind": "LAND",
+      "assetId": "nha-trang"
+    },
+    {
+      "index": 17,
+      "kind": "LIFE",
+      "name": "Cuộc Sống"
+    },
+    {
+      "index": 18,
+      "kind": "LAND",
+      "assetId": "quy-nhon"
+    },
+    {
+      "index": 19,
+      "kind": "LAND",
+      "assetId": "quang-ngai"
+    },
+    {
+      "index": 20,
+      "kind": "REST",
+      "name": "Nghỉ ngơi"
+    },
+    {
+      "index": 21,
+      "kind": "LAND",
+      "assetId": "da-nang"
+    },
+    {
+      "index": 22,
+      "kind": "CHANCE",
+      "name": "Cơ Hội"
+    },
+    {
+      "index": 23,
+      "kind": "LAND",
+      "assetId": "hoi-an"
+    },
+    {
+      "index": 24,
+      "kind": "LAND",
+      "assetId": "hue"
+    },
+    {
+      "index": 25,
+      "kind": "RAILROAD",
+      "assetId": "ga-da-nang"
+    },
+    {
+      "index": 26,
+      "kind": "LAND",
+      "assetId": "quang-binh"
+    },
+    {
+      "index": 27,
+      "kind": "LAND",
+      "assetId": "ha-tinh"
+    },
+    {
+      "index": 28,
+      "kind": "UTILITY",
+      "assetId": "cap-nuoc"
+    },
+    {
+      "index": 29,
+      "kind": "LAND",
+      "assetId": "nghe-an"
+    },
+    {
+      "index": 30,
+      "kind": "GO_TO_JAIL",
+      "name": "Đi tù"
+    },
+    {
+      "index": 31,
+      "kind": "LAND",
+      "assetId": "thanh-hoa"
+    },
+    {
+      "index": 32,
+      "kind": "LAND",
+      "assetId": "ninh-binh"
+    },
+    {
+      "index": 33,
+      "kind": "LIFE",
+      "name": "Cuộc Sống"
+    },
+    {
+      "index": 34,
+      "kind": "LAND",
+      "assetId": "lao-cai"
+    },
+    {
+      "index": 35,
+      "kind": "RAILROAD",
+      "assetId": "ga-ha-noi"
+    },
+    {
+      "index": 36,
+      "kind": "CHANCE",
+      "name": "Cơ Hội"
+    },
+    {
+      "index": 37,
+      "kind": "LAND",
+      "assetId": "hai-phong"
+    },
+    {
+      "index": 38,
+      "kind": "TAX",
+      "name": "Thuế xa xỉ",
+      "amount": 100
+    },
+    {
+      "index": 39,
+      "kind": "LAND",
+      "assetId": "ha-noi"
+    }
+  ],
+  "migration": {
+    "removedLandIds": [
+      "phu-quoc"
+    ],
+    "removedTileKinds": [
+      "DETENTION",
+      "TRAVEL",
+      "TRAVEL_FUND"
+    ],
+    "preserveLegacySourceUntilMigration": true,
+    "preserveExistingLandmarksForRetainedAssets": true,
+    "newGameRequired": true
+  },
+  "scope": {
+    "coreTarget": [
+      "40_TILE_BOARD",
+      "THREE_ASSET_TYPES",
+      "CLASSIC_RENT",
+      "COLOR_SET_BUILDING",
+      "EVEN_BUILDING",
+      "HOUSES_AND_HOTELS",
+      "DOUBLES",
+      "JAIL",
+      "VIETNAMESE_EVENT_DECKS",
+      "MOBILE_3D_CAMERA",
+      "LAST_PLAYER_STANDING"
+    ],
+    "deferredNeedsScopeDecision": [
+      "AUCTIONS",
+      "MORTGAGES",
+      "TRADING",
+      "CLASSIC_CREDITOR_ASSET_TRANSFER",
+      "AUCTION_LAST_BUILDING"
+    ],
+    "transitionalRules": {
+      "declinePurchase": "SKIP_WITHOUT_AUCTION",
+      "debtResolution": "EXISTING_LIQUIDATION_ADAPTED_TO_NEW_ASSETS",
+      "constructionTiming": "CURRENT_PLAYER_OPTIONAL_ACTIONS_AND_DEBT_SELLING_ONLY",
+      "rentCollection": "AUTOMATIC_ENGINE_PROMPT",
+      "decks": "SHUFFLED_DRAW_DISCARD_WITH_RESHUFFLE",
+      "buildingShortage": "BLOCK_PURCHASE_WITHOUT_BUILDING_AUCTION"
+    }
+  }
+}

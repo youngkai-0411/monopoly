@@ -10,7 +10,8 @@ export function currentPlayer(game: GameState) {
 }
 
 export function startTurn(game: GameState) {
-  game.phase = 'WAITING_FOR_ROLL';
+  game.phase = currentPlayer(game).jailed ? 'JAIL_DECISION' : 'WAITING_FOR_ROLL';
+  game.consecutiveDoubles = 0; game.extraRoll = false; game.rentDice = null; game.rentOverride = null; game.eventDepth = 0; game.paymentResume = null;
   game.dice = null;
   game.movement = null;
   game.rent = null;

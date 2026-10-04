@@ -1,0 +1,931 @@
+# TASK — TỐI ƯU UI/UX GAME “TỶ PHÚ VIỆT NAM”
+
+Bạn đang tiếp tục phát triển Web Board Game **Tỷ Phú Việt Nam**.
+
+Game hiện đã có giao diện Isometric Board hoạt động và visual direction tương đối tốt. Nhiệm vụ lần này **KHÔNG phải redesign toàn bộ game**, mà là tối ưu UI/UX màn hình gameplay hiện tại, đặc biệt cho **Mobile Landscape**.
+
+---
+
+# 1. MỤC TIÊU CHÍNH
+
+Giao diện hiện tại đang có cảm giác:
+
+> “Game nằm bên trong một dashboard.”
+
+Mục tiêu mới:
+
+> “Người chơi đang trực tiếp ở trên bàn cờ.”
+
+Board phải trở thành thành phần quan trọng nhất trên màn hình.
+
+Ưu tiên:
+
+**Game World > Gameplay Actions > Secondary Information**
+
+Không để các panel UI chiếm quá nhiều diện tích của Board.
+
+---
+
+# 2. GIỮ NGUYÊN
+
+KHÔNG thay đổi nếu không thực sự cần thiết:
+
+- Isometric Board.
+- Art direction hiện tại.
+- Property models.
+- Landmark models.
+- Color palette xanh / vàng hiện tại.
+- Player tokens.
+- Game Rules.
+- Game Engine.
+- Property data.
+- Economy.
+- Turn system.
+- Dice logic.
+- Movement logic.
+- Existing gameplay functionality.
+
+Đây chủ yếu là **UI/UX refactor**.
+
+Không rebuild Game Engine.
+
+Không thay đổi luật game để phục vụ UI.
+
+---
+
+# 3. VẤN ĐỀ GIAO DIỆN HIỆN TẠI
+
+Layout hiện tại gần giống:
+
+```text
+┌──────────────────────────────────────────────────────┐
+│ PLAYER HUD                                           │
+├────────────┬──────────────────────────┬───────────────┤
+│            │                          │               │
+│ LEFT PANEL │          BOARD           │ RIGHT PANEL   │
+│            │                          │               │
+│            │                          │               │
+├────────────┴──────────────────────────┴───────────────┤
+└──────────────────────────────────────────────────────┘
+```
+
+Các vấn đề:
+
+1. Left Panel chiếm diện tích lớn nhưng không chứa thông tin cần nhìn liên tục.
+2. Right Panel đang đảm nhiệm quá nhiều chức năng.
+3. Board bị kẹp giữa hai sidebar.
+4. Board chưa có cảm giác là game world chính.
+5. Camera controls chiếm diện tích quá lớn.
+6. Property ở xa khó đọc do perspective.
+7. Các action phụ cạnh tranh sự chú ý với gameplay chính.
+8. Mobile Landscape chưa tận dụng tối đa viewport.
+
+---
+
+# 4. TARGET LAYOUT
+
+Refactor màn hình theo hướng:
+
+```text
+┌────────────────────────────────────────────────────────────┐
+│ 🔴 Nghĩa 1.180Tr     🔵 Kai 1.500Tr                  ⚙    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│                                                 ◎          │
+│                                                 ⛶          │
+│                                                            │
+│                    ISOMETRIC BOARD                         │
+│                                                            │
+│                          🔴                                │
+│                                                            │
+│                                                            │
+│                                ┌────────────────────────┐  │
+│                                │ LƯỢT CỦA NGHĨA        │  │
+│                                │                        │  │
+│                                │ 🎲 2 + 3       = 5     │  │
+│                                │                        │  │
+│                                │ [ KẾT THÚC LƯỢT ]      │  │
+│                                └────────────────────────┘  │
+│                                                            │
+│ 🏠 Tài sản        🎴 Thẻ        📜 Nhật ký                │
+└────────────────────────────────────────────────────────────┘
+```
+
+Không cần copy pixel-perfect wireframe này.
+
+Hãy sử dụng nó như UX direction.
+
+---
+
+# 5. BOARD PHẢI TRỞ THÀNH MAIN CANVAS
+
+Board nên chiếm khoảng **85–90% vùng gameplay khả dụng** khi hợp lý.
+
+Board phải:
+
+- lớn hơn;
+- dễ quan sát hơn;
+- ít bị UI che;
+- tận dụng viewport landscape;
+- trở thành visual focus chính.
+
+Không tạo một container nhỏ rồi nhét Board vào giữa các sidebar.
+
+UI nên **overlay lên Game World khi cần**.
+
+---
+
+# 6. LOẠI BỎ LEFT SIDEBAR CỐ ĐỊNH
+
+Hiện tại Left Panel có những thông tin kiểu:
+
+- Hành trình / Vòng
+- Property hiện tại
+- Landmark
+- Xem chi tiết
+- Toàn bàn
+- Theo quân
+
+Không cần hiển thị toàn bộ liên tục.
+
+Hãy loại bỏ Left Sidebar cố định.
+
+Thông tin Property phải chuyển thành **Contextual Property Card / Bottom Sheet**.
+
+---
+
+# 7. PROPERTY CONTEXT CARD
+
+Khi:
+
+- Player tap Property;
+- Token vừa đáp xuống Property;
+- Property cần interaction;
+
+thì hiển thị Context Card.
+
+Ví dụ:
+
+```text
+┌────────────────────────┐
+│ 📍 HỒ CHÍ MINH         │
+│                        │
+│ 🏛️ Chợ Bến Thành      │
+│                        │
+│ Owner      Nghĩa       │
+│ Level      Lv.1        │
+│ Giá        120 Tr      │
+│ Rent        20 Tr      │
+│                        │
+│ [ XEM CHI TIẾT ]       │
+└────────────────────────┘
+```
+
+Nếu Property chưa có chủ:
+
+```text
+HỒ CHÍ MINH
+
+Giá
+120 Tr
+
+Rent
+20 Tr
+
+[ MUA 120 TR ]
+
+Bỏ qua
+```
+
+Ưu tiên Bottom Sheet trên màn hình nhỏ.
+
+Context Card không được permanently chiếm board space.
+
+---
+
+# 8. LANDMARK DATA
+
+Không hiển thị placeholder/debug data kiểu:
+
+> Landmark 81
+
+Nếu Landmark data thực chưa có thì:
+
+- Ẩn field đó.
+- Hoặc sử dụng landmark thực từ PropertyDefinition.
+
+Ví dụ:
+
+Hồ Chí Minh
+→ Chợ Bến Thành / Landmark phù hợp từ static data.
+
+Không hiển thị raw ID cho người chơi.
+
+---
+
+# 9. RIGHT PANEL → FLOATING ACTION PANEL
+
+Right Panel hiện tại đang chứa:
+
+- Current player.
+- Dice.
+- Result.
+- End Turn.
+- Property.
+- History.
+- Activity text.
+
+Hãy tách responsibilities.
+
+Right Panel phải trở thành **Floating Action Panel** nhỏ và context-sensitive.
+
+Nội dung panel phụ thuộc `GamePhase`.
+
+---
+
+# 10. PHASE — WAITING_FOR_ROLL
+
+Hiển thị:
+
+```text
+LƯỢT CỦA BẠN
+
+Nghĩa
+
+🎲      🎲
+
+[ ĐỔ XÚC XẮC ]
+```
+
+Primary CTA:
+
+**ĐỔ XÚC XẮC**
+
+Không hiển thị End Turn nếu chưa hợp lệ.
+
+---
+
+# 11. PHASE — ROLLING
+
+Khi dice đang roll:
+
+```text
+LƯỢT CỦA NGHĨA
+
+🎲   🎲
+
+Đang tung xúc xắc...
+```
+
+Disable interaction không hợp lệ.
+
+---
+
+# 12. PHASE — MOVING
+
+Sau khi dice result xuất hiện:
+
+```text
+🎲 2 + 🎲 3
+
+= 5
+
+Đang di chuyển...
+```
+
+Trong lúc token movement:
+
+- Disable Roll.
+- Disable End Turn.
+- Disable Buy.
+- Disable Upgrade.
+- Disable conflicting UI interactions.
+
+Engine vẫn phải validate phase, không chỉ disable button.
+
+---
+
+# 13. PHASE — RESOLVE PROPERTY
+
+Ví dụ:
+
+```text
+HỒ CHÍ MINH
+
+Giá: 120 Tr
+
+[ MUA ]
+
+[ BỎ QUA ]
+```
+
+Hoặc nếu đã mua:
+
+```text
+✓ ĐÃ MUA HỒ CHÍ MINH
+
+-120 Tr
+```
+
+Sau khi resolve hoàn tất mới cho phép:
+
+```text
+[ KẾT THÚC LƯỢT ]
+```
+
+---
+
+# 14. PRIMARY CTA
+
+Mỗi phase chỉ nên có **một Primary CTA rõ ràng**.
+
+Ví dụ:
+
+WAITING_FOR_ROLL
+→ ĐỔ XÚC XẮC
+
+PROPERTY_DECISION
+→ MUA
+
+OPTIONAL_ACTIONS
+→ KẾT THÚC LƯỢT
+
+Không để nhiều nút có visual weight giống nhau cạnh tranh.
+
+---
+
+# 15. CAMERA CONTROLS
+
+Hiện tại:
+
+```text
+[ Toàn bàn ]
+
+[ Theo quân ]
+```
+
+chiếm quá nhiều diện tích.
+
+Thay bằng floating controls.
+
+Ví dụ:
+
+```text
+┌────┐
+│ ◎  │
+├────┤
+│ ⛶  │
+└────┘
+```
+
+Ý nghĩa:
+
+`◎`
+→ Follow Player
+
+`⛶`
+→ Overview / Fit Board
+
+Touch target:
+
+khoảng 44–52px.
+
+Có tooltip/label ngắn nếu cần.
+
+---
+
+# 16. CAMERA FOLLOW
+
+Khi player Roll:
+
+```text
+ROLL
+ ↓
+DICE RESULT
+ ↓
+UI REDUCES VISUAL NOISE
+ ↓
+CAMERA FOLLOW TOKEN
+ ↓
+TOKEN MOVES TILE BY TILE
+ ↓
+CAMERA STOPS
+ ↓
+DESTINATION HIGHLIGHT
+ ↓
+RESOLVE TILE UI
+```
+
+Trong lúc token movement, Board phải trở thành visual focus.
+
+Có thể fade hoặc minimize các secondary UI element.
+
+KHÔNG cần hide Player HUD hoàn toàn nếu gây layout shift.
+
+Ưu tiên giảm opacity/visual emphasis thay vì làm màn hình nhảy layout.
+
+---
+
+# 17. PROPERTY READABILITY
+
+Không cố ép người chơi đọc toàn bộ Property text trực tiếp trên isometric board.
+
+Perspective khiến tile xa camera nhỏ.
+
+Board có nhiệm vụ cung cấp:
+
+- spatial position;
+- group color;
+- owner;
+- level;
+- landmark visual;
+- token position.
+
+Property Card / Bottom Sheet có nhiệm vụ cung cấp:
+
+- full name;
+- landmark name;
+- price;
+- rent;
+- owner;
+- level;
+- upgrade;
+- group;
+- actions.
+
+---
+
+# 18. FULL PROPERTY NAME
+
+Khi camera đủ gần, ưu tiên:
+
+Quảng Ngãi
+
+thay vì:
+
+Q.Ngãi
+
+Ưu tiên:
+
+Quảng Bình
+
+thay vì:
+
+Q.Bình
+
+Ưu tiên:
+
+Nghệ An
+
+thay vì:
+
+N.An
+
+Không viết tắt chỉ để giữ layout.
+
+Nếu tên dài:
+
+- Cho xuống 2 dòng.
+- Scale typography hợp lý.
+- Chỉ sử dụng shortName ở zoom level rất xa nếu thật sự cần.
+
+---
+
+# 19. PLAYER HUD
+
+Player HUD hiện tại có hướng tốt nhưng cần hierarchy rõ hơn.
+
+Active Player:
+
+```text
+┌───────────────────────┐
+│ 🔴 NGHĨA          🎲 │
+│    1.180 Tr            │
+└───────────────────────┘
+```
+
+Active player nên có:
+
+- Accent border.
+- Subtle highlight.
+- Current-turn indicator.
+- Có thể pulse nhẹ khi turn bắt đầu.
+
+Không sử dụng animation liên tục gây distraction.
+
+Inactive Player:
+
+```text
+🔵 Kai
+1.500 Tr
+```
+
+visual weight thấp hơn.
+
+---
+
+# 20. SECONDARY ACTIONS
+
+Các action:
+
+- Tài sản
+- Thẻ
+- Nhật ký
+- More
+
+không đặt chung trong Primary Action Panel.
+
+Chuyển thành bottom/floating navigation.
+
+Ví dụ:
+
+```text
+[ 🏠 ]
+Tài sản
+
+[ 🎴 ]
+Thẻ
+
+[ 📜 ]
+Nhật ký
+
+[ ⋯ ]
+```
+
+Trên màn hình nhỏ có thể chỉ dùng icon nếu label làm thiếu diện tích.
+
+Touch target tối thiểu khoảng 44px, ưu tiên 48px+.
+
+---
+
+# 21. PROPERTY MANAGEMENT
+
+Tap `Tài sản`:
+
+Mở Bottom Sheet.
+
+Ví dụ:
+
+```text
+━━━━━━━━
+
+TÀI SẢN CỦA BẠN
+
+🟠 DUYÊN HẢI
+2 / 3
+
+Quảng Ngãi
+Lv.2
+
+Nha Trang
+Lv.1
+
+[ NÂNG CẤP ]
+```
+
+Không navigate khỏi Game Screen nếu không cần.
+
+---
+
+# 22. GAME LOG
+
+Activity kiểu:
+
+> Nghĩa mua Hồ Chí Minh với 120 Tr.
+
+không cần permanent chiếm Action Panel.
+
+Có thể:
+
+- hiển thị toast/activity message ngắn;
+- sau vài giây fade;
+- lưu đầy đủ trong Nhật ký.
+
+Ví dụ:
+
+```text
+✓ Nghĩa đã mua Hồ Chí Minh • 120 Tr
+```
+
+hiện 2–3 giây.
+
+Sau đó biến mất.
+
+Nhật ký vẫn lưu event.
+
+---
+
+# 23. DICE UX
+
+Dice cần visual hierarchy rõ.
+
+Trước Roll:
+
+```text
+🎲    🎲
+
+[ ĐỔ XÚC XẮC ]
+```
+
+Rolling:
+
+- Shake / roll animation.
+- Không nhận thêm tap.
+
+Result:
+
+```text
+⚁ + ⚂
+
+5
+```
+
+Sau đó bắt đầu token movement.
+
+Không để người chơi spam Roll.
+
+---
+
+# 24. TOKEN MOVEMENT
+
+Movement nên:
+
+- đi từng tile;
+- tốc độ ổn định;
+- camera follow;
+- không teleport trừ effect đặc biệt;
+- destination có highlight.
+
+Animation chỉ là presentation.
+
+Game State vẫn là source of truth.
+
+Không để CSS animation quyết định logical player position.
+
+---
+
+# 25. MOBILE LANDSCAPE
+
+Primary target:
+
+**Mobile Landscape**
+
+Game screen không được yêu cầu scroll trong gameplay bình thường.
+
+Cần kiểm tra ít nhất các viewport gần:
+
+- 844 × 390
+- 852 × 393
+- 896 × 414
+- 915 × 412
+- 932 × 430
+
+Không hard-code UI chỉ cho một kích thước screenshot.
+
+---
+
+# 26. SAFE AREA
+
+Hỗ trợ:
+
+```css
+env(safe-area-inset-top)
+env(safe-area-inset-right)
+env(safe-area-inset-bottom)
+env(safe-area-inset-left)
+```
+
+để tránh notch / Dynamic Island / browser controls ảnh hưởng button.
+
+---
+
+# 27. TOUCH UX
+
+Phải ngăn:
+
+- accidental text selection;
+- double tap zoom nếu gây vấn đề;
+- long press menu;
+- repeated action;
+- dragging ngoài ý muốn.
+
+Áp dụng phù hợp:
+
+```css
+user-select: none;
+-webkit-user-select: none;
+-webkit-touch-callout: none;
+touch-action: manipulation;
+```
+
+Không disable browser accessibility một cách không cần thiết.
+
+---
+
+# 28. VISUAL DIRECTION
+
+GIỮ:
+
+- Isometric board.
+- Soft green environment.
+- Cream UI surfaces.
+- Yellow/gold primary CTA.
+- Rounded cards.
+- Current friendly Vietnamese board-game feeling.
+
+Không chuyển sang:
+
+- Cyberpunk.
+- Dark gaming UI.
+- Glassmorphism nặng.
+- Neon.
+- Casino style.
+- Monopoly clone trực tiếp.
+
+Game cần có identity riêng:
+
+**Modern Vietnamese Travel / Property Board Game.**
+
+---
+
+# 29. TYPOGRAPHY
+
+Cải thiện readability.
+
+Hierarchy:
+
+Player Name
+→ mạnh
+
+Property Name
+→ mạnh
+
+Primary CTA
+→ mạnh
+
+Supporting information
+→ nhỏ hơn
+
+Metadata
+→ nhẹ
+
+Không dùng quá nhiều uppercase.
+
+Không dùng font quá condensed cho text cần đọc nhanh.
+
+Không để text quan trọng nhỏ chỉ để fit layout.
+
+---
+
+# 30. KHÔNG THỰC HIỆN
+
+Trong task này KHÔNG:
+
+- Thay Game Engine.
+- Thay Economy.
+- Thay Property rules.
+- Thay Board data.
+- Thêm Multiplayer Online.
+- Thêm Bot.
+- Thêm Trading.
+- Thêm Auction.
+- Thêm feature mới.
+- Rebuild project.
+- Thay toàn bộ art style.
+- Refactor unrelated modules.
+
+Đây là **UI/UX Optimization Task**.
+
+---
+
+# 31. IMPLEMENTATION APPROACH
+
+Trước khi sửa code:
+
+1. Inspect Game Screen hiện tại.
+2. Inspect layout components.
+3. Inspect board/camera implementation.
+4. Inspect GamePhase/state.
+5. Inspect Property detail UI.
+6. Inspect responsive CSS.
+7. Xác định component nào có thể reuse.
+8. Không rewrite component nếu refactor nhỏ đủ giải quyết.
+
+Sau đó viết plan ngắn.
+
+---
+
+# 32. IMPLEMENTATION ORDER
+
+Thực hiện theo thứ tự:
+
+### Phase A — Layout
+
+1. Remove fixed Left Sidebar.
+2. Expand Board.
+3. Convert Right Panel → Floating Action Panel.
+4. Move camera controls onto Board.
+5. Move secondary actions ra khỏi Action Panel.
+
+### Phase B — Context UI
+
+6. Property Context Card.
+7. Property Bottom Sheet.
+8. Activity Toast.
+9. Property Management Sheet.
+
+### Phase C — Game Phase UX
+
+10. WAITING_FOR_ROLL state.
+11. ROLLING state.
+12. MOVING state.
+13. RESOLVING state.
+14. OPTIONAL_ACTIONS state.
+
+### Phase D — Camera & Motion
+
+15. Camera follow.
+16. Overview camera.
+17. Destination focus.
+18. Reduce UI noise during movement.
+
+### Phase E — Responsive Polish
+
+19. Typography.
+20. Full Property names.
+21. Touch targets.
+22. Safe areas.
+23. Multiple landscape viewport testing.
+
+---
+
+# 33. TARGET RESULT
+
+Sau refactor, người chơi phải có cảm giác:
+
+> Board là game.
+
+chứ không phải:
+
+> Board là một widget nằm giữa dashboard.
+
+Khi không có decision:
+
+**Board chiếm sự chú ý.**
+
+Khi cần action:
+
+**Action xuất hiện đúng context.**
+
+Khi cần thông tin:
+
+**Information surface xuất hiện tạm thời.**
+
+Sau đó UI trả lại không gian cho Board.
+
+---
+
+# 34. DEFINITION OF DONE
+
+Task chỉ hoàn thành khi:
+
+- Fixed Left Sidebar đã được loại bỏ.
+- Board lớn hơn đáng kể.
+- Board là main visual focus.
+- Right Panel đã trở thành compact contextual Action Panel.
+- Primary CTA thay đổi theo GamePhase.
+- Camera controls compact.
+- Tài sản / Thẻ / Nhật ký không nằm trong primary panel.
+- Property Detail dùng contextual surface.
+- Không hiển thị raw Landmark ID.
+- Full Property Name được ưu tiên.
+- Activity message không chiếm panel vĩnh viễn.
+- Token movement làm Board trở thành focus.
+- Invalid actions bị disable và engine vẫn validate.
+- Không scroll trong mobile landscape gameplay.
+- Touch targets đủ lớn.
+- Safe area được xử lý.
+- Không phá Game Engine.
+- Không thay Game Rules.
+- TypeScript/build/tests hiện tại pass.
+- Không xuất hiện regression nghiêm trọng trên desktop/tablet.
+
+---
+
+# 35. SAU KHI HOÀN THÀNH
+
+Báo cáo:
+
+1. Những vấn đề UI/UX đã tìm thấy.
+2. Những thay đổi đã thực hiện.
+3. Components/files đã sửa.
+4. Components mới đã tạo.
+5. Game Engine có bị thay đổi hay không.
+6. Các viewport đã test.
+7. Build/typecheck/test results.
+8. Những vấn đề UX còn lại.
+9. Screenshot/preview của giao diện mới nếu môi trường hỗ trợ.
+
+Sau đó DỪNG.
+
+Không tự động chuyển sang feature development tiếp theo.

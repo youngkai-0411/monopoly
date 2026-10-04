@@ -1,62 +1,41 @@
+import { lazy,Suspense,useCallback,useEffect,useRef,useState } from 'react';
+import { GameIcon } from './GameIcon';
+import { ClassicBoard } from './ClassicBoard';
 import { BOARD } from '../game/data/board';
-import { PROPERTIES } from '../game/data/properties';
-import { BOARD_ROWS, boardCell } from './boardLayout';
-import type { GameState } from '../game/types/domain';
-import { motion } from 'framer-motion';
-import { PLAYER_COLORS } from './format';
+import { currentPlayer } from '../game/engine/turns';
 import { TurnControls } from './TurnControls';
-
-const properties = Object.fromEntries(PROPERTIES.map((p) => [p.id, p]));
-
-const groupClass: Record<string, string> = {
-  'mien-tay': 'g-mien-tay', 'phuong-nam': 'g-phuong-nam', 'cao-nguyen': 'g-cao-nguyen',
-  'duyen-hai': 'g-duyen-hai', 'di-san': 'g-di-san', 'mien-trung-bac': 'g-mien-trung-bac',
-  'mien-bac': 'g-mien-bac', 'do-thi': 'g-do-thi',
-};
-
-const specials: Record<string, { icon: string; label: string; tone: string }> = {
-  START: { icon: '🇻🇳', label: 'Xuất phát', tone: 'start' },
-  CHANCE: { icon: '🎴', label: 'Cơ hội', tone: 'chance' },
-  LIFE: { icon: '✨', label: 'Cuộc sống', tone: 'life' },
-  TAX: { icon: '💸', label: 'Thuế', tone: 'tax' },
-  DETENTION: { icon: '🚔', label: 'Tạm giữ', tone: 'detention' },
-  REST: { icon: '🏖️', label: 'Nghỉ ngơi', tone: 'rest' },
-  TRAVEL: { icon: '✈️', label: 'Du lịch', tone: 'travel' },
-  TRAVEL_FUND: { icon: '🎁', label: 'Quỹ du lịch', tone: 'fund' },
-};
-
-export function Board({game,onProperty,onAssets,onLog}: {game:GameState;onProperty:(id:string)=>void;onAssets:()=>void;onLog:()=>void}) {
-  const tokens = (index: number) => <span className="tile-tokens" aria-label="Người chơi tại ô này">{game.players.map((player,i)=>!player.isBankrupt&&player.position===index ? <motion.span layoutId={`token-${player.id}`} transition={{duration:.1}} className="board-token" style={{backgroundColor:PLAYER_COLORS[i]}} key={player.id} aria-label={player.name}/> : null)}</span>;
-  return <section className="board-shell" aria-label="Bàn cờ Tỷ Phú Việt Nam">
-    <div className="board-grid">
-      {BOARD.map((tile) => {
-        const style = boardCell(tile.index);
-        const sideClass = style.gridRow !== 1 && style.gridRow !== BOARD_ROWS ? 'side-tile' : '';
-        if (tile.type === 'PROPERTY' && tile.propertyId) {
-          const p = properties[tile.propertyId];
-          const runtime=game.properties[p.id];
-          const ownerIndex=game.players.findIndex(player=>player.id===runtime.ownerId);
-          return <button key={tile.index} className={`tile property ${sideClass} ${groupClass[p.groupId]}`} style={style} title={`${p.name} — ${p.landmark}`} onClick={()=>onProperty(p.id)} aria-label={`${p.name}, ${p.price} Tr${runtime.ownerId?`, của ${game.players[ownerIndex].name}, cấp ${runtime.level}`:', chưa có chủ'}`}>
-            <span className="tile-index">{tile.index + 1}</span>
-            <span className="group-band" />
-            <span className="tile-name property-name">{p.name}</span>
-            <span className="tile-price">{p.price} Tr</span>
-            {ownerIndex>=0 && <span className="owner-mark" style={{backgroundColor:PLAYER_COLORS[ownerIndex]}} aria-hidden="true"/>}
-            {runtime.level>0 && <span className="tile-level">{runtime.level}★</span>}
-            {tokens(tile.index)}
-          </button>;
-        }
-        const meta = specials[tile.type];
-        return <div key={tile.index} className={`tile special ${sideClass} ${meta.tone}`} style={style} aria-label={meta.label}>
-          <span className="tile-index">{tile.index + 1}</span>
-          <span className="special-icon">{meta.icon}</span>
-          <span className="tile-name">{meta.label}</span>
-          {tile.type === 'TAX' && <span className="tile-price">-{tile.amount}Tr</span>}
-          {tokens(tile.index)}
-        </div>;
-      })}
-
-      <TurnControls game={game} onAssets={onAssets} onLog={onLog}/>
-    </div>
-  </section>;
+import { SecondaryActions } from './SecondaryActions';
+import { PropertyContextCard } from './PropertyContextCard';
+import { ActivityToast } from './ActivityToast';
+import { busyPhase,canInspect,decisionPhase } from './gameplayUI';
+import type { GameState } from '../game/types/domain';
+import type { CameraMode } from '../rendering/squareBoard';
+const ThreeBoard=lazy(()=>import('./ThreeBoard'));
+export function Board({game,onProperty,onAssets,onCards,onLog,panelOpen}:{game:GameState;onProperty:(id:string)=>void;onAssets:()=>void;onCards:()=>void;onLog:()=>void;panelOpen:boolean}){
+ const [unavailable,setUnavailable]=useState(false),[mode,setMode]=useState<CameraMode>('overview'),[context,setContext]=useState<{id:string;actor:string;manual:boolean}|null>(null);
+ const contextTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined),previous=useRef(game.phase),manualCamera=useRef(false);
+ const player=currentPlayer(game),inspect=canInspect(game.phase)&&!panelOpen;
+ const onUnavailable=useCallback(()=>setUnavailable(true),[]);
+ useEffect(()=>{
+  const before=previous.current;previous.current=game.phase;clearTimeout(contextTimer.current);
+  if(game.phase==='ROLLING'||game.phase==='TURN_START'){manualCamera.current=false;setContext(null);setMode(game.phase==='ROLLING'?'follow':'overview');}
+  if((game.phase==='MOVING'||game.phase==='RESOLVING_TILE')&&!manualCamera.current)setMode('follow');
+  if(game.phase==='OPTIONAL_ACTIONS'&&before!=='OPTIONAL_ACTIONS'){
+   const id=BOARD[player.position].propertyId;
+   if(id){setContext({id,actor:player.id,manual:false});contextTimer.current=setTimeout(()=>setContext(null),5000);}
+   const timer=setTimeout(()=>{if(!manualCamera.current)setMode('overview');},matchMedia('(prefers-reduced-motion: reduce)').matches?0:1700);return()=>clearTimeout(timer);
+  }
+ },[game.phase,game.currentPlayerId,player.id]);
+ useEffect(()=>()=>clearTimeout(contextTimer.current),[]);
+ const select=useCallback((index:number)=>{if(!inspect)return;const id=BOARD[index].propertyId;clearTimeout(contextTimer.current);setContext(id?{id,actor:game.currentPlayerId,manual:true}:null);},[inspect,game.currentPlayerId]);
+ const visible=context&&context.actor===player.id&&inspect;
+ return <section className="play-board immersive-board" aria-label="Bàn cờ Việt Nam 40 ô" data-game-phase={game.phase} data-busy={busyPhase(game.phase)} data-renderer-fallback={unavailable}>
+ <div className="play-canvas">{unavailable?<ClassicBoard game={game} onProperty={id=>{if(inspect)setContext({id,actor:player.id,manual:true});}} onAssets={onAssets} onLog={onLog} controls={null}/>:<Suspense fallback={<div className="three-loading">Đang dựng bàn cờ…</div>}><ThreeBoard game={game} mode={mode} onSelect={select} onUnavailable={onUnavailable} immersive interactionDisabled={!inspect} framingKey={game.phase+':'+Boolean(visible)+':'+panelOpen}/></Suspense>}</div>
+ <span className="round-marker">Vòng {game.round}</span>
+ {!unavailable&&<div className="play-camera game-occluder"><button aria-label="Theo quân" title="Theo quân" aria-pressed={mode==='follow'} onClick={()=>{manualCamera.current=true;setMode('follow');}}><GameIcon name="follow"/></button><button aria-label="Toàn bàn" title="Toàn bàn" aria-pressed={mode==='overview'} onClick={()=>{manualCamera.current=true;setMode('overview');}}><GameIcon name="overview"/></button></div>}
+ {!decisionPhase(game.phase)&&<aside className="play-actions game-occluder"><TurnControls game={game}/></aside>}
+ <SecondaryActions disabled={!inspect} onAssets={onAssets} onCards={onCards} onLog={onLog}/>
+ {visible&&<PropertyContextCard game={game} id={context.id} focusRequested={context.manual} onClose={()=>setContext(null)} onDetail={()=>{setContext(null);onProperty(context.id);}}/>}
+ <ActivityToast game={game}/>
+ </section>;
 }

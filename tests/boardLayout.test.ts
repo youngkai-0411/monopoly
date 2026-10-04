@@ -5,8 +5,8 @@ import { BOARD_COLUMNS, BOARD_ROWS, boardCell } from '../src/components/boardLay
 describe('M2 board layout', () => {
   const cells = BOARD.map(tile => boardCell(tile.index));
 
-  it('places all 36 tiles in distinct cells on the perimeter', () => {
-    expect(new Set(cells.map(cell => `${cell.gridColumn},${cell.gridRow}`)).size).toBe(36);
+  it('places all 40 tiles in distinct cells on the perimeter', () => {
+    expect(new Set(cells.map(cell => `${cell.gridColumn},${cell.gridRow}`)).size).toBe(40);
     for (const { gridColumn: column, gridRow: row } of cells) {
       expect(column).toBeGreaterThanOrEqual(1);
       expect(column).toBeLessThanOrEqual(BOARD_COLUMNS);

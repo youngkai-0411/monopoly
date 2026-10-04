@@ -1,0 +1,1534 @@
+# TASK — VISUAL SYSTEM V3
+## Tỷ Phú Việt Nam — Visual Polish, Typography & Design System
+
+Bạn đang tiếp tục phát triển Web Board Game **“Tỷ Phú Việt Nam”**.
+
+Project hiện đã có:
+
+- Gameplay screen.
+- Three.js Isometric Board.
+- Low-poly environment.
+- Player HUD.
+- Contextual Action UI.
+- Property UI.
+- Camera controls.
+- Dice.
+- Player tokens.
+- Mobile Landscape support.
+- Visual style hiện tại được mô tả trong file `visual-style-reference.md`.
+
+Hãy đọc kỹ:
+
+`visual-style-reference.md`
+
+và audit implementation thực tế trước khi sửa code.
+
+---
+
+# 1. MỤC TIÊU
+
+Task này KHÔNG phải redesign game từ đầu.
+
+Mục tiêu là nâng visual system hiện tại thành một hệ thống:
+
+- dễ đọc hơn;
+- rõ hierarchy hơn;
+- nhất quán hơn;
+- thân thiện với Mobile Landscape;
+- có cảm giác board game chuyên nghiệp hơn;
+- vẫn giữ personality hiện tại;
+- giảm cảm giác “web dashboard”;
+- giữ identity Việt Nam hiện đại, thân thiện.
+
+Visual direction cần giữ:
+
+> Modern Vietnamese Travel / Property Board Game
+
+Các đặc điểm chính:
+
+- Isometric.
+- Low-poly.
+- Soft.
+- Warm.
+- Friendly.
+- Colorful nhưng không quá saturated.
+- Cream + Teal + Gold UI.
+- Vietnamese travel identity.
+
+---
+
+# 2. CURRENT VISUAL DIRECTION — GIỮ LẠI
+
+Visual hiện tại đang sử dụng:
+
+### Main UI
+
+Background:
+
+`#B4DED7`
+
+Primary surface:
+
+`#FFF9E9`
+
+Secondary surface:
+
+`#EDF2E4`
+
+Primary text:
+
+`#254B4C`
+
+Secondary text:
+
+`#48675E`
+
+Gold accent:
+
+`#EDB944`
+
+Primary CTA gradient:
+
+`#FFDB7D → #EDB435`
+
+Active/selected dark teal:
+
+`#285D59`
+
+Đây là visual direction hợp lý.
+
+KHÔNG thay toàn bộ palette bằng một theme khác.
+
+---
+
+# 3. VẤN ĐỀ HIỆN TẠI
+
+Visual system hiện tại có một số vấn đề:
+
+### A. Quá nhiều màu gần giống nhau
+
+Ví dụ:
+
+```text
+#FFF9E9
+#EDF2E4
+#EAF0DF
+#FFFDF5
+#E6EEDC
+```
+
+và:
+
+```text
+#A9C5B5
+#B5C8AD
+#C4D2BA
+#B5C4AA
+```
+
+Các màu này không sai, nhưng có quá nhiều biến thể nhỏ.
+
+Điều này làm:
+
+- hierarchy yếu;
+- component khó phân biệt;
+- CSS khó maintain;
+- visual system thiếu consistency.
+
+---
+
+# 4. TẠO DESIGN TOKEN SYSTEM
+
+Hãy audit tất cả màu đang sử dụng trong:
+
+- CSS.
+- React components.
+- Three.js renderer.
+- Canvas atlas.
+- Dialog.
+- Bottom Sheet.
+- HUD.
+- Buttons.
+- Toast.
+- Event Cards.
+- Winner UI.
+
+Sau đó gom chúng thành semantic tokens.
+
+Ví dụ direction:
+
+```css
+:root {
+  /* Background */
+
+  --color-game-bg: #B4DED7;
+
+  /* Surface */
+
+  --color-surface-primary: #FFF9E9;
+  --color-surface-secondary: #EDF2E4;
+
+  /* Border */
+
+  --color-border-default: #A9C5B5;
+  --color-border-strong: #8EAD9D;
+
+  /* Text */
+
+  --color-text-primary: #254B4C;
+  --color-text-secondary: #48675E;
+  --color-text-muted: ...;
+
+  /* Action */
+
+  --color-action: #EDB944;
+  --color-action-light: #FFDB7D;
+  --color-action-text: #382800;
+
+  /* Selected */
+
+  --color-selected: #285D59;
+  --color-selected-text: #FFF9E9;
+
+  /* Danger */
+
+  --color-danger: ...;
+  --color-danger-surface: ...;
+
+  /* Success */
+
+  --color-success: ...;
+}
+```
+
+Đây chỉ là structure suggestion.
+
+Hãy audit implementation trước khi quyết định token cuối cùng.
+
+---
+
+# 5. SEMANTIC COLOR RULES
+
+Sau refactor, màu phải có ý nghĩa rõ ràng.
+
+## GOLD
+
+Gold chỉ dùng cho:
+
+> PRIMARY GAMEPLAY ACTION
+
+Ví dụ:
+
+- Đổ xúc xắc.
+- Mua.
+- Nâng cấp.
+- Xác nhận.
+- Kết thúc lượt khi đây là primary action.
+
+Nguyên tắc:
+
+> Thấy Gold → đây là action chính tiếp theo.
+
+Không sử dụng Gold quá nhiều cho decoration.
+
+---
+
+## DARK TEAL
+
+Dark Teal dùng cho:
+
+> ACTIVE / SELECTED / NAVIGATION STATE
+
+Ví dụ:
+
+- Follow Camera đang active.
+- Tab đang selected.
+- Toggle active.
+- Navigation selection.
+
+Không sử dụng Gold cho những trạng thái này.
+
+---
+
+## RED
+
+Red dùng cho:
+
+> DANGER / ERROR / DESTRUCTIVE ACTION
+
+Ví dụ:
+
+- Error.
+- Bankruptcy warning.
+- Destructive confirmation.
+- Không đủ tiền nếu cần cảnh báo.
+
+Chuẩn hóa error colors hiện tại thành một semantic family.
+
+---
+
+# 6. TÁCH BA HỆ MÀU
+
+Game có ba color systems khác nhau.
+
+KHÔNG trộn chúng.
+
+## SYSTEM 1 — UI COLORS
+
+Cream / Teal / Gold.
+
+Dùng cho:
+
+- UI.
+- Cards.
+- Buttons.
+- Navigation.
+- Text.
+- Dialog.
+
+---
+
+## SYSTEM 2 — PROPERTY GROUP COLORS
+
+8 màu nhóm đất.
+
+Dùng để biểu thị:
+
+> Property thuộc Group nào.
+
+---
+
+## SYSTEM 3 — PLAYER COLORS
+
+4 màu Player.
+
+Dùng để biểu thị:
+
+> Player identity / Ownership.
+
+---
+
+# 7. PROPERTY GROUP COLORS
+
+Hiện có 8 Group:
+
+### Miền Tây
+Current:
+
+`#8B5A2B`
+
+### Phương Nam
+
+`#87CEEB`
+
+### Cao Nguyên
+
+`#D95AA5`
+
+### Duyên Hải
+
+`#F59E0B`
+
+### Di Sản
+
+`#DC2626`
+
+### Miền Trung Bắc
+
+`#FACC15`
+
+### Miền Bắc
+
+`#16A34A`
+
+### Đô Thị
+
+`#1D4ED8`
+
+KHÔNG thay đổi mapping Group.
+
+Nhưng hãy audit palette như một tổng thể.
+
+Mục tiêu:
+
+- vẫn dễ phân biệt 8 Group;
+- saturation tương đối đồng đều;
+- lightness có chủ đích;
+- phù hợp low-poly art;
+- không có màu nào quá “web utility color”;
+- không quá neon;
+- vẫn nhận diện tốt khi nhìn từ xa.
+
+Có thể điều chỉnh HEX nếu cần.
+
+Nhưng:
+
+> Không được làm các Group trở nên khó phân biệt.
+
+Nếu thay đổi HEX, hãy ghi rõ before/after trong báo cáo.
+
+---
+
+# 8. PLAYER COLORS
+
+Player hiện có:
+
+Player 1:
+
+`#EE6B73`
+
+Player 2:
+
+`#59BAFA`
+
+Player 3:
+
+`#73D7A0`
+
+Player 4:
+
+`#FFD46A`
+
+Giữ identity này trừ khi có vấn đề contrast rõ ràng.
+
+Các màu này phải được dùng thống nhất cho:
+
+- Token.
+- Ownership marker.
+- HUD indicator.
+- Active player indicator khi phù hợp.
+- Property ownership.
+
+---
+
+# 9. KHÔNG DÙNG EMOJI LÀM PLAYER COLOR INDICATOR
+
+Hiện HUD có thể đang dùng:
+
+🔴
+🔵
+🟢
+🟡
+
+Không dùng emoji để biểu thị màu Player.
+
+Lý do:
+
+Emoji phụ thuộc OS và không đảm bảo khớp Player HEX.
+
+Thay bằng CSS/SVG/game asset controlled indicator.
+
+Ví dụ:
+
+```text
+● Nghĩa
+● Kai
+```
+
+Circle phải lấy trực tiếp từ Player color token/data.
+
+Player HUD và Player Token phải có cùng color identity.
+
+Emoji vẫn được phép trong Event content nếu phù hợp.
+
+---
+
+# 10. TYPOGRAPHY — PRIORITY CAO NHẤT
+
+Typography hiện tại đang phụ thuộc:
+
+```css
+font-family: "Segoe UI", Arial, sans-serif;
+```
+
+Board Canvas atlas có thể đang sử dụng Arial riêng.
+
+Điều này khiến typography:
+
+- khác giữa Windows;
+- Android;
+- iPhone;
+- UI và Board không hoàn toàn đồng nhất.
+
+Hãy chuẩn hóa typography.
+
+---
+
+# 11. FONT DIRECTION
+
+Ưu tiên sử dụng:
+
+**Be Vietnam Pro**
+
+nếu việc thêm webfont phù hợp với project.
+
+Font phải hỗ trợ tốt:
+
+- tiếng Việt;
+- dấu;
+- số;
+- uppercase;
+- mobile rendering.
+
+Nếu không thể hoặc không nên thêm dependency/network font runtime, hãy chọn phương án self-host hoặc fallback phù hợp với kiến trúc project.
+
+Không phụ thuộc vào việc tải font từ network trong lúc gameplay nếu điều đó làm game kém ổn định.
+
+---
+
+# 12. TYPOGRAPHY FAMILY
+
+Direction:
+
+```text
+Be Vietnam Pro
+
+800
+→ Display / Winner
+
+700
+→ Property Name
+→ Player Name
+→ Heading
+→ Button
+
+500
+→ Body
+→ Secondary information
+→ Metadata
+```
+
+Không cần sử dụng quá nhiều font weights.
+
+Ưu tiên:
+
+500
+700
+800
+
+nếu đủ.
+
+---
+
+# 13. TYPE SCALE
+
+Chuẩn hóa type scale thay vì mỗi component có một font-size riêng.
+
+Target direction:
+
+```text
+DISPLAY
+28–32px
+
+TITLE
+20–24px
+
+HEADING
+16–18px
+
+BODY
+14px
+
+LABEL
+12–13px
+
+MICRO
+11px
+```
+
+`MICRO` chỉ dùng cho metadata thực sự phụ.
+
+Không dùng 10–11px cho thông tin quan trọng mà người chơi phải đọc liên tục.
+
+---
+
+# 14. PLAYER HUD TYPOGRAPHY
+
+Current HUD text đang hơi nhỏ.
+
+Target direction:
+
+Player Name:
+
+```text
+14px
+700
+```
+
+Money:
+
+```text
+12–13px
+500/600
+```
+
+Active Player phải dễ nhận ra nhưng không làm HUD quá lớn.
+
+---
+
+# 15. PROPERTY TYPOGRAPHY
+
+Property Name là thông tin quan trọng.
+
+Ưu tiên full name.
+
+Ví dụ:
+
+```text
+Quảng Ngãi
+Quảng Bình
+Nghệ An
+Hải Phòng
+Buôn Ma Thuột
+```
+
+Không ưu tiên:
+
+```text
+Q.Ngãi
+Q.Bình
+N.An
+H.Phòng
+```
+
+chỉ để fit layout.
+
+Tên dài có thể:
+
+- xuống 2 dòng;
+- dùng responsive size;
+- sử dụng context card khi camera quá xa.
+
+Readability > cố nhét text.
+
+---
+
+# 16. BOARD TYPOGRAPHY
+
+Board hiện sử dụng Canvas Atlas.
+
+Không chỉ đơn giản tăng font-size để giải quyết readability.
+
+Perspective khiến tile ở xa nhỏ hơn.
+
+Hãy xem xét khả năng sử dụng typography theo camera/zoom level.
+
+Concept:
+
+### FAR
+
+```text
+GROUP COLOR
+
+Quảng Ngãi
+```
+
+### MEDIUM
+
+```text
+GROUP COLOR
+
+Quảng Ngãi
+
+300 Tr
+```
+
+### CLOSE
+
+```text
+Duyên Hải
+
+QUẢNG NGÃI
+
+Lý Sơn
+
+300 Tr
+
+● Nghĩa
+Lv.2
+```
+
+Không bắt buộc implement LOD nếu architecture hiện tại làm việc đó quá phức tạp.
+
+Nếu LOD gây complexity không cần thiết:
+
+> Giữ board text đơn giản và chuyển detail sang Context Card.
+
+Không over-engineer.
+
+---
+
+# 17. SURFACE HIERARCHY
+
+Hiện nhiều surface đều có cảm giác:
+
+> Cream + Rounded + Thin Border.
+
+Hãy tạo hierarchy rõ hơn.
+
+## LEVEL 0
+
+Game World / Board.
+
+Không UI surface.
+
+## LEVEL 1
+
+Persistent HUD / Navigation.
+
+Visual nhẹ.
+
+Không cạnh tranh Board.
+
+## LEVEL 2
+
+Contextual Information.
+
+Ví dụ:
+
+- Property Context.
+- Camera UI.
+- Small contextual panels.
+
+Có elevation rõ hơn Level 1.
+
+## LEVEL 3
+
+Decision Surface.
+
+Ví dụ:
+
+- Buy Property.
+- Rent.
+- Event Card.
+- Upgrade confirmation.
+
+Phải thu hút sự chú ý ngay.
+
+## LEVEL 4
+
+Blocking State.
+
+Ví dụ:
+
+- Bankruptcy.
+- Winner.
+- Critical confirmation.
+
+Có backdrop và hierarchy mạnh nhất.
+
+---
+
+# 18. SHADOW / BORDER
+
+Không sử dụng shadow nặng kiểu web dashboard.
+
+Ưu tiên:
+
+- soft shadow;
+- subtle elevation;
+- slightly stronger border khi cần;
+- board-game card feeling.
+
+Persistent HUD nên nhẹ.
+
+Decision surface có thể shadow mạnh hơn.
+
+Modal có backdrop.
+
+---
+
+# 19. BOARD 3D PALETTE
+
+Current Three.js palette đang có:
+
+- Cream property tiles.
+- Green grass.
+- Beige stone.
+- Teal roofs.
+- Warm paths.
+- Gold active highlight.
+
+GIỮ visual direction này.
+
+Không redesign toàn bộ Three.js scene.
+
+---
+
+# 20. BOARD CONTRAST
+
+Audit ba vấn đề:
+
+### Property vs Environment
+
+Property tiles có đủ tách khỏi grass/environment không?
+
+Nếu không:
+
+- tăng contrast nhẹ;
+- điều chỉnh border;
+- điều chỉnh tile material.
+
+Không biến board thành saturated UI.
+
+---
+
+### Group Recognition
+
+Group strip phải dễ nhận biết từ camera medium/far.
+
+Có thể:
+
+- tăng diện tích strip nhẹ;
+- tăng saturation có kiểm soát;
+- cải thiện border separation.
+
+---
+
+### Ownership Recognition
+
+Player ownership phải nhìn thấy mà không cần đọc text.
+
+Ví dụ visual hierarchy:
+
+```text
+GROUP STRIP
+████████
+
+┌──────────────┐
+│              │
+│ QUẢNG NGÃI   │
+│              │
+│   300 Tr     │
+└──────────────┘
+
+      ●
+ PLAYER OWNER
+```
+
+Group Color và Player Color phải là hai visual signals khác nhau.
+
+Không đổi toàn bộ Property sang Player Color.
+
+---
+
+# 21. ACTIVE TILE
+
+Gold active ring/highlight hiện tại phù hợp.
+
+Dùng Gold để chỉ:
+
+- destination;
+- currently resolved tile;
+- important temporary focus.
+
+Không để active highlight tồn tại quá lâu nếu tile không còn active.
+
+---
+
+# 22. PLAYER TOKEN
+
+Token phải:
+
+- dễ phân biệt khỏi environment;
+- match Player Color;
+- active player có subtle indication;
+- không dùng quá nhiều glow.
+
+Có thể sử dụng:
+
+- soft ring;
+- subtle shadow;
+- small active pulse khi bắt đầu turn.
+
+Không animate liên tục.
+
+---
+
+# 23. HUD VISUAL HIERARCHY
+
+Active Player:
+
+```text
+┌───────────────────────┐
+│ ● NGHĨA           🎲 │
+│   1.180 Tr             │
+└───────────────────────┘
+```
+
+Có:
+
+- stronger border;
+- subtle highlight;
+- optional turn indicator.
+
+Inactive:
+
+```text
+● Kai
+1.500 Tr
+```
+
+Visual weight thấp hơn.
+
+Không làm inactive player khó đọc.
+
+---
+
+# 24. BUTTON SYSTEM
+
+Chuẩn hóa button variants.
+
+Ví dụ:
+
+### PRIMARY
+
+Gold.
+
+Dùng cho gameplay action chính.
+
+### SECONDARY
+
+Cream/Secondary surface + Teal text.
+
+### SELECTED
+
+Dark Teal + light text.
+
+### DANGER
+
+Danger surface / red.
+
+### GHOST
+
+Minimal surface.
+
+Dùng cho low-priority navigation.
+
+Không tạo button color mới cho từng component.
+
+---
+
+# 25. EVENT CARD VISUAL
+
+Event Cards là nơi được phép có personality mạnh hơn phần còn lại.
+
+Game world:
+
+> calm / readable
+
+Event:
+
+> expressive / fun / animated
+
+Ví dụ:
+
+```text
+╭────────────────────────╮
+│       CUỘC SỐNG        │
+│                        │
+│           🧋           │
+│                        │
+│     “ĐỂ TÔI BAO!”      │
+│                        │
+│  Lỡ miệng bao cả hội.  │
+│                        │
+│        −50 TR          │
+│                        │
+│        [ OK ]          │
+╰────────────────────────╯
+```
+
+Cơ Hội và Cuộc Sống có thể có visual identity riêng.
+
+Nhưng phải cùng global design system.
+
+Không biến mỗi Event thành một theme khác nhau.
+
+---
+
+# 26. EVENT CARD TYPOGRAPHY
+
+Hierarchy:
+
+```text
+DECK TYPE
+small label
+
+EVENT TITLE
+large + bold
+
+ILLUSTRATION
+
+DESCRIPTION
+body
+
+EFFECT
+large / clear
+
+ACTION
+primary CTA
+```
+
+Không dùng text vàng nhạt trên cream nếu contrast thấp.
+
+---
+
+# 27. WINNER SCREEN
+
+Audit Winner UI hiện tại.
+
+Không dùng pale yellow/light blue text trên cream nếu contrast kém.
+
+Direction:
+
+```text
+          🏆
+
+    TỶ PHÚ VIỆT NAM
+
+         NGHĨA
+
+     ĐÃ CHIẾN THẮNG!
+
+      Tổng tài sản
+        3.850 Tr
+
+      [ CHƠI LẠI ]
+```
+
+Winner name:
+
+- Primary Text;
+- hoặc Player Color nếu contrast đủ.
+
+Gold:
+
+- Trophy.
+- Accent.
+- Celebration.
+- CTA.
+
+Không dùng Gold cho toàn bộ typography.
+
+---
+
+# 28. ERROR SYSTEM
+
+Hiện error colors chưa hoàn toàn đồng nhất.
+
+Chuẩn hóa:
+
+```text
+Danger Text
+Danger Surface
+Danger Border
+Danger Strong
+```
+
+Áp dụng cùng hệ cho:
+
+- setup error;
+- sheet error;
+- toast error;
+- bankruptcy warning;
+- invalid action nếu hiển thị.
+
+Không dùng mỗi nơi một màu đỏ khác nhau nếu không có semantic reason.
+
+---
+
+# 29. ICONOGRAPHY
+
+Audit icon system.
+
+Ưu tiên:
+
+- SVG.
+- CSS controlled icons.
+- Existing consistent icon library nếu project đã có.
+
+Không trộn quá nhiều:
+
+- Emoji.
+- Unicode symbol.
+- SVG.
+- Raster.
+
+Emoji vẫn phù hợp với:
+
+- Event personality;
+- playful content;
+
+nhưng không nên là foundation của core UI.
+
+---
+
+# 30. SPACING SYSTEM
+
+Audit spacing hiện tại.
+
+Chuẩn hóa theo một scale nhỏ.
+
+Ví dụ:
+
+```text
+4
+8
+12
+16
+24
+32
+```
+
+Không cần bắt buộc đúng scale này nếu code hiện tại đã có system hợp lý.
+
+Mục tiêu:
+
+- HUD consistent.
+- Cards consistent.
+- Buttons consistent.
+- Bottom Sheet consistent.
+- Dialog consistent.
+
+---
+
+# 31. BORDER RADIUS
+
+Chuẩn hóa radius.
+
+Ví dụ semantic:
+
+```text
+Small control
+8–10px
+
+Button
+10–12px
+
+HUD/Card
+14–16px
+
+Dialog/Sheet
+18–20px
+```
+
+Không để mỗi component có radius ngẫu nhiên.
+
+Giữ feeling mềm và thân thiện.
+
+---
+
+# 32. MOBILE LANDSCAPE READABILITY
+
+Primary target vẫn là Mobile Landscape.
+
+Test ít nhất:
+
+```text
+844 × 390
+852 × 393
+896 × 414
+915 × 412
+932 × 430
+```
+
+Kiểm tra:
+
+- Player HUD.
+- Property text.
+- Action Panel.
+- Context Card.
+- Dice.
+- Buttons.
+- Event Card.
+- Bottom Sheet.
+- Winner.
+- Errors.
+
+Không chỉ test desktop.
+
+---
+
+# 33. ACCESSIBILITY / CONTRAST
+
+Không cần biến game thành enterprise dashboard.
+
+Nhưng text quan trọng phải có contrast đủ tốt.
+
+Đặc biệt audit:
+
+- Yellow text on Cream.
+- Light Blue text on Cream.
+- Muted text.
+- Disabled controls.
+- Group colors.
+- Player indicators.
+
+Nếu một màu đẹp nhưng khó đọc:
+
+> Readability thắng.
+
+---
+
+# 34. KHÔNG THỰC HIỆN TRONG TASK NÀY
+
+KHÔNG:
+
+- Redesign Game Engine.
+- Thay Game Rules.
+- Thay Economy.
+- Thay Board layout.
+- Rebuild Three.js scene.
+- Thêm feature gameplay.
+- Thêm Online Multiplayer.
+- Thêm Bot.
+- Thêm Trading.
+- Thêm Auction.
+- Rebuild project.
+- Thay art direction.
+- Chuyển sang dark theme.
+- Dùng neon/cyberpunk/casino style.
+- Refactor unrelated modules.
+
+Đây là:
+
+> VISUAL SYSTEM / READABILITY / DESIGN CONSISTENCY TASK.
+
+---
+
+# 35. IMPLEMENTATION ORDER
+
+Không sửa mọi thứ ngẫu nhiên.
+
+Thực hiện theo thứ tự sau.
+
+## PHASE A — AUDIT
+
+1. Đọc `visual-style-reference.md`.
+2. Audit CSS.
+3. Audit React UI.
+4. Audit Canvas Atlas.
+5. Audit Three.js materials.
+6. Liệt kê màu/font/spacing/radius đang dùng.
+7. Xác định duplicate/inconsistent values.
+
+---
+
+## PHASE B — DESIGN TOKENS
+
+8. Tạo semantic color tokens.
+9. Tạo typography tokens.
+10. Tạo spacing tokens.
+11. Tạo radius tokens.
+12. Tạo elevation/shadow tokens.
+
+Không thay visual lớn ở bước này ngoài việc chuẩn hóa foundation.
+
+---
+
+## PHASE C — TYPOGRAPHY
+
+13. Integrate Be Vietnam Pro hoặc giải pháp font đã quyết định.
+14. Apply consistent font family.
+15. Chuẩn hóa type scale.
+16. Cải thiện Player HUD.
+17. Cải thiện Property typography.
+18. Cải thiện button typography.
+19. Cải thiện sheet/dialog typography.
+
+---
+
+## PHASE D — COLOR SYSTEM
+
+20. Normalize UI colors.
+21. Normalize button variants.
+22. Normalize danger/error.
+23. Normalize selected state.
+24. Remove emoji player color indicators.
+25. Normalize Player Colors.
+26. Audit/soften Group palette nếu cần.
+
+---
+
+## PHASE E — SURFACE HIERARCHY
+
+27. Persistent HUD.
+28. Context Card.
+29. Decision Surface.
+30. Bottom Sheet.
+31. Event Card.
+32. Modal.
+33. Winner.
+
+Đảm bảo mỗi level có visual hierarchy rõ.
+
+---
+
+## PHASE F — BOARD READABILITY
+
+34. Audit board tile contrast.
+35. Audit Group strip.
+36. Audit owner indicator.
+37. Audit active tile.
+38. Audit board typography.
+39. Implement typography LOD chỉ nếu architecture phù hợp.
+40. Nếu LOD quá phức tạp, giữ board đơn giản và dùng Context Card.
+
+---
+
+## PHASE G — POLISH
+
+41. Event Card.
+42. Winner.
+43. Error states.
+44. Icon consistency.
+45. Spacing.
+46. Radius.
+47. Shadow/elevation.
+48. Responsive landscape.
+
+---
+
+# 36. KHÔNG OVER-ENGINEER
+
+Đừng tạo một Design System framework phức tạp chỉ cho MVP.
+
+Mục tiêu là:
+
+- semantic variables;
+- reusable component variants;
+- consistent typography;
+- consistent colors;
+- maintainable CSS.
+
+Không cần xây Storybook/design package riêng trừ khi project đã có.
+
+---
+
+# 37. SOURCE OF TRUTH
+
+`visual-style-reference.md` mô tả implementation hiện tại.
+
+Code hiện tại là implementation cần audit.
+
+Không được giả định các giá trị trong prompt này đã tồn tại trong source.
+
+Nếu prompt và source khác nhau:
+
+1. Xác định difference.
+2. Kiểm tra lý do.
+3. Giữ behavior/gameplay đúng.
+4. Áp dụng visual refactor có kiểm soát.
+
+---
+
+# 38. VALIDATION
+
+Sau implementation phải chạy các check hiện có của project:
+
+- TypeScript.
+- Lint.
+- Tests.
+- Build.
+
+Sau đó visual test các viewport Mobile Landscape.
+
+Đặc biệt kiểm tra:
+
+### HUD
+
+Không overflow.
+
+### Property
+
+Tên đầy đủ dễ đọc khi context phù hợp.
+
+### Button
+
+Không text clipping.
+
+### Event
+
+Không overflow với tiếng Việt dài.
+
+### Bottom Sheet
+
+Không mất CTA.
+
+### Winner
+
+Không mất content.
+
+### Board
+
+Không bị UI mới che quá nhiều.
+
+---
+
+# 39. VISUAL REGRESSION CHECK
+
+So sánh BEFORE / AFTER.
+
+Đánh giá:
+
+1. Typography có dễ đọc hơn không?
+2. UI hierarchy có rõ hơn không?
+3. Primary Action có nổi bật hơn không?
+4. Board có còn là visual focus không?
+5. Player identity có rõ hơn không?
+6. Property Group có dễ phân biệt không?
+7. UI có ít “web dashboard” hơn không?
+8. Visual có còn giữ identity hiện tại không?
+
+Nếu một thay đổi làm game đẹp hơn trên desktop nhưng tệ hơn trên Mobile Landscape:
+
+> ưu tiên Mobile Landscape.
+
+---
+
+# 40. TARGET VISUAL LANGUAGE
+
+Kết quả cuối cùng cần truyền tải:
+
+```text
+Cream
+→ Surface
+
+Dark Teal
+→ Text / Selected
+
+Gold
+→ Primary Gameplay Action
+
+8 Group Colors
+→ Property Group
+
+4 Player Colors
+→ Player / Ownership
+
+Red
+→ Danger / Error
+```
+
+Typography:
+
+```text
+Be Vietnam Pro
+
+800 → Display
+700 → Heading / Property / Player / Button
+500 → Body / Metadata
+```
+
+Game World:
+
+```text
+Low-poly
+Soft
+Warm
+Vietnamese
+Travel
+Friendly
+Readable
+```
+
+UI:
+
+```text
+Minimal
+Contextual
+Consistent
+Large enough to read
+Few permanent surfaces
+Mobile-first
+```
+
+---
+
+# 41. DEFINITION OF DONE
+
+Task chỉ hoàn thành khi:
+
+- Typography đã được chuẩn hóa.
+- Vietnamese text render tốt.
+- UI và Board typography có direction thống nhất.
+- Design tokens đã được tạo.
+- Duplicate colors giảm đáng kể.
+- Button variants rõ ràng.
+- Gold có semantic role rõ.
+- Dark Teal có semantic role rõ.
+- Error colors thống nhất.
+- Emoji không còn dùng làm core Player color indicator.
+- Player colors nhất quán.
+- Property Group colors dễ phân biệt.
+- Surface hierarchy rõ.
+- HUD dễ đọc hơn.
+- Property Context dễ đọc hơn.
+- Event Cards có hierarchy tốt.
+- Winner có contrast tốt.
+- Board Property/Group/Owner dễ phân biệt.
+- Mobile Landscape không bị overflow nghiêm trọng.
+- Game Engine không bị thay đổi.
+- Game Rules không bị thay đổi.
+- Build/typecheck/tests pass.
+- Không có regression gameplay nghiêm trọng.
+
+---
+
+# 42. BÁO CÁO SAU KHI HOÀN THÀNH
+
+Trả về:
+
+## A. Visual Audit
+
+Các vấn đề tìm thấy.
+
+## B. Design Tokens
+
+Danh sách token mới.
+
+## C. Typography
+
+Font/type scale đã triển khai.
+
+## D. Color Changes
+
+Nếu thay HEX:
+
+```text
+Before → After → Reason
+```
+
+## E. Component Changes
+
+Components đã sửa.
+
+## F. Board Changes
+
+Các thay đổi liên quan Three.js/Canvas Atlas.
+
+## G. Responsive Testing
+
+Các viewport đã test.
+
+## H. Validation
+
+Kết quả:
+
+- typecheck
+- lint
+- tests
+- build
+
+## I. Before / After
+
+Cung cấp screenshot comparison nếu môi trường Agent hỗ trợ.
+
+## J. Remaining Issues
+
+Các vấn đề còn lại nhưng không thuộc scope hoặc chưa nên giải quyết.
+
+Sau đó DỪNG.
+
+Không tự động triển khai gameplay feature tiếp theo.

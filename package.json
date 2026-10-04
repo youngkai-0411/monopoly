@@ -9,18 +9,30 @@
     "typecheck": "tsc -b --pretty false",
     "test": "vitest run",
     "check": "npm run typecheck && npm test && npm run build",
-    "playtest": "node scripts/playtest.mjs"
+    "playtest": "node scripts/playtest.mjs",
+    "design:check": "node scripts/check-classic-design.mjs",
+    "game:check": "node scripts/v2-browser-check.mjs",
+    "production:check": "node scripts/production-smoke.mjs",
+    "graphics:check": "node scripts/graphics-check.mjs",
+    "graphics:check:2d": "node scripts/graphics2d-check.mjs"
+  },
+  "engines": {
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
   },
   "dependencies": {
     "@vitejs/plugin-react": "6.1.1",
     "framer-motion": "14.0.0",
+    "pixi.js": "8.22.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "three": "0.186.1",
     "zustand": "5.0.15"
   },
   "devDependencies": {
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/three": "0.186.0",
+    "playwright": "1.63.0",
     "typescript": "7.0.2",
     "vite": "8.3.2",
     "vitest": "5.0.3"

@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-10-04T04:28:28.389Z",
+  "method": "SHA256 compared against snapshot taken immediately before Task #1 UI implementation",
+  "protectedFileCount": 20,
+  "changedFiles": [],
+  "addedProtectedFiles": [],
+  "unchanged": true,
+  "protectedFiles": [
+    "docs/classic-vietnam-v2.json",
+    "src/game\\data\\board.ts",
+    "src/game\\data\\cards.ts",
+    "src/game\\data\\groups.ts",
+    "src/game\\data\\properties.ts",
+    "src/game\\data\\tileLabels.ts",
+    "src/game\\engine\\actions.ts",
+    "src/game\\engine\\buildings.ts",
+    "src/game\\engine\\economy.ts",
+    "src/game\\engine\\events.ts",
+    "src/game\\engine\\jail.ts",
+    "src/game\\engine\\movement.ts",
+    "src/game\\engine\\payments.ts",
+    "src/game\\engine\\random.ts",
+    "src/game\\engine\\selectors.ts",
+    "src/game\\engine\\setup.ts",
+    "src/game\\engine\\turns.ts",
+    "src/game\\rules\\config.ts",
+    "src/game\\types\\domain.ts",
+    "src/store\\gameStore.ts"
+  ]
+}

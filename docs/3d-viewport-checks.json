@@ -1,0 +1,159 @@
+{
+  "testedAt": "2026-10-04T05:45:25.179Z",
+  "url": "http://127.0.0.1:5173",
+  "browser": "154.0.8037.97",
+  "environment": "Windows desktop Chrome; mobile viewport/touch emulation, NOT physical Android/iPhone",
+  "viewports": [
+    {
+      "width": 568,
+      "height": 320,
+      "tiles": 40,
+      "properties": 28,
+      "uniformSizes": [
+        "1",
+        "1.6"
+      ],
+      "uniquePositions": 40,
+      "fullBoardFits": true,
+      "canvasCount": 1,
+      "overlaysOutsideBoard": true,
+      "drawCalls": 125,
+      "triangles": 7274,
+      "overlaysFit": true,
+      "pageScroll": false,
+      "primaryHeight": 48
+    },
+    {
+      "width": 667,
+      "height": 375,
+      "tiles": 40,
+      "properties": 28,
+      "uniformSizes": [
+        "1",
+        "1.6"
+      ],
+      "uniquePositions": 40,
+      "fullBoardFits": true,
+      "canvasCount": 1,
+      "overlaysOutsideBoard": true,
+      "drawCalls": 125,
+      "triangles": 7274,
+      "overlaysFit": true,
+      "pageScroll": false,
+      "primaryHeight": 48
+    },
+    {
+      "width": 740,
+      "height": 360,
+      "tiles": 40,
+      "properties": 28,
+      "uniformSizes": [
+        "1",
+        "1.6"
+      ],
+      "uniquePositions": 40,
+      "fullBoardFits": true,
+      "canvasCount": 1,
+      "overlaysOutsideBoard": true,
+      "drawCalls": 125,
+      "triangles": 7274,
+      "overlaysFit": true,
+      "pageScroll": false,
+      "primaryHeight": 48
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "tiles": 40,
+      "properties": 28,
+      "uniformSizes": [
+        "1",
+        "1.6"
+      ],
+      "uniquePositions": 40,
+      "fullBoardFits": true,
+      "canvasCount": 1,
+      "overlaysOutsideBoard": true,
+      "drawCalls": 125,
+      "triangles": 7274,
+      "overlaysFit": true,
+      "pageScroll": false,
+      "primaryHeight": 48
+    },
+    {
+      "width": 932,
+      "height": 430,
+      "tiles": 40,
+      "properties": 28,
+      "uniformSizes": [
+        "1",
+        "1.6"
+      ],
+      "uniquePositions": 40,
+      "fullBoardFits": true,
+      "canvasCount": 1,
+      "overlaysOutsideBoard": true,
+      "drawCalls": 125,
+      "triangles": 7274,
+      "overlaysFit": true,
+      "pageScroll": false,
+      "primaryHeight": 48
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "tiles": 40,
+      "properties": 28,
+      "uniformSizes": [
+        "1",
+        "1.6"
+      ],
+      "uniquePositions": 40,
+      "fullBoardFits": true,
+      "canvasCount": 1,
+      "overlaysOutsideBoard": true,
+      "drawCalls": 125,
+      "triangles": 7274,
+      "overlaysFit": true,
+      "pageScroll": false,
+      "primaryHeight": 48
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "tiles": 40,
+      "properties": 28,
+      "uniformSizes": [
+        "1",
+        "1.6"
+      ],
+      "uniquePositions": 40,
+      "fullBoardFits": true,
+      "canvasCount": 1,
+      "overlaysOutsideBoard": true,
+      "drawCalls": 125,
+      "triangles": 7274,
+      "overlaysFit": true,
+      "pageScroll": false,
+      "primaryHeight": 48
+    }
+  ],
+  "idleRenders": 0,
+  "raycastSelection": true,
+  "keyboardSelection": true,
+  "manualCamera": true,
+  "phaseSequence": [
+    "FOCUS",
+    "ROLLING",
+    "MOVING",
+    "LANDING",
+    "RETURNING",
+    "OVERVIEW"
+  ],
+  "cameraFollowsPawn": true,
+  "returnsToFullBoard": true,
+  "nextPlayer": true,
+  "portraitFallback": true,
+  "reducedMotion": true,
+  "errors": []
+}

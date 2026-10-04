@@ -1,0 +1,52 @@
+{
+  "checkedAt": "2026-10-04T05:32:54.201Z",
+  "manifest": "classic-vietnam-v2",
+  "scope": "RUNTIME_DATA_AND_DOCUMENTATION",
+  "passed": true,
+  "counts": {
+    "tiles": 40,
+    "ownable": 28,
+    "land": 22,
+    "railroads": 4,
+    "utilities": 2,
+    "groups": 8
+  },
+  "checks": [
+    {
+      "name": "reference board order and corners",
+      "passed": true
+    },
+    {
+      "name": "28 unique assets and one board occurrence each",
+      "passed": true
+    },
+    {
+      "name": "eight groups, six triples and two pairs, all land assigned once",
+      "passed": true
+    },
+    {
+      "name": "integer positive prices and increasing rent tables",
+      "passed": true
+    },
+    {
+      "name": "starting cash, fees and all rail/utility economics",
+      "passed": true
+    },
+    {
+      "name": "square closes with nine normal tiles and two corners per side",
+      "passed": true
+    },
+    {
+      "name": "retained land IDs match legacy data minus Phu Quoc",
+      "passed": true
+    },
+    {
+      "name": "documentation board/group/rent tables match JSON",
+      "passed": true
+    },
+    {
+      "name": "runtime enabled and deferred scope explicit",
+      "passed": true
+    }
+  ]
+}

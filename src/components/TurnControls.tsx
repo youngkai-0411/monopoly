@@ -1,32 +1,15 @@
 import type { GameState } from '../game/types/domain';
 import { currentPlayer } from '../game/engine/turns';
 import { useGameStore } from '../store/gameStore';
-import { PLAYER_TOKENS } from './format';
-
-const phaseLabel: Record<GameState['phase'],string> = {
-  GAME_START:'Chuẩn bị ván chơi', TURN_START:'Chuyển lượt', WAITING_FOR_ROLL:'Đến lượt bạn đổ xúc xắc', ROLLING:'Đang đổ xúc xắc…',
-  MOVING:'Đang di chuyển…', RESOLVING_TILE:'Xử lý ô đến…', PROPERTY_DECISION:'Mua tài sản hay bỏ qua?', RENT:'Thanh toán tiền thuê',
-  EVENT:'Bạn vừa rút thẻ', SPECIAL:'Chọn điểm đến Du Lịch', LIQUIDATION:'Cần thanh lý để trả nợ', BANKRUPTCY:'Người chơi vừa phá sản', OPTIONAL_ACTIONS:'Quản lý tài sản hoặc kết thúc lượt', TURN_END:'Kết thúc lượt', GAME_OVER:'Ván chơi kết thúc',
+import { Dice } from './Dice';
+import { decisionPhase } from './gameplayUI';
+export const phaseLabel:Record<GameState['phase'],string>={
+ GAME_START:'Chuẩn bị ván',TURN_START:'Chuyển lượt',WAITING_FOR_ROLL:'Sẵn sàng khám phá',JAIL_DECISION:'Chọn cách ra tù',ROLLING:'Đang tung xúc xắc…',MOVING:'Đang di chuyển…',RESOLVING_TILE:'Đã đến nơi',PROPERTY_DECISION:'Một cơ hội đầu tư',UTILITY_ROLL:'Đổ riêng để tính thuê',RENT:'Thanh toán tiền thuê',EVENT:'Một bất ngờ mới',LIQUIDATION:'Cần tiền trả nợ',BANKRUPTCY:'Người chơi phá sản',OPTIONAL_ACTIONS:'Quản lý hoặc tiếp tục',TURN_END:'Kết thúc lượt',GAME_OVER:'Đã có người chiến thắng',
 };
-export function TurnControls({ game, onAssets, onLog }: { game: GameState; onAssets:()=>void; onLog:()=>void }) {
-  const dispatch=useGameStore(state=>state.dispatch);
-  const locked=useGameStore(state=>state.locked);
-  const player=currentPlayer(game);
-  const index=game.players.findIndex(p=>p.id===player.id);
-  const rolling=game.phase==='ROLLING';
-  const canRoll=game.phase==='WAITING_FOR_ROLL';
-  const canEnd=game.phase==='OPTIONAL_ACTIONS';
-  return <div className="board-center">
-    <div className="turn-pill">{PLAYER_TOKENS[index]} LƯỢT CỦA {player.name.toLocaleUpperCase('vi-VN')}</div>
-    <div className="phase-label" aria-live="polite">{phaseLabel[game.phase]}{game.phase==='MOVING'?` · ${game.movement?.remaining} bước`:''}</div>
-    <div className="dice-action-row">
-      <div className={`dice-row ${rolling?'rolling':''}`} aria-label={`Xúc xắc: ${game.dice?.values.join(', ') ?? 'chưa đổ'}`}>
-        {(game.dice?.values ?? [0,0]).map((value,i)=><div className="die" key={i}>{value ? ['','⚀','⚁','⚂','⚃','⚄','⚅'][value] : '?'}</div>)}
-        <div className="dice-total"><small>TỔNG</small><strong>{game.dice?.total ?? '—'}</strong></div>
-      </div>
-      <button className="roll-button" disabled={locked || (!canRoll&&!canEnd)} onClick={()=>dispatch({type:canEnd?'END_TURN':'ROLL'})}>{canEnd?'KẾT THÚC LƯỢT →':rolling?'ĐANG ĐỔ…':'🎲 ĐỔ XÚC XẮC'}</button>
-    </div>
-    <div className="center-tools"><button onClick={onAssets}>Tài sản</button><span>Vòng {game.round}</span><button onClick={onLog}>Nhật ký</button></div>
-    <p className="last-log">{game.log.at(-1)?.message}</p>
-  </div>;
+export function TurnControls({game}:{game:GameState;onAssets?:()=>void;onLog?:()=>void}){
+ const dispatch=useGameStore(s=>s.dispatch),locked=useGameStore(s=>s.locked),player=currentPlayer(game);
+ const roll=game.phase==='WAITING_FOR_ROLL',end=game.phase==='OPTIONAL_ACTIONS',moving=['ROLLING','MOVING','RESOLVING_TILE'].includes(game.phase);
+ if(decisionPhase(game.phase))return null;
+ return <div className="board-center"><div className="turn-console" data-compact={moving}><div className="turn-heading"><span className="section-kicker">Lượt của</span><strong className="turn-name">{player.name}</strong></div>{(roll||end||moving)&&<Dice values={game.dice?.values} total={game.dice?.total} rolling={game.phase==='ROLLING'}/>}
+ {(roll||end)?<button className="roll-button" disabled={locked} onClick={()=>dispatch({type:end?'END_TURN':'ROLL'})}>{end?(game.extraRoll&&!player.jailed?'ĐỔ THÊM →':'KẾT THÚC LƯỢT →'):'ĐỔ XÚC XẮC'}</button>:<p className="phase-label" role="status">{phaseLabel[game.phase]}</p>}</div></div>;
 }

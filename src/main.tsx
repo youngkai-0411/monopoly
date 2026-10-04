@@ -1,5 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import { GROUPS } from './game/data/groups';
+import { installVisualTokens } from './visual/tokens';
+import './visual/tokens.css';
+import './visual/fonts.css';
 import { MotionConfig } from 'framer-motion';
+installVisualTokens(document.documentElement);
+for (const group of GROUPS) document.documentElement.style.setProperty('--group-'+group.id,group.color);
 createRoot(document.getElementById('root')!).render(<StrictMode><MotionConfig reducedMotion="user"><App /></MotionConfig></StrictMode>);

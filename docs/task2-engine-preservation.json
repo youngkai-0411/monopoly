@@ -1,0 +1,118 @@
+{
+  "checkedAt": "2026-10-04T05:37:33.959Z",
+  "protectedFiles": 22,
+  "unchanged": true,
+  "added": [],
+  "files": [
+    {
+      "path": "src/game/data/board.ts",
+      "before": "01a3de498e64555e9e0d0f1344fbca5b85e8c93624ad5195f59857de7065716c",
+      "after": "01a3de498e64555e9e0d0f1344fbca5b85e8c93624ad5195f59857de7065716c"
+    },
+    {
+      "path": "src/game/data/cards.ts",
+      "before": "969627d36ea6f14ff79e186bd5dee4ea234bd9b5c9d99f32d3ee3f4c7aaa2699",
+      "after": "969627d36ea6f14ff79e186bd5dee4ea234bd9b5c9d99f32d3ee3f4c7aaa2699"
+    },
+    {
+      "path": "src/game/data/groups.ts",
+      "before": "07277c9fde0cd53d7465804f73d90cd24aea6c08b6af4c3407275a818399bb81",
+      "after": "07277c9fde0cd53d7465804f73d90cd24aea6c08b6af4c3407275a818399bb81"
+    },
+    {
+      "path": "src/game/data/properties.ts",
+      "before": "806a1943349744635afb5291b0e2d9ad5794a7d594d64b238ed6a33e717576a7",
+      "after": "806a1943349744635afb5291b0e2d9ad5794a7d594d64b238ed6a33e717576a7"
+    },
+    {
+      "path": "src/game/data/tileLabels.ts",
+      "before": "7847d854ab5a4d6710c09e9427d8dc83176d787768ab87bcb1248264877d0bf8",
+      "after": "7847d854ab5a4d6710c09e9427d8dc83176d787768ab87bcb1248264877d0bf8"
+    },
+    {
+      "path": "src/game/engine/actions.ts",
+      "before": "ac88719b51c48576d02f47d1de3e360a38130729f55096becb93ac66f057b64e",
+      "after": "ac88719b51c48576d02f47d1de3e360a38130729f55096becb93ac66f057b64e"
+    },
+    {
+      "path": "src/game/engine/buildings.ts",
+      "before": "3b4c8376a82c86f9ffc7e08160cde69c0105396ccade629144821b0be5aae085",
+      "after": "3b4c8376a82c86f9ffc7e08160cde69c0105396ccade629144821b0be5aae085"
+    },
+    {
+      "path": "src/game/engine/economy.ts",
+      "before": "b42afdc9a41a4071343e5d0ae00c633efdd86017922cc0adf63b7d9cd64194c1",
+      "after": "b42afdc9a41a4071343e5d0ae00c633efdd86017922cc0adf63b7d9cd64194c1"
+    },
+    {
+      "path": "src/game/engine/events.ts",
+      "before": "2d340f4a44303dd3dcdcf546eda0ba8dc20b0808bda21793464406055a6fdec5",
+      "after": "2d340f4a44303dd3dcdcf546eda0ba8dc20b0808bda21793464406055a6fdec5"
+    },
+    {
+      "path": "src/game/engine/jail.ts",
+      "before": "cfb9ffcbd20cd747da000e50e0f4e7b4bf587d7cc103b0a212c52ef728cf9ff1",
+      "after": "cfb9ffcbd20cd747da000e50e0f4e7b4bf587d7cc103b0a212c52ef728cf9ff1"
+    },
+    {
+      "path": "src/game/engine/movement.ts",
+      "before": "80b87be3d99acbc418a3f7c593ca7175951de58c2b00d7231668b4c332a9cd59",
+      "after": "80b87be3d99acbc418a3f7c593ca7175951de58c2b00d7231668b4c332a9cd59"
+    },
+    {
+      "path": "src/game/engine/payments.ts",
+      "before": "6fd634db2b1be8a8ef3bdf6d9f2304b0763a294444865272a1f7224e80781890",
+      "after": "6fd634db2b1be8a8ef3bdf6d9f2304b0763a294444865272a1f7224e80781890"
+    },
+    {
+      "path": "src/game/engine/random.ts",
+      "before": "bc72da74cf81d65818f3d526aff0e0582e818131a2b99638d3b40f50857ce7df",
+      "after": "bc72da74cf81d65818f3d526aff0e0582e818131a2b99638d3b40f50857ce7df"
+    },
+    {
+      "path": "src/game/engine/selectors.ts",
+      "before": "677e8b44df22ae02ff9f8b5cd579a462c9b6310c955d41b373d1c76bb1abb7d6",
+      "after": "677e8b44df22ae02ff9f8b5cd579a462c9b6310c955d41b373d1c76bb1abb7d6"
+    },
+    {
+      "path": "src/game/engine/setup.ts",
+      "before": "a240a237cd295158ee68507efa071435823847f6a66db5e44aab9c24fe38e24a",
+      "after": "a240a237cd295158ee68507efa071435823847f6a66db5e44aab9c24fe38e24a"
+    },
+    {
+      "path": "src/game/engine/turns.ts",
+      "before": "095fc1153b81fce1963ba4abc830bd616c70ce953c82fb8b4b39fd4903e9d77c",
+      "after": "095fc1153b81fce1963ba4abc830bd616c70ce953c82fb8b4b39fd4903e9d77c"
+    },
+    {
+      "path": "src/game/rules/config.ts",
+      "before": "e0a7c28003a7d14e309fb9c4a308ff270510c60ce59dc9a3c61ba1f9257f888e",
+      "after": "e0a7c28003a7d14e309fb9c4a308ff270510c60ce59dc9a3c61ba1f9257f888e"
+    },
+    {
+      "path": "src/game/types/domain.ts",
+      "before": "1df1e9417271483b5ab1bb061e560c9fd1ad37d20defb330220f6234e92acc4d",
+      "after": "1df1e9417271483b5ab1bb061e560c9fd1ad37d20defb330220f6234e92acc4d"
+    },
+    {
+      "path": "src/store/gameStore.ts",
+      "before": "cde77fdc2c2723b082f346a4752ddfdb690aa0d7d59070994a808bfca3d00326",
+      "after": "cde77fdc2c2723b082f346a4752ddfdb690aa0d7d59070994a808bfca3d00326"
+    },
+    {
+      "path": "docs/classic-vietnam-v2.json",
+      "before": "cb154e2bfeb7a6c5c122a694edf8aa658afa036d73d91add7cf6f991f79264d5",
+      "after": "cb154e2bfeb7a6c5c122a694edf8aa658afa036d73d91add7cf6f991f79264d5"
+    },
+    {
+      "path": "src/rendering/squareBoard.ts",
+      "before": "bd20f2de803a995796ae7d37deecac4941dd802e838f1c324dcfe44803715849",
+      "after": "bd20f2de803a995796ae7d37deecac4941dd802e838f1c324dcfe44803715849"
+    },
+    {
+      "path": "src/rendering/cameraFraming.ts",
+      "before": "267d47f835da8a1a946feafd346525612ee464b15f4609c9597301dd00f0db74",
+      "after": "267d47f835da8a1a946feafd346525612ee464b15f4609c9597301dd00f0db74"
+    }
+  ]
+}

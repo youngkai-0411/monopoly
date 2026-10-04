@@ -1,14 +1,10 @@
+import design from '../../../docs/classic-vietnam-v2.json';
 export const GAME_RULES = {
-  boardSize: 36,
-  minPlayers: 2,
-  maxPlayers: 4,
-  startingMoney: 2000,
-  passStartReward: 200,
-  defaultTax: 100,
-  detentionFine: 100,
-  liquidationRate: 0.5,
-  travelFundReward: 100,
-  insuranceDuplicateReward: 100,
-  levelRentMultipliers: { 0: 1, 1: 3, 2: 5, 3: 8 },
-  groupRentMultipliers: { twoProperties: 1.3, threeProperties: 1.5 },
+  boardSize: design.board.length, minPlayers: 2, maxPlayers: 4,
+  startingMoney: design.economy.startingMoney, passStartReward: design.economy.passStartReward,
+  jailFine: design.economy.jailFine, jailMaxAttempts: design.economy.jailMaxAttempts,
+  maxConsecutiveDoubles: design.economy.maxConsecutiveDoubles,
+  jailIndex: design.geometry.cornerIndices[1], liquidationRate: .5,
+  initialHouses: design.economy.buildingBank.houses, initialHotels: design.economy.buildingBank.hotels,
+  sellBuildingRate: design.economy.sellBuildingRate, maxEventDepth: 8,
 } as const;

@@ -1,0 +1,117 @@
+{
+  "testedAt": "2026-10-03T18:19:36.884Z",
+  "url": "http://127.0.0.1:4173",
+  "browser": "154.0.8037.97",
+  "environment": "Headless Chrome on Windows; mobile viewport/touch emulation, NOT physical Android/iPhone",
+  "viewports": [
+    {
+      "width": 568,
+      "height": 320,
+      "tiles": 36,
+      "properties": 23,
+      "canvasCount": 1,
+      "scroll": false,
+      "outside": [],
+      "textOverflow": [],
+      "buttonHeight": 48,
+      "panelFits": true
+    },
+    {
+      "width": 667,
+      "height": 375,
+      "tiles": 36,
+      "properties": 23,
+      "canvasCount": 1,
+      "scroll": false,
+      "outside": [],
+      "textOverflow": [],
+      "buttonHeight": 48,
+      "panelFits": true
+    },
+    {
+      "width": 740,
+      "height": 360,
+      "tiles": 36,
+      "properties": 23,
+      "canvasCount": 1,
+      "scroll": false,
+      "outside": [],
+      "textOverflow": [],
+      "buttonHeight": 48,
+      "panelFits": true
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "tiles": 36,
+      "properties": 23,
+      "canvasCount": 1,
+      "scroll": false,
+      "outside": [],
+      "textOverflow": [],
+      "buttonHeight": 48,
+      "panelFits": true
+    },
+    {
+      "width": 932,
+      "height": 430,
+      "tiles": 36,
+      "properties": 23,
+      "canvasCount": 1,
+      "scroll": false,
+      "outside": [],
+      "textOverflow": [],
+      "buttonHeight": 48,
+      "panelFits": true
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "tiles": 36,
+      "properties": 23,
+      "canvasCount": 1,
+      "scroll": false,
+      "outside": [],
+      "textOverflow": [],
+      "buttonHeight": 48,
+      "panelFits": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "tiles": 36,
+      "properties": 23,
+      "canvasCount": 1,
+      "scroll": false,
+      "outside": [],
+      "textOverflow": [],
+      "buttonHeight": 48,
+      "panelFits": true
+    }
+  ],
+  "gameplayViewports": [
+    {
+      "width": 568,
+      "height": 320,
+      "panelFits": true,
+      "textOverflow": [],
+      "buttonHeight": 48
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "panelFits": true,
+      "textOverflow": [],
+      "buttonHeight": 48
+    }
+  ],
+  "idleDrawCalls": 0,
+  "animationDrawCalls": 624,
+  "portraitFallback": true,
+  "reducedMotion": true,
+  "propertyTap": true,
+  "playableFourPlayers": true,
+  "buyAndUpgradeThroughLevel3": true,
+  "contextLossFallback": true,
+  "browserErrors": []
+}

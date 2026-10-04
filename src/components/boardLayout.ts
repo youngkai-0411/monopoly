@@ -1,14 +1,9 @@
-// A 12 × 8 perimeter has exactly 36 cells. Start at bottom-right,
-// then follow the bottom, left, top and right edges clockwise.
-export const BOARD_COLUMNS = 12;
-export const BOARD_ROWS = 8;
-
-export function boardCell(index: number) {
-  if (!Number.isInteger(index) || index < 0 || index >= 36) {
-    throw new RangeError('Board index must be an integer from 0 to 35.');
-  }
-  if (index < 12) return { gridColumn: 12 - index, gridRow: 8 };
-  if (index < 18) return { gridColumn: 1, gridRow: 19 - index };
-  if (index < 30) return { gridColumn: index - 17, gridRow: 1 };
-  return { gridColumn: 12, gridRow: index - 28 };
+export const BOARD_COLUMNS=11;
+export const BOARD_ROWS=11;
+export function boardCell(index:number) {
+ if(!Number.isInteger(index)||index<0||index>=40)throw new RangeError('Board index must be 0–39.');
+ if(index<=10)return {gridColumn:11-index,gridRow:11};
+ if(index<=20)return {gridColumn:1,gridRow:21-index};
+ if(index<=30)return {gridColumn:index-19,gridRow:1};
+ return {gridColumn:11,gridRow:index-29};
 }

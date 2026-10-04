@@ -1,114 +1,101 @@
 import { BOARD } from '../data/board';
-import { PROPERTIES } from '../data/properties';
-import { INSURANCE_CARD_ID } from '../data/cards';
+import { ASSET_BY_ID } from '../data/properties';
+import { CARDS } from '../data/cards';
 import { GAME_RULES } from '../rules/config';
-import type { GameAction, GamePhase, GameState, PropertyLevel } from '../types/domain';
+import type { GameAction, GamePhase, GameState } from '../types/domain';
 import { applyEvent, drawCard } from './events';
-import { beginMovement, forwardDistance, stepMovement } from './movement';
+import { beginMovement, stepMovement } from './movement';
 import { acknowledgeBankruptcy, charge, settlePayments } from './payments';
 import { randomInt, type RandomSource } from './random';
-import { canBuyProperty, canUpgradeProperty, liquidationValue, rentFor } from './selectors';
+import { canBuyProperty, canLiquidate, liquidationValue, rentFor } from './selectors';
 import { addLog, currentPlayer, nextTurn, startTurn } from './turns';
-
-const ALLOWED: Record<GameAction['type'], readonly GamePhase[]> = {
-  START_TURN:['GAME_START','TURN_START'], ROLL:['WAITING_FOR_ROLL'], COMPLETE_ROLL:['ROLLING'],
-  STEP_MOVE:['MOVING'], RESOLVE_TILE:['RESOLVING_TILE'], BUY:['PROPERTY_DECISION'], SKIP:['PROPERTY_DECISION'],
-  PAY_RENT:['RENT'], USE_INSURANCE:['RENT'], APPLY_EVENT:['EVENT'], END_TURN:['OPTIONAL_ACTIONS'],
-  UPGRADE:['OPTIONAL_ACTIONS'], LIQUIDATE:['LIQUIDATION'], TRAVEL:['SPECIAL'],
-  ACK_BANKRUPTCY:['BANKRUPTCY'],
+import { goToJail, releaseFromJail } from './jail';
+import { build, sellBuilding } from './buildings';
+const ALLOWED: Record<GameAction['type'],readonly GamePhase[]> = {
+ START_TURN:['GAME_START','TURN_START'],ROLL:['WAITING_FOR_ROLL','JAIL_DECISION'],COMPLETE_ROLL:['ROLLING'],
+ STEP_MOVE:['MOVING'],RESOLVE_TILE:['RESOLVING_TILE'],BUY:['PROPERTY_DECISION'],SKIP:['PROPERTY_DECISION'],
+ ROLL_UTILITY:['UTILITY_ROLL'],PAY_RENT:['RENT'],PAY_JAIL:['JAIL_DECISION'],USE_JAIL_CARD:['JAIL_DECISION'],
+ APPLY_EVENT:['EVENT'],END_TURN:['OPTIONAL_ACTIONS'],UPGRADE:['OPTIONAL_ACTIONS'],
+ SELL_BUILDING:['OPTIONAL_ACTIONS','LIQUIDATION'],SELL_GROUP:['OPTIONAL_ACTIONS','LIQUIDATION'],LIQUIDATE:['LIQUIDATION'],ACK_BANKRUPTCY:['BANKRUPTCY'],
 };
-
-export function canAct(game: GameState, type: GameAction['type']) { return ALLOWED[type].includes(game.phase); }
-
-export function reduceGame(source: GameState, action: GameAction, random: RandomSource = Math.random): GameState {
-  if (action.playerId !== source.currentPlayerId) throw new Error('Không phải lượt của người chơi này.');
-  if (!canAct(source, action.type)) throw new Error('Thao tác không hợp lệ ở thời điểm này.');
-  const game = structuredClone(source);
-  const player = currentPlayer(game);
-  switch (action.type) {
-    case 'START_TURN': startTurn(game); break;
-    case 'ROLL': game.phase = 'ROLLING'; break;
-    case 'COMPLETE_ROLL': {
-      const traffic = player.statusEffects.includes('TRAFFIC');
-      const coffee = player.statusEffects.includes('COFFEE');
-      const count = traffic && !coffee ? 1 : 2;
-      const values = Array.from({ length:count }, () => randomInt(6,random) + 1);
-      const total = values.reduce((sum, value) => sum + value, 0) + (coffee && !traffic ? 2 : 0);
-      player.statusEffects = [];
-      game.dice = { values, total };
-      addLog(game, `${player.name} đổ ${values.join(' + ')}${coffee && !traffic ? ' + 2 (Cà Phê)' : ''} = ${total}.`);
-      beginMovement(game,total); break;
-    }
-    case 'STEP_MOVE': stepMovement(game); break;
-    case 'RESOLVE_TILE': {
-      const tile = BOARD[player.position];
-      if (tile.propertyId) {
-        const property = PROPERTIES.find(item => item.id === tile.propertyId)!;
-        const runtime = game.properties[property.id];
-        addLog(game, `${player.name} đến ${property.name}.`);
-        if (runtime.ownerId === null) game.phase = 'PROPERTY_DECISION';
-        else if (runtime.ownerId === player.id) game.phase = 'OPTIONAL_ACTIONS';
-        else { game.rent = { propertyId:property.id, ownerId:runtime.ownerId, amount:rentFor(game,property.id) }; game.phase = 'RENT'; }
-      } else if (tile.type === 'CHANCE' || tile.type === 'LIFE') drawCard(game,tile.type,random);
-      else if (tile.type === 'TAX' || tile.type === 'DETENTION') {
-        charge(game,[{ payerId:player.id, recipientId:null, amount:tile.type === 'TAX' ? (tile.amount ?? GAME_RULES.defaultTax) : GAME_RULES.detentionFine, reason:tile.type === 'TAX' ? 'Thuế' : 'Phí Tạm Giữ' }]);
-      } else if (tile.type === 'TRAVEL') { game.phase = 'SPECIAL'; addLog(game, 'Du Lịch: chọn một tài sản để đến.'); }
-      else {
-        if (tile.type === 'TRAVEL_FUND') { player.money += GAME_RULES.travelFundReward; addLog(game, `${player.name} nhận ${GAME_RULES.travelFundReward} Tr từ Quỹ Du Lịch.`); }
-        if (tile.type === 'REST') addLog(game, `${player.name} Nghỉ Ngơi, không mất phí.`);
-        game.phase = 'OPTIONAL_ACTIONS';
-      }
-      break;
-    }
-    case 'BUY': {
-      const property = PROPERTIES.find(item => item.id === BOARD[player.position].propertyId);
-      if (!property || game.properties[property.id].ownerId !== null) throw new Error('Tài sản không thể mua.');
-      if (!canBuyProperty(game,property.id)) throw new Error('Không đủ tiền mua tài sản.');
-      player.money -= property.price;
-      game.properties[property.id].ownerId = player.id;
-      addLog(game, `${player.name} mua ${property.name} với ${property.price} Tr.`);
-      game.phase = 'OPTIONAL_ACTIONS'; break;
-    }
-    case 'SKIP': game.phase = 'OPTIONAL_ACTIONS'; addLog(game, `${player.name} bỏ qua mua tài sản.`); break;
-    case 'PAY_RENT': {
-      if (!game.rent) throw new Error('Không có tiền thuê cần trả.');
-      charge(game,[{ payerId:player.id, recipientId:game.rent.ownerId, amount:game.rent.amount, reason:`Thuê ${PROPERTIES.find(item => item.id === game.rent!.propertyId)!.name}` }]);
-      break;
-    }
-    case 'USE_INSURANCE':
-      if (!player.heldCards.includes(INSURANCE_CARD_ID) || !game.rent) throw new Error('Không có bảo hiểm để dùng.');
-      player.heldCards = player.heldCards.filter(id => id !== INSURANCE_CARD_ID);
-      game.chanceDeck.discardPile.push(INSURANCE_CARD_ID);
-      addLog(game, `${player.name} dùng bảo hiểm, được miễn ${game.rent.amount} Tr tiền thuê.`);
-      game.rent = null; game.phase = 'OPTIONAL_ACTIONS'; break;
-    case 'UPGRADE': {
-      const property = PROPERTIES.find(item => item.id === action.propertyId);
-      const runtime = game.properties[action.propertyId];
-      if (!property || !runtime || runtime.ownerId !== player.id) throw new Error('Bạn không sở hữu tài sản này.');
-      if (!canUpgradeProperty(game,property.id)) throw new Error('Không thể nâng cấp: đã Lv.3 hoặc không đủ tiền.');
-      player.money -= property.upgradeCost;
-      runtime.level = (runtime.level + 1) as PropertyLevel;
-      addLog(game, `${player.name} nâng ${property.name} lên Lv.${runtime.level}, trả ${property.upgradeCost} Tr.`);
-      break;
-    }
-    case 'LIQUIDATE': {
-      const debt = game.payments[0];
-      const runtime = game.properties[action.propertyId];
-      if (!debt || !runtime || runtime.ownerId !== debt.payerId) throw new Error('Chỉ được thanh lý tài sản của người đang thiếu tiền.');
-      const debtor = game.players.find(item => item.id === debt.payerId)!;
-      const value = liquidationValue(game,action.propertyId);
-      debtor.money += value;
-      runtime.ownerId = null; runtime.level = 0;
-      addLog(game, `${debtor.name} thanh lý ${PROPERTIES.find(item => item.id === action.propertyId)!.name}, nhận ${value} Tr.`);
-      settlePayments(game); break;
-    }
-    case 'APPLY_EVENT': applyEvent(game); break;
-    case 'ACK_BANKRUPTCY': acknowledgeBankruptcy(game); break;
-    case 'TRAVEL': {
-      if (!Number.isInteger(action.destination) || !BOARD[action.destination]?.propertyId) throw new Error('Điểm đến Du Lịch phải là tài sản trên bàn cờ.');
-      beginMovement(game,forwardDistance(player.position,action.destination)); break;
-    }
-    case 'END_TURN': game.phase = 'TURN_END'; nextTurn(game); break;
+export function canAct(game:GameState,type:GameAction['type']) {return ALLOWED[type]?.includes(game.phase)??false;}
+const dice=(random:RandomSource)=>{const values=[randomInt(6,random)+1,randomInt(6,random)+1];return {values,total:values[0]+values[1]};};
+export function reduceGame(source:GameState,action:GameAction,random:RandomSource=Math.random):GameState {
+ if(action.playerId!==source.currentPlayerId)throw new Error('Không phải lượt của người chơi này.');
+ if(!canAct(source,action.type))throw new Error('Thao tác không hợp lệ ở thời điểm này.');
+ const game=structuredClone(source), player=currentPlayer(game);
+ switch(action.type) {
+  case 'START_TURN':startTurn(game);break;
+  case 'ROLL':game.phase='ROLLING';break;
+  case 'COMPLETE_ROLL': {
+   const result=dice(random);game.dice=result;game.rentDice=null;game.eventDepth=0;game.rentOverride=null;
+   const doubles=result.values[0]===result.values[1];addLog(game,player.name+' đổ '+result.values.join(' + ')+' = '+result.total+(doubles?' · Đôi':'')+'.');
+   if(player.jailed) {
+    game.extraRoll=false;game.consecutiveDoubles=0;
+    if(doubles){releaseFromJail(game);beginMovement(game,result.total);}
+    else if(++player.jailAttempts>=GAME_RULES.jailMaxAttempts)charge(game,[{payerId:player.id,recipientId:null,amount:GAME_RULES.jailFine,reason:'Phí ra tù sau ba lượt thử'}],'MOVE_AFTER_JAIL');
+    else {game.phase='OPTIONAL_ACTIONS';addLog(game,'Chưa ra tù: đã thử '+player.jailAttempts+'/3 lượt.');}
+   } else {
+    game.extraRoll=doubles;game.consecutiveDoubles=doubles?game.consecutiveDoubles+1:0;
+    if(game.consecutiveDoubles>=GAME_RULES.maxConsecutiveDoubles)goToJail(game);else beginMovement(game,result.total);
+   }
+   break;
   }
-  return game;
+  case 'STEP_MOVE':stepMovement(game);break;
+  case 'RESOLVE_TILE': {
+   const tile=BOARD[player.position];if(!tile)throw new Error('Vị trí không hợp lệ.');
+   if(tile.propertyId) {
+    const p=ASSET_BY_ID.get(tile.propertyId)!, state=game.properties[p.id];addLog(game,player.name+' đến '+p.name+'.');
+    if(!state.ownerId){game.phase='PROPERTY_DECISION';game.rentOverride=null;}
+    else if(state.ownerId===player.id){game.phase='OPTIONAL_ACTIONS';game.rentOverride=null;}
+    else {
+     const override=game.rentOverride;
+     const amount=p.kind==='RAILROAD'?rentFor(game,p.id)*(override?.kind==='RAILROAD'?override.multiplier:1):p.kind==='LAND'?rentFor(game,p.id):0;
+     game.rent={propertyId:p.id,ownerId:state.ownerId,amount};game.phase=p.kind==='UTILITY'?'UTILITY_ROLL':'RENT';
+     if(p.kind!=='UTILITY')game.rentOverride=null;
+    }
+   } else if(tile.type==='CHANCE'||tile.type==='LIFE')drawCard(game,tile.type,random);
+   else if(tile.type==='GO_TO_JAIL')goToJail(game);
+   else if(tile.type==='TAX')charge(game,[{payerId:player.id,recipientId:null,amount:tile.amount!,reason:tile.name??'Thuế'}]);
+   else {game.phase='OPTIONAL_ACTIONS';game.rentOverride=null;addLog(game,tile.type==='JAIL'?'Chỉ thăm tù.':tile.type==='REST'?'Nghỉ ngơi, không có thưởng/phạt.':'Bắt đầu một hành trình mới.');}
+   break;
+  }
+  case 'BUY': {
+   const id=BOARD[player.position].propertyId;if(!id||!canBuyProperty(game,id))throw new Error('Tài sản không thể mua hoặc chưa đủ tiền.');
+   const p=ASSET_BY_ID.get(id)!;player.money-=p.price;game.properties[id].ownerId=player.id;game.phase='OPTIONAL_ACTIONS';addLog(game,player.name+' mua '+p.name+' với '+p.price+' Tr.');break;
+  }
+  case 'SKIP':game.phase='OPTIONAL_ACTIONS';addLog(game,player.name+' bỏ qua mua. Không mở đấu giá trong phiên bản này.');break;
+  case 'ROLL_UTILITY': {
+   if(!game.rent)throw new Error('Không có tiện ích cần tính thuê.');
+   game.rentDice=dice(random);
+   const multiplier=game.rentOverride?.kind==='UTILITY'?game.rentOverride.multiplier:null;
+   game.rent.amount=multiplier?game.rentDice.total*multiplier:rentFor(game,game.rent.propertyId,game.rentDice.total);
+   game.rentOverride=null;game.phase='RENT';addLog(game,'Xúc xắc tính thuê: '+game.rentDice.values.join(' + ')+' → '+game.rent.amount+' Tr. Không di chuyển quân.');break;
+  }
+  case 'PAY_RENT':
+   if(!game.rent)throw new Error('Không có tiền thuê cần trả.');
+   charge(game,[{payerId:player.id,recipientId:game.rent.ownerId,amount:game.rent.amount,reason:'Thuê '+ASSET_BY_ID.get(game.rent.propertyId)!.name}]);break;
+  case 'PAY_JAIL':charge(game,[{payerId:player.id,recipientId:null,amount:GAME_RULES.jailFine,reason:'Phí ra tù'}],'ROLL_AFTER_JAIL');break;
+  case 'USE_JAIL_CARD': {
+   const id=player.heldCards.find(id=>CARDS.find(c=>c.id===id)?.effectType==='JAIL_CARD');if(!id)throw new Error('Bạn chưa có thẻ ra tù.');
+   const card=CARDS.find(c=>c.id===id)!;player.heldCards=player.heldCards.filter(key=>key!==id);
+   (card.deck==='CHANCE'?game.chanceDeck:game.lifeDeck).discardPile.push(id);releaseFromJail(game);game.phase='WAITING_FOR_ROLL';addLog(game,player.name+' dùng thẻ ra tù.');break;
+  }
+  case 'UPGRADE':build(game,action.propertyId);break;
+  case 'SELL_BUILDING':case 'SELL_GROUP': {
+   const debt=game.phase==='LIQUIDATION';sellBuilding(game,action.propertyId,action.type==='SELL_GROUP');if(debt)settlePayments(game);break;
+  }
+  case 'LIQUIDATE': {
+   const debt=game.payments[0], state=game.properties[action.propertyId];
+   if(!debt||!state||state.ownerId!==debt.payerId||!canLiquidate(game,action.propertyId))throw new Error('Chỉ thanh lý tài sản của người nợ sau khi bán hết công trình trong nhóm.');
+   const debtor=game.players.find(p=>p.id===debt.payerId)!, value=liquidationValue(game,action.propertyId);
+   debtor.money+=value;state.ownerId=null;state.level=0;addLog(game,debtor.name+' thanh lý '+ASSET_BY_ID.get(action.propertyId)!.name+', nhận '+value+' Tr.');settlePayments(game);break;
+  }
+  case 'APPLY_EVENT':applyEvent(game);break;
+  case 'ACK_BANKRUPTCY':acknowledgeBankruptcy(game);break;
+  case 'END_TURN':
+   if(game.extraRoll&&!player.jailed){game.phase='WAITING_FOR_ROLL';game.extraRoll=false;game.dice=null;game.rentDice=null;addLog(game,player.name+' được đổ thêm vì đổ đôi.');}
+   else {game.phase='TURN_END';nextTurn(game);}break;
+ }
+ return game;
 }

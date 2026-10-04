@@ -1,0 +1,34 @@
+{
+  "testedAt": "2026-10-04T04:31:20.429Z",
+  "url": "http://127.0.0.1:4173",
+  "browser": "154.0.8037.97",
+  "environment": "Built production bundle on desktop Chrome with mobile viewport/touch emulation. No physical phone measurement.",
+  "method": "All actions through UI, seeded browser Math.random, no store imports or snapshot injection. Each ended turn waits for a changed current-player name.",
+  "completedTurns": 24,
+  "rolls": 28,
+  "extraRolls": 4,
+  "buys": 3,
+  "events": 6,
+  "rents": 1,
+  "phases": [
+    "MOVING",
+    "RESOLVING_TILE",
+    "EVENT",
+    "OPTIONAL_ACTIONS",
+    "WAITING_FOR_ROLL",
+    "ROLLING",
+    "TURN_START",
+    "PROPERTY_DECISION",
+    "RENT",
+    "JAIL_DECISION"
+  ],
+  "checks": [
+    "40-tile WebGL board",
+    "actual roll and camera follow",
+    "24 observed UI turn transitions with purchases/events/rent",
+    "log dialog and portrait rotation recovery",
+    "no page scroll",
+    "no console errors"
+  ],
+  "errors": []
+}

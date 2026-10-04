@@ -1,0 +1,256 @@
+{
+  "reviewedAt": "2026-10-04T03:51:53.770Z",
+  "purpose": "Read-only Task #1 layout review; no UI implementation changes.",
+  "environment": "Desktop Chrome with mobile viewport emulation, not physical phone QA.",
+  "viewports": [
+    {
+      "width": 568,
+      "height": 320,
+      "stage": {
+        "x": 8,
+        "y": 58,
+        "width": 552,
+        "height": 258
+      },
+      "canvas": {
+        "x": 118,
+        "y": 58,
+        "width": 296,
+        "height": 258
+      },
+      "location": {
+        "x": 8,
+        "y": 58,
+        "width": 102,
+        "height": 70.4375
+      },
+      "actions": {
+        "x": 422,
+        "y": 78,
+        "width": 138,
+        "height": 238
+      },
+      "canvasSharePercent": 53.6,
+      "noPageScroll": true,
+      "phase": "WAITING_FOR_ROLL"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "stage": {
+        "x": 8,
+        "y": 58,
+        "width": 828,
+        "height": 328
+      },
+      "canvas": {
+        "x": 154,
+        "y": 58,
+        "width": 494,
+        "height": 328
+      },
+      "location": {
+        "x": 8,
+        "y": 58,
+        "width": 138,
+        "height": 155.515625
+      },
+      "actions": {
+        "x": 656,
+        "y": 98.15625,
+        "width": 180,
+        "height": 287.84375
+      },
+      "canvasSharePercent": 59.7,
+      "noPageScroll": true,
+      "phase": "WAITING_FOR_ROLL"
+    },
+    {
+      "width": 852,
+      "height": 393,
+      "stage": {
+        "x": 8,
+        "y": 58,
+        "width": 836,
+        "height": 331
+      },
+      "canvas": {
+        "x": 154,
+        "y": 58,
+        "width": 502,
+        "height": 331
+      },
+      "location": {
+        "x": 8,
+        "y": 58,
+        "width": 138,
+        "height": 155.515625
+      },
+      "actions": {
+        "x": 664,
+        "y": 101.15625,
+        "width": 180,
+        "height": 287.84375
+      },
+      "canvasSharePercent": 60,
+      "noPageScroll": true,
+      "phase": "WAITING_FOR_ROLL"
+    },
+    {
+      "width": 896,
+      "height": 414,
+      "stage": {
+        "x": 8,
+        "y": 58,
+        "width": 880,
+        "height": 352
+      },
+      "canvas": {
+        "x": 154,
+        "y": 58,
+        "width": 546,
+        "height": 352
+      },
+      "location": {
+        "x": 8,
+        "y": 58,
+        "width": 138,
+        "height": 155.515625
+      },
+      "actions": {
+        "x": 708,
+        "y": 122.15625,
+        "width": 180,
+        "height": 287.84375
+      },
+      "canvasSharePercent": 62,
+      "noPageScroll": true,
+      "phase": "WAITING_FOR_ROLL"
+    },
+    {
+      "width": 915,
+      "height": 412,
+      "stage": {
+        "x": 8,
+        "y": 58,
+        "width": 899,
+        "height": 350
+      },
+      "canvas": {
+        "x": 154,
+        "y": 58,
+        "width": 565,
+        "height": 350
+      },
+      "location": {
+        "x": 8,
+        "y": 58,
+        "width": 138,
+        "height": 155.515625
+      },
+      "actions": {
+        "x": 727,
+        "y": 120.15625,
+        "width": 180,
+        "height": 287.84375
+      },
+      "canvasSharePercent": 62.8,
+      "noPageScroll": true,
+      "phase": "WAITING_FOR_ROLL"
+    },
+    {
+      "width": 932,
+      "height": 430,
+      "stage": {
+        "x": 8,
+        "y": 58,
+        "width": 916,
+        "height": 368
+      },
+      "canvas": {
+        "x": 154,
+        "y": 58,
+        "width": 582,
+        "height": 368
+      },
+      "location": {
+        "x": 8,
+        "y": 58,
+        "width": 138,
+        "height": 155.515625
+      },
+      "actions": {
+        "x": 744,
+        "y": 138.15625,
+        "width": 180,
+        "height": 287.84375
+      },
+      "canvasSharePercent": 63.5,
+      "noPageScroll": true,
+      "phase": "WAITING_FOR_ROLL"
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "stage": {
+        "x": 8,
+        "y": 58,
+        "width": 1008,
+        "height": 706
+      },
+      "canvas": {
+        "x": 154,
+        "y": 58,
+        "width": 674,
+        "height": 706
+      },
+      "location": {
+        "x": 8,
+        "y": 58,
+        "width": 138,
+        "height": 192.78125
+      },
+      "actions": {
+        "x": 836,
+        "y": 452.15625,
+        "width": 180,
+        "height": 311.84375
+      },
+      "canvasSharePercent": 66.9,
+      "noPageScroll": true,
+      "phase": "WAITING_FOR_ROLL"
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "stage": {
+        "x": 8,
+        "y": 58,
+        "width": 1424,
+        "height": 838
+      },
+      "canvas": {
+        "x": 154,
+        "y": 58,
+        "width": 1090,
+        "height": 838
+      },
+      "location": {
+        "x": 8,
+        "y": 58,
+        "width": 138,
+        "height": 192.78125
+      },
+      "actions": {
+        "x": 1252,
+        "y": 584.15625,
+        "width": 180,
+        "height": 311.84375
+      },
+      "canvasSharePercent": 76.5,
+      "noPageScroll": true,
+      "phase": "WAITING_FOR_ROLL"
+    }
+  ],
+  "errors": []
+}

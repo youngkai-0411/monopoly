@@ -1,0 +1,14 @@
+:root {
+  --space-2:2px; --space-4:4px; --space-8:8px; --space-12:12px; --space-16:16px; --space-24:24px; --space-32:32px;
+  --type-display:32px; --type-title:24px; --type-sheet:20px; --type-heading:18px; --type-heading-small:16px; --type-body:14px; --type-label:13px; --type-label-small:12px; --type-micro:11px;
+  --weight-body:500; --weight-heading:700; --weight-display:800;
+  --radius-control:10px; --radius-button:12px; --radius-card:16px; --radius-sheet:20px; --radius-pill:999px;
+  --shadow-context:0 3px 12px color-mix(in srgb,var(--color-selected) 14%,transparent);
+  --shadow-decision:0 8px 28px color-mix(in srgb,var(--color-selected) 20%,transparent);
+  --shadow-blocking:0 16px 48px color-mix(in srgb,var(--color-selected) 28%,transparent);
+  --surface-hud:color-mix(in srgb,var(--color-surface-primary) 86%,transparent);
+  --surface-context:color-mix(in srgb,var(--color-surface-primary) 97%,transparent);
+  --backdrop-decision:color-mix(in srgb,var(--color-selected) 46%,transparent);
+  --backdrop-blocking:color-mix(in srgb,var(--color-selected) 64%,transparent);
+  --line:var(--color-border-default); --panel:var(--color-surface-primary); --gold:var(--color-action);
+}

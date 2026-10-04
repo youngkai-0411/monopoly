@@ -1,76 +1,75 @@
-import { useEffect, useRef, type ReactNode } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { BOARD } from '../game/data/board';
-import { PROPERTIES } from '../game/data/properties';
-import { CARDS, INSURANCE_CARD_ID } from '../game/data/cards';
+import { ASSET_BY_ID } from '../game/data/properties';
+import { CARDS } from '../game/data/cards';
 import { GROUPS } from '../game/data/groups';
 import { GAME_RULES } from '../game/rules/config';
 import type { GameState, PropertyLevel } from '../game/types/domain';
 import { currentPlayer } from '../game/engine/turns';
-import { canBuyProperty, canUpgradeProperty, fullGroup, liquidationValue, ownedProperties, rentFor } from '../game/engine/selectors';
+import { canBuyProperty, canUpgradeProperty, canSellBuilding, canSellGroup, canLiquidate, fullGroup, liquidationValue, ownedProperties, buildingLabel } from '../game/engine/selectors';
 import { calculateRent } from '../game/engine/economy';
 import { useGameStore } from '../store/gameStore';
+import { displayLandmark, rentLabel } from './gameplayUI';
+import { GameIcon } from './GameIcon';
+import { PlayerIndicator } from './PlayerIndicator';
+import { eventPresentation } from './eventPresentation';
 import { money } from './format';
-
-export type Panel = {type:'property';id:string} | {type:'assets'|'log'|'settings'} | null;
-
-function Sheet({title,children,onClose,center=false,fullScreen=false}: {title:string;children:ReactNode;onClose?:()=>void;center?:boolean;fullScreen?:boolean}) {
-  const ref=useRef<HTMLDialogElement>(null);
-  useEffect(()=>{ const dialog=ref.current!; dialog.showModal(); return ()=>dialog.close(); },[]);
-  return <dialog ref={ref} className={`game-dialog ${center?'center-dialog':''} ${fullScreen?'winner-dialog':''}`} aria-label={title} onCancel={event=>{event.preventDefault();onClose?.();}} onClick={event=>{if(event.target===event.currentTarget)onClose?.();}}>
-    <motion.div className="sheet-panel" initial={center?{rotateY:-75,opacity:0}:{y:35,opacity:0}} animate={{y:0,rotateY:0,opacity:1}} transition={{duration:.2}}>
-      <header className="sheet-header"><h2>{title}</h2>{onClose&&<button className="close-button" aria-label="Đóng" onClick={onClose}>×</button>}</header>
-      {children}
-    </motion.div>
-  </dialog>;
+export type Panel={type:'property';id:string}|{type:'assets'|'cards'|'log'|'settings'}|null;
+function Sheet({title,children,onClose,center=false,fullScreen=false,level,tone}:{title:string;children:ReactNode;onClose?:()=>void;center?:boolean;fullScreen?:boolean;level?:'inspection'|'decision'|'blocking';tone?:'danger'|'chance'|'life'}) {
+ const ref=useRef<HTMLDialogElement>(null),reduced=useReducedMotion(),error=useGameStore(s=>s.error),clearError=useGameStore(s=>s.clearError);
+ useEffect(()=>{const d=ref.current!,anchor=document.activeElement as HTMLElement|null;d.showModal();return()=>{d.close();if(anchor?.isConnected)anchor.focus({preventScroll:true});else document.querySelector<HTMLButtonElement>('.secondary-actions button:not(:disabled)')?.focus({preventScroll:true});};},[]);
+ return <dialog ref={ref} className={'game-dialog '+(center?'center-dialog ':'')+(fullScreen?'winner-dialog':'')} aria-label={title} data-level={level??(fullScreen?'blocking':onClose?'inspection':'decision')} data-tone={tone} onCancel={e=>{e.preventDefault();onClose?.();}} onClick={e=>{if(e.target===e.currentTarget)onClose?.();}}>
+ <motion.div className="sheet-panel" initial={reduced?false:center?{rotateY:-65,opacity:0}:{y:30,opacity:0}} animate={{y:0,rotateY:0,opacity:1}} transition={{duration:reduced?0:.2}}>
+ <header className="sheet-header"><h2>{title}</h2>{onClose&&<button className="close-button" aria-label="Đóng" onClick={onClose}><GameIcon name="close"/></button>}</header><div className="sheet-content">{error&&<button className="sheet-error" role="alert" onClick={clearError}>{error} · Đóng</button>}{children}</div></motion.div></dialog>;
 }
-
-export function GameOverlay({game,panel,setPanel}: {game:GameState;panel:Panel;setPanel:(panel:Panel)=>void}) {
-  const dispatch=useGameStore(state=>state.dispatch);
-  const locked=useGameStore(state=>state.locked);
-  const reset=useGameStore(state=>state.reset);
-  const player=currentPlayer(game);
-  const close=()=>setPanel(null);
-  const decision=game.phase==='PROPERTY_DECISION';
-  const propertyId=decision ? BOARD[player.position].propertyId : panel?.type==='property'?panel.id:undefined;
-  if(game.phase==='BANKRUPTCY') {
-    const bankrupt=game.players.find(p=>p.id===game.bankruptcyNoticeId)!;
-    return <Sheet key="bankruptcy" center title={`${bankrupt.name} phá sản`}><p className="sheet-copy">Đã hết tài sản và vẫn không đủ tiền trả nợ. {bankrupt.name} rời khỏi thứ tự lượt chơi. Những người còn lại tiếp tục ván.</p><button className="primary-button" disabled={locked} onClick={()=>dispatch({type:'ACK_BANKRUPTCY'})}>Tiếp tục →</button></Sheet>;
-  }
-  if(game.phase==='GAME_OVER') {
-    const winner=game.players.find(p=>p.id===game.winnerId)!;
-    return <Sheet key="winner" center fullScreen title="Ván chơi kết thúc"><div className="winner-copy"><motion.span initial={{scale:.5}} animate={{scale:1}} transition={{type:'spring'}}>🏆</motion.span><h3>{winner.name} chiến thắng!</h3><p>Người cuối cùng còn lại · {game.round} vòng</p><strong>{money(winner.money)}</strong></div><button className="primary-button" onClick={reset}>Chơi ván mới</button></Sheet>;
-  }
-  if(game.phase==='LIQUIDATION') {
-    const debt=game.payments[0];
-    const debtor=game.players.find(p=>p.id===debt.payerId)!;
-    return <Sheet key="liquidation" center title={`${debtor.name} cần thanh lý`}><p className="sheet-copy">Cần trả {money(debt.amount)} · {debt.reason}. Tiền mặt: {money(debtor.money)}. Chọn tài sản để thanh lý; nếu bán hết vẫn thiếu tiền, người chơi sẽ phá sản.</p><div className="property-list">{ownedProperties(game,debtor.id).map(p=><button key={p.id} disabled={locked} onClick={()=>dispatch({type:'LIQUIDATE',propertyId:p.id})}><strong>{p.name} · Lv.{game.properties[p.id].level}</strong><span>Thanh lý +{money(liquidationValue(game,p.id))}</span></button>)}</div></Sheet>;
-  }
-  if(game.phase==='EVENT') {
-    const card=CARDS.find(c=>c.id===game.eventCardId)!;
-    return <Sheet key={card.id} center title={card.deck==='CHANCE'?'🎴 Cơ Hội':'✨ Cuộc Sống'}><div className="event-copy"><span className="section-kicker">{player.name}</span><h3>{card.title}</h3><p>{card.description}</p></div><button className="primary-button" disabled={locked} onClick={()=>dispatch({type:'APPLY_EVENT'})}>Áp dụng thẻ →</button></Sheet>;
-  }
-  if(game.phase==='RENT'&&game.rent) {
-    const rent=game.rent;
-    const owner=game.players.find(p=>p.id===rent.ownerId)!;
-    return <Sheet key="rent" title="Thanh toán tiền thuê"><p className="sheet-copy">{player.name} đến {PROPERTIES.find(p=>p.id===rent.propertyId)!.name}, tài sản của {owner.name}.</p><div className="amount-display">{money(rent.amount)}</div><div className="sheet-actions"><button className="primary-button" disabled={locked} onClick={()=>dispatch({type:'PAY_RENT'})}>Trả tiền thuê</button>{player.heldCards.includes(INSURANCE_CARD_ID)&&<button className="secondary-button" disabled={locked} onClick={()=>dispatch({type:'USE_INSURANCE'})}>Dùng bảo hiểm · miễn thuê</button>}</div></Sheet>;
-  }
-  if(game.phase==='SPECIAL') return <Sheet key="travel" title="✈️ Chọn điểm đến Du Lịch"><p className="sheet-copy">Đi đến một tài sản theo chiều kim đồng hồ. Qua Xuất Phát nhận {money(GAME_RULES.passStartReward)}; ô đến được xử lý như bình thường.</p><div className="property-list travel-list">{BOARD.filter(tile=>tile.propertyId).map(tile=><button key={tile.index} disabled={locked} onClick={()=>dispatch({type:'TRAVEL',destination:tile.index})}>{PROPERTIES.find(p=>p.id===tile.propertyId)!.name}</button>)}</div></Sheet>;
-  if(propertyId) {
-    const property=PROPERTIES.find(p=>p.id===propertyId)!;
-    const runtime=game.properties[propertyId];
-    const owner=game.players.find(p=>p.id===runtime.ownerId);
-    const group=GROUPS.find(g=>g.id===property.groupId)!;
-    const canUpgrade=canUpgradeProperty(game,propertyId);
-    return <Sheet key={propertyId} title={property.name} onClose={decision?undefined:close}>
-      <div className="property-detail"><div><span className="section-kicker">{group.name}</span><h3>{property.landmark}</h3><p>{owner?`Chủ: ${owner.name} · Lv.${runtime.level}`:'Chưa có chủ'}{fullGroup(game,propertyId)?' · Đủ nhóm':''}</p></div><dl><div><dt>Giá mua</dt><dd>{money(property.price)}</dd></div><div><dt>Thuê hiện tại</dt><dd>{money(rentFor(game,propertyId))}</dd></div><div><dt>Nâng một cấp</dt><dd>{money(property.upgradeCost)}</dd></div></dl></div>
-      <div className="rent-levels">{([0,1,2,3] as PropertyLevel[]).map(level=><span key={level}>Lv.{level}<b>{money(calculateRent(property,level,fullGroup(game,propertyId)))}</b></span>)}</div>
-      <div className="sheet-actions">{decision?<><button className="primary-button" disabled={locked||!canBuyProperty(game,propertyId)} onClick={()=>dispatch({type:'BUY'})}>Mua · {money(property.price)}</button><button className="secondary-button" disabled={locked} onClick={()=>dispatch({type:'SKIP'})}>Bỏ qua</button></>:runtime.ownerId===player.id&&<button className="primary-button" disabled={locked||!canUpgrade} onClick={()=>dispatch({type:'UPGRADE',propertyId})}>{runtime.level===3?'Đã đạt Lv.3':`Nâng cấp · ${money(property.upgradeCost)}`}</button>}</div>
-      {decision&&player.money<property.price&&<p className="sheet-copy">Chưa đủ tiền để mua. Bạn có thể bỏ qua.</p>}
-    </Sheet>;
-  }
-  if(panel?.type==='assets') return <Sheet key="assets" title={`Tài sản của ${player.name}`} onClose={close}><p className="sheet-copy">{money(player.money)} tiền mặt · {player.heldCards.length?'🛡️ Có Bảo Hiểm Đầu Tư':'Chưa có bảo hiểm'}{player.statusEffects.length?` · ${player.statusEffects.map(s=>s==='TRAFFIC'?'Kẹt Xe':'Cà Phê Sáng').join(', ')}`:''}</p><div className="property-list">{ownedProperties(game,player.id).map(p=><button key={p.id} onClick={()=>setPanel({type:'property',id:p.id})}><strong>{p.name} · Lv.{game.properties[p.id].level}</strong><span>Thuê {money(rentFor(game,p.id))}{fullGroup(game,p.id)?' · Đủ nhóm':''}</span></button>)}</div>{!ownedProperties(game,player.id).length&&<p className="sheet-copy">Chưa sở hữu tài sản. Đổ xúc xắc để bắt đầu khám phá.</p>}</Sheet>;
-  if(panel?.type==='log') return <Sheet key="log" title="Nhật ký ván chơi" onClose={close}><ol className="game-log">{[...game.log].reverse().map(entry=><li key={entry.id}><span>Vòng {entry.round}</span>{entry.message}</li>)}</ol></Sheet>;
-  if(panel?.type==='settings') return <Sheet key="settings" title="Thông tin ván chơi" onClose={close}><p className="sheet-copy">Người cuối cùng còn lại chiến thắng. Hai xúc xắc mỗi lượt, không có lượt thêm khi đổ đôi. Nâng tài sản Lv.0–3 không cần đủ nhóm; đủ nhóm tăng tiền thuê. Thiếu tiền phải thanh lý trước khi phá sản.</p><p className="sheet-copy">Tạm Giữ: trả {money(GAME_RULES.detentionFine)}. Nghỉ Ngơi: không mất phí. Quỹ Du Lịch: nhận {money(GAME_RULES.travelFundReward)}. Game local trên thiết bị này; tải lại trang sẽ bắt đầu lại.</p><button className="secondary-button danger" onClick={reset}>Kết thúc ván này và tạo ván mới</button></Sheet>;
-  return null;
+export function GameOverlay({game,panel,setPanel}:{game:GameState;panel:Panel;setPanel:(panel:Panel)=>void}) {
+ const dispatch=useGameStore(s=>s.dispatch),locked=useGameStore(s=>s.locked),reset=useGameStore(s=>s.reset),player=currentPlayer(game);
+ const [debtAsset,setDebtAsset]=useState<string|null>(null);
+ useEffect(()=>setDebtAsset(null),[game.phase,game.payments[0]?.payerId]);
+ const close=()=>setPanel(null),decision=game.phase==='PROPERTY_DECISION';
+ const propertyId=decision?BOARD[player.position].propertyId:panel?.type==='property'?panel.id:undefined;
+ if(game.phase==='BANKRUPTCY')return <Sheet key="bankruptcy" level="blocking" tone="danger" center title={game.players.find(p=>p.id===game.bankruptcyNoticeId)!.name+' phá sản'}><p className="sheet-copy">Đã hết tài sản và không đủ tiền trả nợ. Những người còn lại tiếp tục hành trình.</p><button className="primary-button" disabled={locked} onClick={()=>dispatch({type:'ACK_BANKRUPTCY'})}>Tiếp tục →</button></Sheet>;
+ if(game.phase==='GAME_OVER'){
+  const winner=game.players.find(p=>p.id===game.winnerId)!;
+  return <Sheet key="winner" center fullScreen title="Một hành trình, một nhà vô địch"><div className="winner-copy"><GameIcon name="trophy" className="winner-trophy"/><div className="winner-message"><PlayerIndicator index={game.players.indexOf(winner)}/><h3>{winner.name} chiến thắng!</h3><p>{game.round} vòng · Người cuối cùng còn lại</p></div><div className="winner-stat"><span>Tiền mặt</span><strong>{money(winner.money)}</strong></div></div><button className="primary-button" onClick={reset}>Chơi ván mới</button></Sheet>;
+ }
+ if(game.phase==='LIQUIDATION'){
+  const debt=game.payments[0],debtor=game.players.find(p=>p.id===debt.payerId)!,assets=ownedProperties(game,debtor.id),p=assets.find(p=>p.id===debtAsset)??assets[0];
+  return <Sheet key="debt" level="blocking" tone="danger" center title={debtor.name+' cần trả nợ'}><p className="sheet-copy">Cần {money(debt.amount)} · {debt.reason}. Hiện có {money(debtor.money)}. Bán công trình trước khi thanh lý đất trong nhóm.</p><label className="debt-picker">Tài sản để trả nợ<select value={p.id} onChange={e=>setDebtAsset(e.target.value)}>{assets.map(a=><option key={a.id} value={a.id}>{a.name}{a.kind==='LAND'?' · '+buildingLabel(game.properties[a.id].level):''}</option>)}</select></label><div className="debt-asset"><strong>{p.name}</strong><div className="sheet-actions">{canSellBuilding(game,p.id)&&<button className="secondary-button" disabled={locked} onClick={()=>dispatch({type:'SELL_BUILDING',propertyId:p.id})}>Bán 1 công trình</button>}{canSellGroup(game,p.id)&&<button className="secondary-button" disabled={locked} onClick={()=>dispatch({type:'SELL_GROUP',propertyId:p.id})}>Bán công trình nhóm</button>}</div><button className="primary-button debt-primary" disabled={locked||!canLiquidate(game,p.id)} onClick={()=>dispatch({type:'LIQUIDATE',propertyId:p.id})}>Thanh lý +{money(liquidationValue(game,p.id))}</button></div></Sheet>;
+ }
+ if(game.phase==='JAIL_DECISION')return <Sheet key="jail" center title={player.name+' đang ở Nhà tù'}><p className="sheet-copy">Đã thử {player.jailAttempts}/3 lượt. Đổ đôi để ra tù; nếu lần thử thứ ba vẫn chưa được, trả {money(GAME_RULES.jailFine)} rồi di chuyển theo kết quả đó.</p><div className="sheet-actions"><button className="primary-button" disabled={locked} onClick={()=>dispatch({type:'ROLL'})}>Thử đổ đôi</button><button className="secondary-button" disabled={locked} onClick={()=>dispatch({type:'PAY_JAIL'})}>Trả {money(GAME_RULES.jailFine)}</button></div>{player.heldCards.length>0&&<button className="secondary-button jail-card-button" disabled={locked} onClick={()=>dispatch({type:'USE_JAIL_CARD'})}>Dùng thẻ ra tù</button>}</Sheet>;
+ if(game.phase==='EVENT'){
+  const card=CARDS.find(c=>c.id===game.eventCardId)!,visual=eventPresentation(card);
+  return <Sheet key={card.id} center tone={card.deck==='CHANCE'?'chance':'life'} title={card.deck==='CHANCE'?'Cơ Hội':'Cuộc Sống'}><div className="event-copy"><span className="section-kicker">Dành cho {player.name}</span><h3>{card.title}</h3><span className="event-illustration" aria-hidden="true">{visual.illustration}</span><p>{card.description}</p><strong className={'event-effect'+(visual.danger?' danger':'')}>{visual.effect}</strong></div><button className="primary-button" disabled={locked} onClick={()=>dispatch({type:'APPLY_EVENT'})}>Khám phá tiếp →</button></Sheet>;
+ }
+ if(game.phase==='UTILITY_ROLL')return <Sheet key="utility-roll" center title="Tính thuê tiện ích"><p className="sheet-copy">{ASSET_BY_ID.get(game.rent!.propertyId)!.name} đã có chủ. Đổ riêng hai xúc xắc để tính tiền thuê; quân cờ giữ nguyên vị trí.</p><button className="primary-button" disabled={locked} onClick={()=>dispatch({type:'ROLL_UTILITY'})}>Đổ để tính thuê</button></Sheet>;
+ if(game.phase==='RENT'&&game.rent){
+  const rent=game.rent,owner=game.players.find(p=>p.id===rent.ownerId)!;
+  return <Sheet key="rent" title="Thanh toán tiền thuê"><p className="sheet-copy">{player.name} đến {ASSET_BY_ID.get(rent.propertyId)!.name}, tài sản của {owner.name}.{game.rentDice?' Xúc xắc thuê: '+game.rentDice.values.join(' + ')+'.':''}</p><div className="amount-display">{money(rent.amount)}</div><button className="primary-button" disabled={locked} onClick={()=>dispatch({type:'PAY_RENT'})}>Trả tiền thuê</button></Sheet>;
+ }
+ if(propertyId&&decision){
+  const property=ASSET_BY_ID.get(propertyId)!,landmark=displayLandmark(property);
+  return <Sheet key={'buy-'+propertyId} title={property.name}><div className="purchase-context">{landmark&&<p className="sheet-copy">{landmark}</p>}<div className="purchase-price"><span>Giá mua</span><strong>{money(property.price)}</strong></div><p className="sheet-copy">Thuê: {rentLabel(game,property)}</p><details className="decision-details"><summary>Nhóm & bảng thuê</summary>{property.kind==='LAND'?<><p className="sheet-copy">{GROUPS.find(g=>g.id===property.groupId)!.name} · Mỗi công trình {money(property.upgradeCost)}</p><div className="rent-levels">{property.rentByLevel.map((rent,i)=><span key={i}>{i===5?'Khách sạn':i?i+' nhà':'Trống'}<b>{money(rent)}</b></span>)}</div></>:<p className="sheet-copy">{property.kind==='RAILROAD'?property.rentByOwnedCount.map((r,i)=>(i+1)+' ga: '+money(r)).join(' · '):property.rentMultiplierByOwnedCount.map((r,i)=>(i+1)+' tiện ích: '+r+'× xúc xắc').join(' · ')}</p>}</details><div className="sheet-actions decision-actions"><button className="primary-button" disabled={locked||!canBuyProperty(game,propertyId)} onClick={()=>dispatch({type:'BUY'})}>Mua · {money(property.price)}</button><button className="secondary-button" disabled={locked} onClick={()=>dispatch({type:'SKIP'})}>Bỏ qua</button></div>{player.money<property.price&&<p className="sheet-copy">Chưa đủ tiền để mua, hãy bỏ qua.</p>}</div></Sheet>;
+ }
+ if(propertyId){
+  const property=ASSET_BY_ID.get(propertyId)!,runtime=game.properties[propertyId],owner=game.players.find(p=>p.id===runtime.ownerId);
+  const group=property.kind==='LAND'?GROUPS.find(g=>g.id===property.groupId):undefined;
+  return <Sheet key={propertyId} title={property.name} onClose={close}>
+   <div className="asset-badge" style={{borderLeftColor:group?.color??'var(--color-selected)'}}>{group?.name??(property.kind==='RAILROAD'?'Ga tàu':'Tiện ích')}</div>
+   <div className="property-detail"><div>{displayLandmark(property)&&<h3>{displayLandmark(property)}</h3>}<p>{owner&&<PlayerIndicator index={game.players.indexOf(owner)}/>} {owner?'Chủ: '+owner.name:'Chưa có chủ'}{property.kind==='LAND'?' · '+buildingLabel(runtime.level):''}{fullGroup(game,propertyId)?' · Đủ nhóm':''}</p></div><dl><div><dt>Giá mua</dt><dd>{money(property.price)}</dd></div>{property.kind==='LAND'&&<><div><dt>Thuê hiện tại</dt><dd>{rentLabel(game,property)}</dd></div><div><dt>Mỗi công trình</dt><dd>{money(property.upgradeCost)}</dd></div></>}{property.kind!=='LAND'&&<div><dt>Thuê</dt><dd>{rentLabel(game,property)}</dd></div>}</dl></div>
+   {group&&<div className="group-progress">{group.propertyIds.map(id=><span key={id}><strong>{ASSET_BY_ID.get(id)!.name}</strong><small>{game.players.find(p=>p.id===game.properties[id].ownerId)?.name??'Chưa có chủ'}</small></span>)}</div>}
+   {property.kind==='LAND'?<><div className="rent-levels">{([0,1,2,3,4,5] as PropertyLevel[]).map(level=><span key={level}>{level===5?'Khách sạn':level?level+' nhà':'Trống'}<b>{money(calculateRent(property,level,fullGroup(game,propertyId)))}</b></span>)}</div><p className="sheet-copy">Đủ nhóm mới được xây; xây và bán đều. Ngân hàng: {game.buildingBank.houses} nhà · {game.buildingBank.hotels} khách sạn.</p></>:property.kind==='RAILROAD'?<div className="rent-levels">{property.rentByOwnedCount.map((rent,i)=><span key={i}>{i+1} ga<b>{money(rent)}</b></span>)}</div>:<div className="rent-levels">{property.rentMultiplierByOwnedCount.map((factor,i)=><span key={i}>{i+1} tiện ích<b>{factor}× xúc xắc</b></span>)}</div>}
+   <div className="sheet-actions">{runtime.ownerId===player.id&&property.kind==='LAND'&&<><button className="primary-button" disabled={locked||!canUpgradeProperty(game,propertyId)} onClick={()=>dispatch({type:'UPGRADE',propertyId})}>{runtime.level===5?'Đã có khách sạn':'Xây · '+money(property.upgradeCost)}</button><button className="secondary-button" disabled={locked||!canSellBuilding(game,propertyId)} onClick={()=>dispatch({type:'SELL_BUILDING',propertyId})}>Bán 1 công trình</button>{canSellGroup(game,propertyId)&&<button className="secondary-button" disabled={locked} onClick={()=>dispatch({type:'SELL_GROUP',propertyId})}>Bán công trình nhóm</button>}</>}</div>
+  </Sheet>;
+ }
+ if(panel?.type==='assets'){
+  const owned=ownedProperties(game,player.id);
+  const entry=(id:string)=>{const p=ASSET_BY_ID.get(id)!;return <button key={id} onClick={()=>setPanel({type:'property',id})}><strong>{p.name}</strong><span>{p.kind==='LAND'?buildingLabel(game.properties[id].level):p.kind==='RAILROAD'?'Ga tàu':'Tiện ích'}{fullGroup(game,id)?' · Đủ nhóm':''}</span></button>;};
+  return <Sheet key="assets" title={'Tài sản của '+player.name} onClose={close}><p className="sheet-copy">{money(player.money)} · {player.heldCards.length} thẻ ra tù</p><div className="asset-groups">{GROUPS.filter(g=>g.propertyIds.some(id=>game.properties[id].ownerId===player.id)).map(g=><section key={g.id} className="asset-group"><h3 style={{borderLeftColor:g.color}}>{g.name}<span>{g.propertyIds.filter(id=>game.properties[id].ownerId===player.id).length} / {g.propertyIds.length}</span></h3><div className="property-list">{g.propertyIds.filter(id=>game.properties[id].ownerId===player.id).map(entry)}</div></section>)}{(['RAILROAD','UTILITY'] as const).map(kind=>owned.some(p=>p.kind===kind)&&<section className="asset-group" key={kind}><h3>{kind==='RAILROAD'?'Ga tàu':'Tiện ích'}</h3><div className="property-list">{owned.filter(p=>p.kind===kind).map(p=>entry(p.id))}</div></section>)}</div>{!owned.length&&<p className="sheet-copy">Chưa có tài sản. Hãy tìm cơ hội trên bàn cờ.</p>}</Sheet>;
+ }
+ if(panel?.type==='cards')return <Sheet key="cards" title={'Thẻ của '+player.name} onClose={close}>{player.heldCards.length?player.heldCards.map(id=>{const c=CARDS.find(c=>c.id===id)!;return <article className="held-card" key={id}><span className="section-kicker">{c.deck==='CHANCE'?'Cơ Hội':'Cuộc Sống'}</span><h3>{c.title}</h3><p className="sheet-copy">{c.description}</p><small>Dùng trong lựa chọn ra tù ở đầu lượt.</small></article>;}):<p className="sheet-copy">Bạn chưa giữ thẻ ra tù. Các thẻ sự kiện được giải quyết ngay khi rút.</p>}</Sheet>;
+ if(panel?.type==='log')return <Sheet key="log" title="Nhật ký hành trình" onClose={close}><ol className="game-log">{[...game.log].reverse().map(e=><li key={e.id}><span>Vòng {e.round}</span>{e.message}</li>)}</ol></Sheet>;
+ if(panel?.type==='settings')return <Sheet key="settings" title="Luật & thông tin" onClose={close}><p className="sheet-copy">40 ô · 22 đất · 4 ga · 2 tiện ích. Người cuối cùng còn lại chiến thắng. Đổ đôi được thêm lượt; ba lần đôi liên tiếp vào tù. Đủ nhóm mới xây được 1–4 nhà rồi khách sạn, phải xây đều.</p><p className="sheet-copy">Ga tính thuê theo số ga sở hữu. Điện/nước đổ riêng để tính thuê. Nhà tù có trả phí, thử đôi hoặc thẻ ra tù. Bãi nghỉ không có thưởng. Thiếu tiền: bán công trình, thanh lý rồi mới phá sản.</p><p className="sheet-copy">Phiên bản gần Classic: chưa có đấu giá, thế chấp, giao dịch; thanh lý không phải thế chấp. Chơi local; tải lại trang sẽ bắt đầu lại.</p><button className="secondary-button danger" onClick={reset}>Kết thúc ván và tạo ván mới</button></Sheet>;
+ return null;
 }

@@ -1,3 +1,2 @@
-export const PLAYER_COLORS = ['#ee6b73','#59bafa','#73d7a0','#ffd46a'];
-export const PLAYER_TOKENS = ['🔴','🔵','🟢','🟡'];
+export { PLAYER_COLORS } from '../visual/tokens';
 export const money = (amount: number) => `${amount.toLocaleString('vi-VN')} Tr`;

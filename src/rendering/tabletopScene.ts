@@ -1,16 +1,17 @@
 import * as THREE from 'three';
-import { UI_COLORS,WORLD } from '../visual/tokens';
+import { GAMEPLAY_VISUAL,UI_COLORS,WORLD } from '../visual/tokens';
 import { ensureBoardFonts } from '../visual/fonts';
 import { BOARD } from '../game/data/board';
-import { PROPERTIES } from '../game/data/properties';
 import type { GameState } from '../game/types/domain';
 import { PLAYER_COLORS } from '../components/format';
-import { SQUARE_TILES, type CameraMode } from './squareBoard';
+import { BOARD_PLATFORM, SQUARE_TILES, type CameraMode } from './squareBoard';
 import { TabletopArt, boardPrinting } from './tabletopArt';
+import { formationSlot,movementDestination,occupants } from './gameplayVisuals';
+import { TILE_VISUAL_LAYOUT,tileOffset,tileRotation } from './tileVisualLayout';
 
 import { fitOverview, followAnchor, type ScreenRect } from './cameraFraming';
 
-interface PawnMotion { node: THREE.Group; from: THREE.Vector3; to: THREE.Vector3; start: number }
+interface PawnMotion { node: THREE.Group; ring:THREE.Group; identityDot:THREE.Group; colorRing:THREE.Mesh<THREE.RingGeometry,THREE.MeshBasicMaterial>; from: THREE.Vector3; to: THREE.Vector3; start: number }
 const cameraOffset = new THREE.Vector3(12, 14, 12);
 
 /** Isolated 3D presentation; game rules/state are supplied, never advanced here. */
@@ -26,11 +27,23 @@ export class TabletopScene {
   private pawns = new Map<string, PawnMotion>();
   private dice: THREE.Mesh[] = [];
   private diceAnchor = new THREE.Vector3();
-  private ring: THREE.Mesh;
+  private flags=new Map<string,{index:number;ownerIndex:number}>();
+  private flagParts:THREE.InstancedMesh[]=[];
+  private flagTransforms:THREE.Matrix4[]=[];
+  private bannerPart=0;
+  private buildings=new Map<string,{level:number;node:THREE.Group}>();
+  private ringGeometry=new THREE.RingGeometry(.16,.215,24);
+  private ringEdgeGeometry=new THREE.RingGeometry(.215,.232,24);
+  private dotGeometry=new THREE.CircleGeometry(1,12);
+  private dotEdgeMaterial=new THREE.MeshBasicMaterial({color:GAMEPLAY_VISUAL.ringEdge,side:THREE.DoubleSide,depthTest:false});
+  private ringEdgeMaterial=new THREE.MeshBasicMaterial({color:GAMEPLAY_VISUAL.ringEdge,transparent:true,opacity:.60,depthWrite:false,side:THREE.DoubleSide,forceSinglePass:true});
+  private selectedPropertyId:string|null=null;
+  private turnPulseStart=0;
+  private movementTarget:{actor:string;index:number}|null=null;
+  private arrivalStart=0;
   private target = new THREE.Vector3(0, .2, 0);
   private mode: CameraMode = 'overview';
   private game: GameState;
-  private propertySignature = '';
   private raycaster = new THREE.Raycaster();
   private frame = 0;
   private previousTime = 0;
@@ -43,7 +56,9 @@ export class TabletopScene {
   private overlays: ScreenRect[] = [];
   private overview = {anchor:{x:0,y:0},zoom:1,clear:true};
   private screenAnchor = new THREE.Vector2();
-  private destination: THREE.LineLoop;
+  private destination: THREE.Mesh<THREE.BufferGeometry,THREE.MeshBasicMaterial>;
+  private destinationEdge: THREE.Mesh<THREE.BufferGeometry,THREE.MeshBasicMaterial>;
+  private selection: THREE.Mesh<THREE.BufferGeometry,THREE.MeshBasicMaterial>;
 
   constructor(private host: HTMLElement, game: GameState, private immersive = false) {
     this.game = game;
@@ -80,39 +95,76 @@ export class TabletopScene {
       if(!['RAILROAD','UTILITY','JAIL'].includes(tile.type))continue;
       const point=SQUARE_TILES[tile.index];
       const model=this.art.landmark(tile.type as 'RAILROAD'|'UTILITY'|'JAIL',tile.propertyId==='cap-nuoc');
-      model.position.set(point.x+(point.side==='left'?.48:point.side==='right'?-.48:0),.17,point.z+(point.side==='top'?.50:point.side==='bottom'?-.50:0));
-      model.scale.setScalar(.66);landmarks.add(model);
+      const placement=tileOffset(point,.10,-1.13);
+      model.position.set(placement.x,.17,placement.z);model.rotation.y=tileRotation(point);
+      model.scale.setScalar(.55);landmarks.add(model);
     }
     this.scene.add(landmarks);this.batchScenery(landmarks);
     const diceMaterials = this.art.diceMaterials();
     for (let i = 0; i < 2; i++) {
       const die = new THREE.Mesh(new THREE.BoxGeometry(.34, .34, .34), diceMaterials); this.scene.add(die); this.dice.push(die);
     }
-    this.ring = new THREE.Mesh(new THREE.RingGeometry(.29, .37, 24), new THREE.MeshBasicMaterial({ color: WORLD.focus.active, side: THREE.DoubleSide }));
-    this.ring.rotation.x = -Math.PI / 2; this.scene.add(this.ring);
-    this.destination = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-.5,0,-.5),new THREE.Vector3(.5,0,-.5),new THREE.Vector3(.5,0,.5),new THREE.Vector3(-.5,0,.5)]),new THREE.LineBasicMaterial({color:WORLD.focus.destination}));
-    this.scene.add(this.destination);
+    this.destinationEdge=this.tileMarker(WORLD.house.flagPole,.085,true);
+    this.destination=this.tileMarker(GAMEPLAY_VISUAL.destination,.055,true);
+    this.selection=this.tileMarker(GAMEPLAY_VISUAL.selection,.035,false);this.selection.material.opacity=.78;
+    this.scene.add(this.destinationEdge,this.destination,this.selection);
+    const template=this.art.ownerFlag();template.banner.material.color.set(0xffffff);template.group.updateMatrixWorld(true);
+    const propertyCount=BOARD.filter(t=>t.propertyId).length;
+    for(const [i,child] of template.group.children.entries()){
+      const part=child as THREE.Mesh;
+      const batch=new THREE.InstancedMesh(part.geometry,part.material,propertyCount);batch.frustumCulled=false;
+      const hidden=new THREE.Matrix4().makeScale(0,0,0);
+      for(let index=0;index<propertyCount;index++)batch.setMatrixAt(index,hidden);
+      if(child===template.banner){this.bannerPart=i;for(let index=0;index<propertyCount;index++)batch.setColorAt(index,new THREE.Color(WORLD.tile.paper));}
+      this.flagParts.push(batch);this.flagTransforms.push(part.matrix.clone());this.scene.add(batch);
+    }
+    for(const tile of BOARD){
+      if(!tile.propertyId)continue;
+      this.flags.set(tile.propertyId,{index:this.flags.size,ownerIndex:-2});
+    }
     this.camera.position.copy(cameraOffset).add(this.target); this.camera.lookAt(this.target);
     this.resize(host.clientWidth, host.clientHeight);
     this.setGame(game);
   }
 
+  private tileMarker(color:string,thickness:number,corners:boolean) {
+    const vertices:number[]=[],indices:number[]=[];
+    const rect=(x:number,z:number,w:number,d:number)=>{
+      const offset=vertices.length/3;
+      vertices.push(x,0,z,x+w,0,z,x+w,0,z+d,x,0,z+d);
+      indices.push(offset,offset+2,offset+1,offset,offset+3,offset+2);
+    };
+    if(corners){for(const x of [-1,1])for(const z of [-1,1]){
+      rect(x<0?-.5:.5-.24,z<0?-.5:.5-thickness,.24,thickness);
+      rect(x<0?-.5:.5-thickness,z<0?-.5:.5-.24,thickness,.24);
+    }}else{
+      rect(-.5,-.5,1,thickness);rect(-.5,.5-thickness,1,thickness);
+      rect(-.5,-.5,thickness,1);rect(.5-thickness,-.5,thickness,1);
+    }
+    const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.setIndex(indices);
+    const marker=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color,transparent:true,opacity:1,depthWrite:false,side:THREE.DoubleSide,forceSinglePass:true}));
+    marker.visible=false;marker.renderOrder=2;return marker;
+  }
+
+  setSelection(id:string|null){if(this.selectedPropertyId!==id){this.selectedPropertyId=id;this.request();}}
+
   private environment() {
-    const a = this.art, scene = this.scene;
+    const a = this.art, scene = this.scene, platform = BOARD_PLATFORM;
     a.box(scene, 0, -1.27, 0, 100, .15, 100, UI_COLORS['game-bg']);
-    a.box(scene, 0, -.92, 0, 15.3, .68, 13.3, WORLD.environment.stone);
-    a.box(scene, 0, -.56, 0, 15.5, .14, 13.5, WORLD.environment.grassRim);
-    a.box(scene, 0, -.33, 0, 12.55, .40, 10.6, WORLD.environment.stoneTop);
-    a.box(scene, 0, -.08, 0, 12.4, .13, 10.45, WORLD.environment.rim);
-    a.box(scene, 0, .05, 0, 8.95, .15, 7.95, WORLD.environment.grass);
+    a.box(scene, 0, -.92, 0, platform.islandSize, .68, platform.islandSize, WORLD.environment.stone);
+    a.box(scene, 0, -.56, 0, platform.islandRimSize, .14, platform.islandRimSize, WORLD.environment.grassRim);
+    a.box(scene, 0, -.33, 0, platform.plinthSize, .40, platform.plinthSize, WORLD.environment.stoneTop);
+    a.box(scene, 0, -.08, 0, platform.rimSize, .18, platform.rimSize, WORLD.environment.rim);
+    a.box(scene, 0, .05, 0, platform.courtyardSize, .15, platform.courtyardSize, WORLD.environment.grass);
     // Paved courtyard surrounds the open grass; no title/controls in the scene.
     for (const side of [-1, 1]) {
       a.box(scene, side * 3.60, .145, 0, .36, .025, 7.6, WORLD.environment.path);
       a.box(scene, 0, .145, side * 3.60, 7.6, .025, .36, WORLD.environment.path);
       // Block joints on the raised island, rather than costly shadow maps.
       for (let i = -6; i <= 6; i++) {
-        a.box(scene, i, -.89, side * 7.66, .025, .58, .015, WORLD.environment.joint);
-        a.box(scene, side * 7.66, -.89, i, .015, .58, .025, WORLD.environment.joint);
+        const face = side * (platform.islandSize / 2 + .007);
+        a.box(scene, i, -.89, face, .025, .58, .015, WORLD.environment.joint);
+        a.box(scene, face, -.89, i, .015, .58, .025, WORLD.environment.joint);
       }
     }
     a.cylinder(scene, 0, .19, 0, 1.14, .10, WORLD.environment.fountain);
@@ -154,7 +206,8 @@ export class TabletopScene {
     for (const meshes of batches.values()) {
       if (meshes.length < 2) continue;
       const batch = new THREE.InstancedMesh(meshes[0].geometry, meshes[0].material, meshes.length);
-      meshes.forEach((mesh, index) => { batch.setMatrixAt(index, mesh.matrixWorld); mesh.removeFromParent(); });
+      const inverse=new THREE.Matrix4().copy(root.matrixWorld).invert();
+      meshes.forEach((mesh, index) => { batch.setMatrixAt(index, new THREE.Matrix4().multiplyMatrices(inverse,mesh.matrixWorld)); mesh.removeFromParent(); });
       root.add(batch);
     }
   }
@@ -184,46 +237,69 @@ export class TabletopScene {
   }
   setGame(game: GameState) {
     const wasRolling = this.game.phase === 'ROLLING';
+    const previous=this.game;
     this.game = game;
-    const signature = PROPERTIES.map(p => `${game.properties[p.id].ownerId}:${game.properties[p.id].level}`).join('|');
-    if (signature !== this.propertySignature) {
-      this.propertySignature = signature;
-      // Models reuse the art pool. Their shared GPU resources live until scene disposal.
-      this.houses.traverse(node=>{if(node instanceof THREE.InstancedMesh)node.dispose();});this.houses.clear();
-      for (const tile of BOARD) {
-        if (!tile.propertyId) continue;
-        const state = game.properties[tile.propertyId];
-        if (!state.ownerId) continue;
-        const point = SQUARE_TILES[tile.index];
-        const index = game.players.findIndex(p => p.id === state.ownerId);
-        this.art.box(this.houses, point.x, .172, point.z + point.depth/2-.07, point.width-.15, .032, .12, PLAYER_COLORS[index]);
-        // A dark outline keeps light player colors readable independently of the group strip.
-        this.art.box(this.houses, point.x, .159, point.z + point.depth/2-.07, point.width-.10, .022, .16, WORLD.focus.active);
-        if (state.level) {
-          const house = this.art.house(state.level, PLAYER_COLORS[index]);
-          // Houses occupy the inner lip, leaving printed names visible.
-          house.position.set(point.x + (point.side === 'left' ? .4 : point.side === 'right' ? -.4 : 0), .18,
-            point.z + (point.side === 'top' ? .4 : point.side === 'bottom' ? -.4 : 0));
-          house.scale.setScalar(.80); this.houses.add(house);
-        }
+    if(previous.currentPlayerId!==game.currentPlayerId||previous.phase!==game.phase&&game.phase==='TURN_START')this.turnPulseStart=performance.now();
+    const destination=movementDestination(game);
+    if(destination!==null){
+      this.movementTarget={actor:game.currentPlayerId,index:destination};this.arrivalStart=0;
+    }else if(this.movementTarget){
+      const actor=game.players.find(p=>p.id===this.movementTarget!.actor);
+      if(previous.phase==='MOVING'&&actor?.position===this.movementTarget.index&&game.phase==='RESOLVING_TILE')this.arrivalStart=performance.now();
+      else if(actor?.id!==game.currentPlayerId||actor.isBankrupt||actor.position!==this.movementTarget.index||['ROLLING','TURN_START','GAME_START','GAME_OVER','JAIL_DECISION'].includes(game.phase)){
+        this.movementTarget=null;this.arrivalStart=0;
       }
-      this.batchScenery(this.houses);
     }
+    for(const tile of BOARD){
+      if(!tile.propertyId)continue;
+      const state=game.properties[tile.propertyId],flag=this.flags.get(tile.propertyId)!;
+      const ownerIndex=game.players.findIndex(p=>p.id===state.ownerId&&!p.isBankrupt);
+      if(flag.ownerIndex!==ownerIndex){
+        flag.ownerIndex=ownerIndex;
+        const point=SQUARE_TILES[tile.index],pos=tileOffset(point,TILE_VISUAL_LAYOUT.flag.x,TILE_VISUAL_LAYOUT.flag.z);
+        const matrix=new THREE.Matrix4().compose(new THREE.Vector3(pos.x,.18,pos.z),new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),tileRotation(point)),new THREE.Vector3(1,1,1));
+        this.flagParts.forEach((part,i)=>{
+          part.setMatrixAt(flag.index,ownerIndex<0?new THREE.Matrix4().makeScale(0,0,0):new THREE.Matrix4().multiplyMatrices(matrix,this.flagTransforms[i]));part.instanceMatrix.needsUpdate=true;
+        });
+        const banners=this.flagParts[this.bannerPart];banners.setColorAt(flag.index,new THREE.Color(ownerIndex<0?WORLD.tile.paper:PLAYER_COLORS[ownerIndex]));banners.instanceColor!.needsUpdate=true;
+      }
+      const level=ownerIndex>=0?state.level:0,existing=this.buildings.get(tile.propertyId);
+      if(existing?.level===level||!existing&&!level)continue;
+      if(existing){existing.node.traverse(node=>{if(node instanceof THREE.InstancedMesh)node.dispose();});existing.node.removeFromParent();this.buildings.delete(tile.propertyId);}
+      if(level){
+        const point=SQUARE_TILES[tile.index],pos=tileOffset(point,TILE_VISUAL_LAYOUT.building.x,TILE_VISUAL_LAYOUT.building.z);
+        const node=this.art.house(level);node.position.set(pos.x,.18,pos.z);node.rotation.y=tileRotation(point);node.scale.setScalar(.86);
+        this.houses.add(node);this.batchScenery(node);this.buildings.set(tile.propertyId,{level,node});
+      }
+    }
+    const hasOwner=[...this.flags.values()].some(f=>f.ownerIndex>=0);
+    for(const part of this.flagParts)part.visible=hasOwner;
     for (const [index, player] of game.players.entries()) {
       const point = SQUARE_TILES[player.position];
-      const target = new THREE.Vector3(point.x + (index % 2 ? .09 : -.09), .18, point.z + (index < 2 ? -.08 : .10));
+      const peers=occupants(game,player.position),slot=player.isBankrupt?{x:0,z:0}:formationSlot(peers.length,peers.indexOf(player.id));
+      const outward=point.corner?TILE_VISUAL_LAYOUT.cornerPawnOutward:peers.length>2?TILE_VISUAL_LAYOUT.crowdedPawnOutward:TILE_VISUAL_LAYOUT.pawnOutward;
+      const pos=tileOffset(point,slot.x,slot.z+outward);
+      const target = new THREE.Vector3(pos.x, .18, pos.z);
       let motion = this.pawns.get(player.id);
       if (!motion) {
         const node = this.art.pawn(PLAYER_COLORS[index], index); node.scale.setScalar(.75); node.position.copy(target); this.scene.add(node);
-        motion = { node, from: target.clone(), to: target, start: 0 }; this.pawns.set(player.id, motion);
+        const ring=new THREE.Group();
+        const colorRing=new THREE.Mesh(this.ringGeometry,new THREE.MeshBasicMaterial({color:PLAYER_COLORS[index],transparent:true,opacity:GAMEPLAY_VISUAL.inactiveRingOpacity,depthWrite:false,side:THREE.DoubleSide,forceSinglePass:true}));
+        const edge=new THREE.Mesh(this.ringEdgeGeometry,this.ringEdgeMaterial);colorRing.rotation.x=edge.rotation.x=-Math.PI/2;ring.add(colorRing,edge);this.scene.add(ring);
+        const identityDot=new THREE.Group(),edgeDot=new THREE.Mesh(this.dotGeometry,this.dotEdgeMaterial);
+        const centerDot=new THREE.Mesh(this.dotGeometry,new THREE.MeshBasicMaterial({color:PLAYER_COLORS[index],side:THREE.DoubleSide,depthTest:false}));
+        centerDot.scale.setScalar(.76);centerDot.position.z=.002;edgeDot.renderOrder=3;centerDot.renderOrder=4;
+        identityDot.add(edgeDot,centerDot);identityDot.visible=false;this.scene.add(identityDot);
+        motion = { node,ring,identityDot,colorRing, from: target.clone(), to: target, start: 0 }; this.pawns.set(player.id, motion);
       }
-      motion.node.visible = !player.isBankrupt;
+      motion.node.visible = motion.ring.visible = !player.isBankrupt;
       if(player.jailed && motion.to.distanceTo(target)>2){motion.node.position.copy(target);motion.from.copy(target);motion.to=target;motion.start=0;}
       if (!motion.to.equals(target)) {
         motion.from.copy(motion.node.position); motion.to = target; motion.start = performance.now();
         motion.node.rotation.y = Math.atan2(target.x - motion.from.x, target.z - motion.from.z);
       }
     }
+    for(const [id,motion] of this.pawns)if(!game.players.some(p=>p.id===id)){motion.node.removeFromParent();motion.ring.removeFromParent();motion.identityDot.traverse(n=>{if(n instanceof THREE.Mesh&&n.material!==this.dotEdgeMaterial)(n.material as THREE.Material).dispose();});motion.identityDot.removeFromParent();motion.colorRing.material.dispose();motion.node.traverse(n=>{if(n instanceof THREE.Mesh&&n.geometry.type==='ConeGeometry')n.geometry.dispose();});this.pawns.delete(id);}
     if (game.phase === 'ROLLING' && !wasRolling) {
       const active = this.pawns.get(game.currentPlayerId);
       if (active) this.diceAnchor.copy(active.node.position);
@@ -243,11 +319,17 @@ export class TabletopScene {
     const dt = this.previousTime ? Math.min(.064, (now - this.previousTime) / 1000) : 1 / 60; this.previousTime = now;
     let animating = false;
     for (const motion of this.pawns.values()) {
-      const t = this.reduced || !motion.start ? 1 : Math.min(1, (now - motion.start) / 420);
+      const t = this.reduced || !motion.start ? 1 : Math.min(1, (now - motion.start) / GAMEPLAY_VISUAL.stepMs);
       const smooth = t * t * (3 - 2 * t);
       motion.node.position.lerpVectors(motion.from, motion.to, smooth);
-      motion.node.position.y += Math.sin(t * Math.PI) * .11;
+      motion.node.position.y += Math.sin(t * Math.PI) * GAMEPLAY_VISUAL.stepBounce;
       if (t < 1) animating = true;
+      const active=motion===this.pawns.get(this.game.currentPlayerId);
+      const pulse=this.reduced?1:Math.min(1,(now-this.turnPulseStart)/GAMEPLAY_VISUAL.turnPulseMs);
+      motion.ring.position.copy(motion.node.position).setY(.17);
+      motion.ring.scale.setScalar(active?1.12+Math.sin(pulse*Math.PI)*.16:1);
+      motion.colorRing.material.opacity=active?GAMEPLAY_VISUAL.activeRingOpacity:GAMEPLAY_VISUAL.inactiveRingOpacity;
+      if(active&&pulse<1)animating=true;
     }
     const active = this.pawns.get(this.game.currentPlayerId);
     const desired = this.mode === 'follow' && active ? active.node.position.clone().setY(.38) : new THREE.Vector3(0, .2, 0);
@@ -264,8 +346,18 @@ export class TabletopScene {
       else { this.target.copy(desired); this.camera.zoom = desiredZoom; }
     }
     this.camera.position.copy(cameraOffset).add(this.target); this.camera.lookAt(this.target); this.camera.updateProjectionMatrix();
+    // Crowded overview gets identity dots; follow assists an active pawn behind the group.
+    for(const player of this.game.players){
+      const motion=this.pawns.get(player.id)!;
+      const peers=occupants(this.game,player.position);
+      const behind=peers.some(id=>{const other=this.pawns.get(id)!.node.position;return other.x+other.z>motion.node.position.x+motion.node.position.z+.15;});
+      motion.identityDot.visible=!player.isBankrupt&&peers.length>1&&(this.mode==='overview'||player.id===this.game.currentPlayerId&&behind);
+      if(motion.identityDot.visible){
+        const radius=Math.min(.16,Math.max(.055,2.2*(this.camera.top-this.camera.bottom)/(this.height*this.camera.zoom)));
+        motion.identityDot.position.copy(motion.node.position).add(new THREE.Vector3(0,.82,0));motion.identityDot.scale.setScalar(radius);motion.identityDot.lookAt(this.camera.position);
+      }
+    }
     if (active) {
-      this.ring.position.copy(active.node.position).setY(.17);
       const rolling = this.game.phase === 'ROLLING';
       for (const [i, die] of this.dice.entries()) {
         die.visible = this.mode === 'follow' && (rolling || this.game.phase === 'MOVING');
@@ -278,9 +370,23 @@ export class TabletopScene {
         }
       }
     }
-    const destination=SQUARE_TILES[this.game.players.find(p=>p.id===this.game.currentPlayerId)!.position];
-    this.destination.position.set(destination.x,.168,destination.z);this.destination.scale.set(destination.width-.02,1,destination.depth-.02);
-    this.destination.visible=['RESOLVING_TILE','PROPERTY_DECISION','UTILITY_ROLL','RENT','EVENT'].includes(this.game.phase);
+    const destinationIndex=movementDestination(this.game);
+    const arrival=this.arrivalStart?(now-this.arrivalStart)/GAMEPLAY_VISUAL.arrivalMs:1;
+    const targetIndex=destinationIndex??(arrival<1?this.movementTarget?.index:null);
+    this.destination.visible=targetIndex!=null;
+    this.destinationEdge.visible=this.destination.visible;
+    if(targetIndex!=null){
+      const point=SQUARE_TILES[targetIndex];
+      this.destination.position.set(point.x,.177,point.z);this.destination.scale.set(point.width-.045,1,point.depth-.045);
+      if(destinationIndex===null&&!this.reduced){const pulse=1+Math.sin(arrival*Math.PI)*.035;this.destination.scale.x*=pulse;this.destination.scale.z*=pulse;}
+      this.destination.material.opacity=destinationIndex!==null||arrival<.2?1:Math.max(0,(1-arrival)/.8);
+      this.destinationEdge.position.copy(this.destination.position).setY(.174);this.destinationEdge.scale.copy(this.destination.scale);this.destinationEdge.material.opacity=this.destination.material.opacity*.82;
+      if(destinationIndex===null&&arrival<1&&!this.reduced)animating=true;
+      if(this.reduced&&destinationIndex===null)this.destination.visible=this.destinationEdge.visible=false;
+    }
+    const selectedTile=BOARD.find(t=>t.propertyId===this.selectedPropertyId);
+    this.selection.visible=!!selectedTile&&!(this.destination.visible&&targetIndex===selectedTile.index);
+    if(selectedTile){const point=SQUARE_TILES[selectedTile.index];this.selection.position.set(point.x,.172,point.z);this.selection.scale.set(point.width-.055,1,point.depth-.055);}
     this.renderer.render(this.scene, this.camera);
     this.renderCount++;
     this.host.dataset.cameraZoom = this.camera.zoom.toFixed(3);
@@ -293,6 +399,12 @@ export class TabletopScene {
     this.host.dataset.boardScreenPolygon = JSON.stringify(corners.map(v => ({ x: (v.x + 1) * this.width / 2, y: (1 - v.y) * this.height / 2 })));
     this.host.dataset.overviewClear=String(this.overview.clear);
     this.host.dataset.destinationHighlight=String(this.destination.visible);
+    this.host.dataset.destinationTile=targetIndex==null?'':String(targetIndex);
+    this.host.dataset.selectedProperty=this.selectedPropertyId??'';
+    this.host.dataset.ownerFlags=JSON.stringify([...this.flags].filter(([,f])=>f.ownerIndex>=0).map(([id,f])=>{const color=new THREE.Color();this.flagParts[this.bannerPart].getColorAt(f.index,color);return {id,color:'#'+color.getHexString()};}));
+    this.host.dataset.buildingLevels=JSON.stringify([...this.buildings].map(([id,b])=>({id,level:b.level})));
+    this.host.dataset.pawnSlots=JSON.stringify([...this.pawns].filter(([,m])=>m.node.visible).map(([id,m])=>{const p=m.node.position.clone().setY(.55).project(this.camera);return {id,x:m.to.x,z:m.to.z,screenX:(p.x+1)*this.width/2,screenY:(1-p.y)*this.height/2};}));
+    this.host.dataset.resourceMemory=JSON.stringify(this.renderer.info.memory);
     this.host.dataset.tileScreens=JSON.stringify(SQUARE_TILES.map(p=>{const v=new THREE.Vector3(p.x,.18,p.z).project(this.camera);return {index:p.index,x:(v.x+1)*this.width/2,y:(1-v.y)*this.height/2};}));
     if(active){const v=active.node.position.clone().setY(.6).project(this.camera);this.host.dataset.tokenScreen=JSON.stringify({x:(v.x+1)*this.width/2,y:(1-v.y)*this.height/2});}
     const point = SQUARE_TILES[0], projected = new THREE.Vector3(point.x, .16, point.z).project(this.camera);
@@ -315,7 +427,8 @@ export class TabletopScene {
     for (const geometry of geometries) geometry.dispose();
     for (const texture of textures) texture.dispose();
     for (const material of materials) material.dispose();
-    this.destination.geometry.dispose();(this.destination.material as THREE.Material).dispose();
+    this.ringGeometry.dispose();this.ringEdgeGeometry.dispose();this.ringEdgeMaterial.dispose();
+    this.dotGeometry.dispose();this.dotEdgeMaterial.dispose();
     this.art.dispose();this.renderer.dispose();
     if (!this.renderer.getContext().isContextLost()) this.renderer.forceContextLoss();
     this.renderer.domElement.remove(); this.scene.clear();

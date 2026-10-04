@@ -56,7 +56,9 @@ try {
  }
  assert.ok(ends>=24);assert.ok(buys>0);assert.ok(events>0);assert.ok(rents>0);
  console.log(JSON.stringify({checkpoint:'after gameplay loop',ends,rolls,buys,events,rents,phase:await page.locator('.play-board').getAttribute('data-game-phase')}));
- await page.waitForFunction(()=>document.querySelector('.play-board')?.dataset.gamePhase==='WAITING_FOR_ROLL'||document.querySelector('.play-board')?.dataset.gamePhase==='JAIL_DECISION');
+ // Paying the last required rent can stop this loop in OPTIONAL_ACTIONS.
+ // That phase already permits inspection; it needs a user action to end the turn.
+ await page.waitForFunction(()=>['WAITING_FOR_ROLL','OPTIONAL_ACTIONS','JAIL_DECISION'].includes(document.querySelector('.play-board')?.dataset.gamePhase));
  // Navigation is intentionally unavailable during a mandatory jail decision.
  // Finish that real UI action before inspecting the log at the end of the run.
  if(await page.locator('.play-board').getAttribute('data-game-phase')==='JAIL_DECISION'){

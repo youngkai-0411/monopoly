@@ -1,0 +1,1575 @@
+# TASK — IMPLEMENT COMPLETE VISUAL GAMEPLAY SYSTEM V2
+## Tỷ Phú Việt Nam
+
+Bạn đang tiếp tục phát triển Web Board Game **Tỷ Phú Việt Nam**.
+
+Đây là một **ONE-SHOT IMPLEMENTATION TASK**.
+
+Bạn phải hoàn thành toàn bộ Visual Gameplay System V2 trong một lần làm việc:
+
+**Audit Current Implementation → Implement P0 → Validate/Fix → Implement P1 → Validate/Fix → Implement P2 → Full Regression Test → Final Visual Review**
+
+KHÔNG dừng lại để hỏi confirmation giữa các phase trừ khi gặp blocker kỹ thuật thực sự khiến không thể tiếp tục.
+
+---
+
+# 1. MỤC TIÊU
+
+Visual direction hiện tại về cơ bản đã tốt:
+
+- Low-poly.
+- Isometric.
+- Pastel.
+- Cream / Teal / Gold.
+- Vietnamese travel/property board game.
+- Mobile Landscape first.
+
+Vấn đề chính KHÔNG phải game thiếu màu.
+
+Vấn đề là:
+
+> Gameplay information chưa có visual hierarchy đủ rõ.
+
+Người chơi cần nhìn Board và nhanh chóng hiểu:
+
+1. Property thuộc Group nào?
+2. Property thuộc Player nào?
+3. Property đã phát triển tới đâu?
+4. Player đang ở đâu?
+5. Ai đang chơi?
+6. Property nào đang được xem?
+7. Destination hiện tại ở đâu?
+8. Game đang muốn người chơi chú ý vào đâu?
+
+Mục tiêu:
+
+> **Make the board more informative, not simply more colorful.**
+
+---
+
+# 2. NGUYÊN TẮC NỀN TẢNG
+
+Một gameplay concept quan trọng phải có một visual channel riêng.
+
+Target mapping:
+
+| Gameplay Concept | Visual Channel |
+|---|---|
+| Environment | Low-poly pastel world |
+| Property | Neutral cream tile |
+| Property Group | Colored Group Band |
+| Property Owner | 3D Player Flag |
+| Development Level | 3D Building |
+| Player Position | Pawn/Token |
+| Player Identity | Player Color |
+| Current Player | Player-colored Ground Ring |
+| Multiple Players | Token Formation |
+| Selected Property | Soft World-space Outline |
+| Destination | Gold Destination Marker |
+| Movement | Token Animation |
+| Special Tile | Icon / Unique Marking |
+| Primary UI Action | Gold CTA |
+
+Do not let multiple concepts compete through the same visual signal.
+
+---
+
+# 3. GIỮ NGUYÊN ART DIRECTION
+
+Do NOT redesign:
+
+- overall board;
+- environment;
+- camera system unless required for readability;
+- low-poly style;
+- general pastel direction;
+- cream property tiles;
+- teal architectural direction;
+- UI design system;
+- gameplay rules;
+- economy;
+- board data;
+- property data;
+- Game Engine.
+
+Do NOT turn the game into:
+
+- neon;
+- cyberpunk;
+- casino;
+- realistic city;
+- Monopoly clone;
+- dark gaming UI.
+
+---
+
+# 4. CURRENT KNOWN PROBLEMS
+
+Current implementation/audit identified:
+
+### Ownership
+
+Ownership currently uses a Player Color strip/mesh.
+
+Problem:
+
+- may visually compete with Group Band;
+- orientation/placement is not always ideal;
+- can overlap/conflict with Group identity.
+
+### Player Tokens
+
+Current dark/black ground rings have too much visual weight at medium distance while tokens become difficult to identify at Overview distance.
+
+### Player Color Collision
+
+Potential collisions exist between:
+
+- Mint Player vs Grass.
+- Yellow Player vs Yellow Group / Gold Focus.
+- Blue Player vs Blue Groups / Teal architecture.
+- Red Player vs Red Group / danger semantics.
+
+### Selected Property
+
+UI can show one selected Property while the 3D Board does not provide an equivalent world-space selection cue.
+
+### Destination
+
+Destination cue is currently too weak, particularly in Overview.
+
+### Buildings
+
+Player Color is involved too heavily in building ownership representation.
+
+At higher development level the ownership signal can become inconsistent.
+
+### Multiple Players
+
+Players occupying the same tile require a deterministic visual formation rather than overlapping.
+
+---
+
+# 5. CORE RULE
+
+Do NOT solve these problems by simply increasing saturation everywhere.
+
+Use:
+
+> COLOR + SHAPE + POSITION + MOTION + SCALE
+
+together.
+
+Color must not carry every piece of gameplay information.
+
+---
+
+# P0 — GAMEPLAY READABILITY
+
+# 6. PROPERTY GROUP
+
+Keep Property Group representation as:
+
+> **GROUP COLOR BAND**
+
+Example:
+
+```text
+┌───────────────────┐
+│                   │
+│     QUẢNG NGÃI    │
+│       300 Tr      │
+│                   │
+├───────────────────┤
+│████ GROUP COLOR ██│
+└───────────────────┘
+```
+
+Rules:
+
+- Same semantic position/orientation.
+- Always visible when reasonable.
+- Never recolored according to Owner.
+- Never recolored according to Building Level.
+- Never recolored according to Selected state.
+
+Property tile surface stays neutral.
+
+---
+
+# 7. REMOVE CURRENT OWNER STRIP
+
+Remove/deprecate the current ownership strip representation where ownership is shown as another colored strip on the Property.
+
+Do not let Owner compete with Group Band.
+
+Replace it with:
+
+> **3D OWNER FLAG / MARKER**
+
+---
+
+# 8. 3D OWNER FLAG
+
+Every owned Property receives one small 3D flag/marker.
+
+Concept:
+
+```text
+        ▰
+        │
+┌───────│───────────┐
+│                   │
+│     QUẢNG NGÃI    │
+│       300 Tr      │
+├───────────────────┤
+│████ GROUP COLOR ██│
+└───────────────────┘
+```
+
+Flag color = Player Color.
+
+Player 1 / Nghĩa:
+`#EE6B73`
+
+Player 2 / Kai:
+`#59BAFA`
+
+Player 3 / An:
+`#73D7A0`
+
+Player 4 / Linh:
+`#FFD46A`
+
+Use existing centralized Player Color data/tokens where possible.
+
+Do NOT duplicate HEX throughout renderer code.
+
+---
+
+# 9. FLAG DESIGN
+
+Flag must:
+
+- fit low-poly art direction;
+- be simple;
+- remain recognizable at Medium camera;
+- remain detectable at Overview when possible;
+- not cover Property text;
+- not overlap Group Band;
+- not overlap Building;
+- not collide with Player Token;
+- rotate/place consistently according to board side if required.
+
+Prefer simple geometry.
+
+Do NOT use high-poly decorative flags.
+
+---
+
+# 10. UNOWNED PROPERTY
+
+Unowned Property:
+
+> No flag.
+
+This must become an immediate visual distinction.
+
+No additional “UNOWNED” text is required on the Board.
+
+---
+
+# 11. BUILDING DOES NOT REPRESENT OWNER
+
+Building answers:
+
+> How developed is this Property?
+
+Flag answers:
+
+> Who owns this Property?
+
+Group Band answers:
+
+> Which Property Group is this?
+
+Do not merge these responsibilities.
+
+---
+
+# 12. PLAYER GROUND RING
+
+Replace/rework the current universal dark/black player ground ring.
+
+New ring:
+
+> Player-colored Ground Ring.
+
+Requirements:
+
+- uses Player Color;
+- translucent;
+- soft;
+- smaller/lighter than current heavy ring;
+- visible against tile/environment;
+- does not obscure Property content.
+
+---
+
+# 13. CURRENT PLAYER
+
+Current Player should have a stronger version of their Player Ring.
+
+Possible treatment:
+
+- slightly higher opacity;
+- subtle outer halo;
+- one-time pulse at turn start.
+
+Do NOT use continuous distracting animation.
+
+Inactive Player rings remain visible but quieter.
+
+---
+
+# 14. MINT PLAYER CONTRAST
+
+Player 3 Mint may collide with Grass.
+
+Do NOT immediately change Player 3's identity color.
+
+Instead improve readability through:
+
+- darker edge;
+- subtle shadow;
+- ring geometry;
+- outline;
+- physical separation.
+
+Only alter the Player Color itself if these techniques demonstrably fail.
+
+---
+
+# 15. MULTIPLE PLAYERS ON SAME TILE
+
+Players must NOT occupy exactly the same world-space position.
+
+Implement deterministic slot formation.
+
+## 1 Player
+
+Center.
+
+## 2 Players
+
+```text
+●     ●
+```
+
+## 3 Players
+
+```text
+    ●
+
+●       ●
+```
+
+## 4 Players
+
+```text
+●       ●
+
+●       ●
+```
+
+Exact coordinates should respect tile geometry.
+
+---
+
+# 16. MULTI-PLAYER FORMATION REQUIREMENTS
+
+Formation must:
+
+- remain inside/near the tile;
+- avoid Building when possible;
+- avoid Owner Flag;
+- avoid excessive overlap;
+- be deterministic;
+- remain stable between renders;
+- animate smoothly when formation changes.
+
+Current Player may be slightly biased toward visual prominence, but do not dramatically scale them.
+
+---
+
+# 17. SELECTED PROPERTY
+
+Implement a world-space visual cue for:
+
+> Property currently selected/inspected by the player.
+
+Use:
+
+> Soft Outline / Edge Highlight.
+
+Direction:
+
+- warm cream / subtle gold;
+- thin;
+- static;
+- low intensity;
+- slight elevation only if appropriate.
+
+Selected is informational.
+
+It must NOT look like Destination.
+
+---
+
+# 18. UI ↔ WORLD SELECTION SYNC
+
+Critical requirement:
+
+If UI says:
+
+> NGHỆ AN
+
+the world-space highlight must be on:
+
+> NGHỆ AN.
+
+There must be one source of truth for selected Property ID.
+
+Do not allow Context Card and Board selection to drift apart.
+
+---
+
+# 19. DESTINATION
+
+Destination represents:
+
+> Where the active Player is currently going.
+
+It must be visually stronger than Selected Property.
+
+Preferred direction:
+
+> Gold Corner Markers / Gold Target Outline.
+
+Concept:
+
+```text
+┌─                 ─┐
+
+      ĐÀ NẴNG
+
+└─                 ─┘
+```
+
+Gold uses the existing gameplay focus/action family.
+
+---
+
+# 20. DESTINATION ANIMATION
+
+Destination may use a subtle breathing animation:
+
+```text
+opacity:
+0.65 → 1 → 0.65
+```
+
+Slow and subtle.
+
+No:
+
+- flashing;
+- neon glow;
+- aggressive pulse.
+
+---
+
+# 21. CURRENT VS SELECTED VS DESTINATION
+
+These must remain distinct:
+
+### CURRENT
+
+Pawn + Player Ring.
+
+### SELECTED
+
+Soft static outline.
+
+### DESTINATION
+
+Gold target marker / stronger focus.
+
+Do not reuse one effect for all three.
+
+---
+
+# 22. MOVEMENT FLOW
+
+Target flow:
+
+```text
+ROLL
+ ↓
+DICE RESULT
+ ↓
+DESTINATION IDENTIFIED
+ ↓
+DESTINATION MARKER APPEARS
+ ↓
+CAMERA FOLLOW
+ ↓
+TOKEN MOVES TILE-BY-TILE
+ ↓
+ARRIVAL
+ ↓
+DESTINATION FEEDBACK
+ ↓
+DESTINATION MARKER FADES
+ ↓
+SELECTED / RESOLVE STATE
+```
+
+Gameplay state remains source of truth.
+
+Animations must never determine logical Player position.
+
+---
+
+# P1 — VISUAL CONSISTENCY
+
+# 23. BUILDING LEVELS
+
+Development must primarily be represented through geometry/silhouette.
+
+Target conceptual hierarchy:
+
+### Lv.0
+
+No Building.
+
+### Lv.1
+
+Small house.
+
+### Lv.2
+
+Larger house / more developed footprint.
+
+### Lv.3
+
+Townhouse / small commercial.
+
+### Lv.4
+
+Mid-rise.
+
+### Lv.5
+
+Premium building / landmark-like structure.
+
+Reuse current assets/models where reasonable.
+
+Do NOT unnecessarily rebuild all building geometry if existing models already communicate progression.
+
+---
+
+# 24. BUILDING PALETTE
+
+Move toward a shared architectural palette.
+
+Suggested direction:
+
+```text
+Walls
+→ Cream / Stone
+
+Roofs
+→ Teal / Warm Terracotta
+
+Windows
+→ Dark Teal
+
+Wood
+→ Warm Brown
+
+Accent
+→ Muted Gold
+```
+
+These are semantic directions, not mandatory exact HEX replacements.
+
+Audit current values before changing them.
+
+---
+
+# 25. PLAYER COLOR ON BUILDINGS
+
+Do not use full Player Color recoloring as the primary ownership mechanism.
+
+Ownership is now handled by:
+
+> Owner Flag.
+
+A small Player Color architectural accent is allowed if it improves visual richness, but it must remain secondary.
+
+Do not create inconsistency where Lv.1–4 communicate Owner one way and Lv.5 suddenly loses that meaning.
+
+---
+
+# 26. LANDMARKS
+
+Landmarks represent:
+
+> Place / Property identity.
+
+They do NOT represent Owner.
+
+Do not recolor Landmark based on Player ownership.
+
+Preserve current landmark personality.
+
+Only reduce saturation/contrast for an individual Landmark if it clearly overwhelms gameplay signals.
+
+---
+
+# 27. OVERVIEW MODE
+
+Overview is a strategic view.
+
+Prioritize:
+
+1. Player positions.
+2. Ownership.
+3. Property Groups.
+4. Development.
+5. Destination/Focus.
+
+Do NOT prioritize:
+
+- price;
+- detailed rent;
+- landmark name;
+- metadata.
+
+---
+
+# 28. OVERVIEW PLAYER ASSISTANCE
+
+If Pawn models become too small at Overview distance, add subtle screen-space or world-space assistance.
+
+Example:
+
+- small Player Color dot;
+- halo;
+- base marker with minimum perceived size.
+
+Do NOT dramatically enlarge the actual character model.
+
+---
+
+# 29. OWNER FLAG AT OVERVIEW
+
+Flags should remain recognizable as colored ownership markers at Overview when technically reasonable.
+
+At Overview the user does not need to see the flag shape perfectly.
+
+They need to perceive:
+
+> “There are several red-owned Properties here.”
+
+---
+
+# 30. GROUP BAND AT OVERVIEW
+
+Group Bands must remain visible enough to communicate Property families.
+
+Do not increase saturation excessively.
+
+Use geometry/size/contrast before extreme color changes.
+
+---
+
+# 31. FOLLOW MODE
+
+Follow Mode is the primary gameplay view.
+
+It should clearly expose:
+
+- active Player;
+- current Property;
+- Property Group;
+- Owner;
+- Building;
+- Selected state;
+- Destination when applicable.
+
+Keep current camera direction unless a small adjustment is necessary.
+
+Do NOT redesign the camera system.
+
+---
+
+# 32. CLOSE PROPERTY MODE
+
+When a Property is selected:
+
+Board and UI must cooperate.
+
+Example:
+
+```text
+BOARD:
+Soft outline around Nghệ An
+
+UI:
+NGHỆ AN
+Owner: Nghĩa
+Level: 2
+Price/Rent...
+```
+
+World and UI must reference the same Property ID.
+
+---
+
+# 33. SPECIAL TILES
+
+Special Tiles must remain visually different from Properties.
+
+Examples:
+
+- Cơ Hội.
+- Cuộc Sống.
+- Thuế.
+- Tạm Giữ.
+- Nghỉ Ngơi.
+- Du Lịch.
+- Quỹ Du Lịch.
+- Xuất Phát.
+
+Do NOT give them Property Group Bands.
+
+Use:
+
+> Icon + distinctive marking + existing world material language.
+
+Avoid making them look like floating UI cards.
+
+---
+
+# 34. COLOR COLLISION RULES
+
+Do not solve semantic collision through hue alone.
+
+## Red Player vs Red Group
+
+Different channels:
+
+```text
+Red Group
+→ horizontal Group Band
+
+Red Player
+→ Pawn + Flag + Ring
+```
+
+---
+
+## Yellow Player vs Yellow Group vs Gold Focus
+
+```text
+Yellow Group
+→ Band
+
+Yellow Player
+→ Pawn + Flag + Ring
+
+Gold
+→ Destination / gameplay focus / Primary CTA
+```
+
+Shape and role differentiate them.
+
+---
+
+## Blue Player vs Blue Groups
+
+Same rule:
+
+Group = Band.
+
+Player = physical marker.
+
+---
+
+## Green Player vs Grass
+
+Use:
+
+- outline;
+- ring;
+- shadow;
+- geometry.
+
+Do not redesign the entire grass palette solely for this collision.
+
+---
+
+# 35. VISUAL PRIORITY
+
+World-space visual priority should roughly be:
+
+```text
+Environment
+↓
+Board Surface
+↓
+Property Group
+↓
+Building
+↓
+Ownership
+↓
+Player
+↓
+Selected
+↓
+Destination / Current Gameplay Focus
+```
+
+Higher priority does NOT mean “use brighter color everywhere”.
+
+Use composition and visual channels.
+
+---
+
+# P2 — MOTION & POLISH
+
+# 36. TOKEN MOVEMENT
+
+Preserve tile-by-tile movement.
+
+Movement should be:
+
+- smooth;
+- deterministic;
+- stable;
+- readable;
+- not overly bouncy.
+
+Do not add excessive cartoon motion.
+
+---
+
+# 37. STEP FEEDBACK
+
+Optional:
+
+A subtle step/ripple when the token reaches each tile.
+
+Only implement if visually beneficial.
+
+It must remain secondary to token motion.
+
+Do not add particle spam.
+
+---
+
+# 38. ARRIVAL FEEDBACK
+
+When Player reaches Destination:
+
+Destination marker may briefly strengthen.
+
+Then:
+
+```text
+Destination
+↓
+Arrival
+↓
+Fade
+↓
+Selected / Resolve
+```
+
+Avoid keeping multiple focus effects alive simultaneously.
+
+---
+
+# 39. TURN START
+
+At turn start:
+
+Current Player Ring may perform a one-time subtle pulse.
+
+HUD active player state remains synchronized.
+
+No infinite animation.
+
+---
+
+# 40. TRANSITIONS
+
+Transitions should feel:
+
+- soft;
+- quick;
+- board-game-like.
+
+Avoid:
+
+- springy web-dashboard animations everywhere;
+- excessive bounce;
+- neon glow;
+- long transitions.
+
+Gameplay must remain responsive.
+
+---
+
+# 41. PERFORMANCE
+
+This is a mobile-first Web Game.
+
+Do not solve readability with expensive effects.
+
+Avoid excessive:
+
+- transparent overlapping meshes;
+- dynamic lights;
+- post-processing;
+- bloom;
+- large particle systems;
+- complex shaders.
+
+Prefer:
+
+- simple geometry;
+- simple material;
+- lightweight animation.
+
+---
+
+# 42. MOBILE LANDSCAPE
+
+Primary target:
+
+> Mobile Landscape.
+
+Validate at minimum around:
+
+```text
+844 × 390
+852 × 393
+896 × 414
+915 × 412
+932 × 430
+```
+
+Pay special attention to the lowest-height viewport.
+
+---
+
+# 43. DO NOT CHANGE GAMEPLAY
+
+Do not modify:
+
+- dice rules;
+- movement rules;
+- rent;
+- buying;
+- upgrading;
+- economy;
+- event cards;
+- bankruptcy;
+- winner logic;
+- turn state machine;
+
+unless a tiny technical integration is required to expose an existing state to rendering.
+
+Any such change must preserve behavior.
+
+---
+
+# 44. DO NOT REDESIGN UI AGAIN
+
+Visual System V3 for UI has already been completed.
+
+Do not redo:
+
+- typography system;
+- general HUD layout;
+- UI palette;
+- Action Panel architecture;
+- Bottom Sheets;
+
+unless a small integration change is required for world/UI synchronization.
+
+This task is focused on:
+
+> **3D GAMEPLAY VISUAL LANGUAGE.**
+
+---
+
+# 45. IMPLEMENTATION STRATEGY
+
+You are explicitly authorized to implement:
+
+P0 + P1 + P2
+
+in one task.
+
+Do NOT stop after P0.
+
+However, internally you MUST validate after each phase.
+
+Workflow:
+
+```text
+Inspect
+↓
+P0
+↓
+Build/Test
+↓
+Fix
+↓
+P1
+↓
+Build/Test
+↓
+Fix
+↓
+P2
+↓
+Build/Test
+↓
+Visual Regression
+↓
+Fix
+↓
+Final Validation
+```
+
+Do not ask for confirmation between phases.
+
+---
+
+# 46. SELF-REVIEW AFTER P0
+
+Before continuing, internally verify:
+
+- Owner Strip removed/replaced.
+- Owner Flag works.
+- Group Band still works.
+- Player Ring works.
+- Multiple players don't overlap.
+- Selected Property works.
+- Destination works.
+- UI ↔ Board selection sync works.
+
+Fix issues before P1.
+
+Then continue automatically.
+
+---
+
+# 47. SELF-REVIEW AFTER P1
+
+Verify:
+
+- Building ownership responsibility removed.
+- Building progression remains understandable.
+- Overview works.
+- Follow works.
+- Property close selection works.
+- Special Tiles remain distinguishable.
+- Group/Player/Gold semantics remain separated.
+
+Fix issues.
+
+Then continue automatically.
+
+---
+
+# 48. SELF-REVIEW AFTER P2
+
+Verify:
+
+- movement remains smooth;
+- destination transitions correctly;
+- arrival doesn't leave stale effects;
+- current-player animation is subtle;
+- no unnecessary continuous animations;
+- mobile performance remains acceptable.
+
+Fix before final validation.
+
+---
+
+# 49. SCREENSHOT VALIDATION
+
+Capture screenshots if environment supports browser automation.
+
+Required states:
+
+### A — Overview
+
+4 players visible if possible.
+
+### B — Follow
+
+Current Player clearly visible.
+
+### C — Owned Property
+
+Group + Owner Flag + Building visible.
+
+### D — Unowned Property
+
+No ownership marker.
+
+### E — Selected Property
+
+World outline + matching UI property.
+
+### F — Destination
+
+Gold Destination marker visible.
+
+### G — Multiple Players
+
+At least 3 Players on same tile if test/debug setup allows it.
+
+### H — Developed Property
+
+High-level Building + Owner Flag.
+
+### I — Special Tile
+
+At least one Special Tile.
+
+---
+
+# 50. TEST MULTIPLE PLAYER FORMATIONS
+
+Explicitly test:
+
+```text
+1 Player
+2 Players
+3 Players
+4 Players
+```
+
+on one tile.
+
+Do not assume the 4-player case works because 2-player works.
+
+---
+
+# 51. TEST COLOR COLLISIONS
+
+Explicitly inspect:
+
+### An / Mint
+
+on/near Grass.
+
+### Linh / Yellow
+
+near Yellow Group and Gold Destination.
+
+### Kai / Blue
+
+near Blue Group / Teal structures.
+
+### Nghĩa / Red
+
+near Red Group.
+
+If identity remains readable through shape/position, do not unnecessarily change colors.
+
+---
+
+# 52. TEST CAMERA MODES
+
+Test:
+
+- Overview.
+- Follow.
+- Property selection/close view.
+
+A solution that only works at Follow distance is incomplete.
+
+---
+
+# 53. STATE CLEANUP
+
+Ensure temporary visuals clean up correctly.
+
+Examples:
+
+- Destination marker removed after resolve.
+- Selected outline changes when selection changes.
+- Flag disappears if ownership is removed through bankruptcy/liquidation.
+- Ring follows Player.
+- Multiple-player formation recalculates when Player leaves.
+- Building updates when level changes.
+
+No stale meshes.
+
+No duplicate markers.
+
+No memory leak from repeatedly creating effects.
+
+---
+
+# 54. RENDER ARCHITECTURE
+
+Reuse existing render architecture.
+
+Prefer:
+
+```text
+create once
+→ update
+→ reuse
+→ dispose when truly removed
+```
+
+over:
+
+```text
+destroy/recreate everything every render
+```
+
+Do not rewrite renderer architecture unless necessary.
+
+---
+
+# 55. SOURCE OF TRUTH
+
+Visual elements must derive from game state.
+
+Examples:
+
+```text
+property.ownerId
+→ Owner Flag
+
+property.level
+→ Building
+
+selectedPropertyId
+→ Selected Outline
+
+destinationTileId
+→ Destination Marker
+
+currentPlayerId
+→ Current Ring emphasis
+
+player.position
+→ Pawn Position
+```
+
+Do not maintain disconnected duplicate gameplay state solely for visual components.
+
+---
+
+# 56. ACCESSIBILITY THROUGH REDUNDANCY
+
+Do not rely solely on color.
+
+We intentionally use:
+
+```text
+Group
+→ Color + Band
+
+Owner
+→ Color + Flag Shape
+
+Player
+→ Color + Pawn
+
+Current
+→ Ring
+
+Selected
+→ Outline
+
+Destination
+→ Gold + Target Geometry + Motion
+```
+
+Preserve this redundancy.
+
+---
+
+# 57. NO LARGE 3D PALETTE REDESIGN YET
+
+Do NOT perform a broad redesign of:
+
+- Grass.
+- Stone.
+- Road.
+- Environment.
+- Background.
+- Lighting.
+
+Only make minor adjustments when absolutely necessary to support the new hierarchy.
+
+We will evaluate environment palette separately after V2 is implemented.
+
+---
+
+# 58. CODE QUALITY
+
+Requirements:
+
+- TypeScript types preserved.
+- Avoid `any`.
+- Reuse centralized color definitions.
+- Avoid magic numbers when values have semantic meaning.
+- Extract visual constants where appropriate.
+- Avoid duplicated geometry/material creation.
+- Dispose Three.js resources properly.
+- Avoid unrelated refactors.
+
+---
+
+# 59. VALIDATION
+
+Run all relevant existing project commands.
+
+At minimum where available:
+
+```text
+typecheck
+lint
+tests
+build
+```
+
+Do not report success without actually running the command.
+
+If a command does not exist:
+
+state that clearly.
+
+---
+
+# 60. REGRESSION TEST
+
+Verify existing gameplay still works:
+
+- Start game.
+- Roll dice.
+- Move.
+- Select property.
+- Buy property.
+- Ownership updates.
+- End turn.
+- Next player.
+- Multiple player positions.
+- Upgrade property if implemented.
+- Camera Overview.
+- Camera Follow.
+
+Visual work must not break gameplay.
+
+---
+
+# 61. DEFINITION OF DONE
+
+The task is complete only when ALL of the following are true:
+
+### Property
+
+- Group remains represented by Group Band.
+- Owner Strip no longer competes with Group.
+- Owned Property has Player Flag.
+- Unowned Property has no Player Flag.
+- Flag does not overlap critical content.
+
+### Player
+
+- Universal heavy black ring has been replaced/improved.
+- Player Ring reflects Player identity.
+- Current Player is visually distinguishable.
+- Mint Player remains readable against grass.
+
+### Multiple Players
+
+- 1-player layout works.
+- 2-player layout works.
+- 3-player layout works.
+- 4-player layout works.
+- Tokens do not stack directly.
+
+### Selection
+
+- Selected Property has world-space cue.
+- UI and world selection stay synchronized.
+
+### Destination
+
+- Destination is clearly visible.
+- Destination is stronger than Selected.
+- Destination visual cleans up correctly.
+
+### Buildings
+
+- Development remains readable.
+- Building is no longer primary Owner indicator.
+- Lv.5 ownership remains understandable through Flag.
+
+### Overview
+
+- Players can be located.
+- Ownership distribution can be perceived.
+- Groups can be perceived.
+- Destination can be perceived.
+
+### Follow
+
+- Player, Property, Owner, Group and Focus remain readable.
+
+### Motion
+
+- Movement remains smooth.
+- Arrival feedback works.
+- No stale focus effects.
+
+### Performance
+
+- No obvious mobile performance regression.
+- No excessive effects added.
+
+### Architecture
+
+- Game Engine unchanged in behavior.
+- Game Rules unchanged.
+- Renderer state derives from Game State.
+- No unnecessary renderer rewrite.
+
+### Quality
+
+- Typecheck passes.
+- Build passes.
+- Tests pass where available.
+- No critical visual regression.
+
+---
+
+# 62. FINAL REPORT
+
+After everything is complete, return ONE final report.
+
+Do not stop between P0/P1/P2.
+
+Report:
+
+## A. Implementation Summary
+
+What changed.
+
+## B. Property & Ownership
+
+Explain final Group/Owner representation.
+
+## C. Player System
+
+Ring and multiple-player formation.
+
+## D. Selection & Destination
+
+How world-space focus works.
+
+## E. Buildings
+
+What changed and what was preserved.
+
+## F. Overview / Follow
+
+How readability differs by camera mode.
+
+## G. Motion
+
+Movement/arrival changes.
+
+## H. Files Changed
+
+List files and purpose.
+
+## I. Tests
+
+Actual results for:
+
+- typecheck
+- lint
+- tests
+- build
+
+## J. Screenshot Validation
+
+List screenshots captured for required states.
+
+## K. Performance
+
+Any performance observations.
+
+## L. Remaining Issues
+
+Only real remaining issues.
+
+Do NOT invent future work merely to fill this section.
+
+---
+
+# 63. FINAL BEFORE/AFTER REVIEW
+
+Before declaring completion, answer internally:
+
+### Before
+
+Could the player immediately understand:
+
+- group?
+- owner?
+- current player?
+- selected property?
+- destination?
+
+### After
+
+Can they now do so with less ambiguity?
+
+If not:
+
+continue fixing.
+
+---
+
+# 64. IMPORTANT FINAL INSTRUCTION
+
+Do not interpret this task as:
+
+> “Make everything brighter and more colorful.”
+
+Interpret it as:
+
+> **Build a coherent visual language for gameplay information.**
+
+Preserve the current game's identity.
+
+Complete **P0 + P1 + P2 in one execution**, validate everything, fix regressions, and only then return the final result.

@@ -6,12 +6,12 @@ import { TabletopScene } from '../rendering/tabletopScene';
 import { TILE_LABELS } from '../game/data/tileLabels';
 import { SQUARE_TILES, type CameraMode } from '../rendering/squareBoard';
 
-export default function ThreeBoard({ game, mode, onSelect, onUnavailable, immersive=false, interactionDisabled=false, framingKey='' }: { game: GameState; mode: CameraMode; onSelect: (index: number) => void; onUnavailable?: () => void; immersive?:boolean; interactionDisabled?:boolean; framingKey?:string }) {
+export default function ThreeBoard({ game, mode, onSelect, onUnavailable, immersive=false, interactionDisabled=false, framingKey='',selectedPropertyId=null }: { game: GameState; mode: CameraMode; onSelect: (index: number) => void; onUnavailable?: () => void; immersive?:boolean; interactionDisabled?:boolean; framingKey?:string;selectedPropertyId?:string|null }) {
   const host = useRef<HTMLDivElement>(null);
   const scene = useRef<TabletopScene | null>(null);
-  const latest = useRef({ game, mode, onSelect, onUnavailable, interactionDisabled });
+  const latest = useRef({ game, mode, onSelect, onUnavailable, interactionDisabled,selectedPropertyId });
   const [error, setError] = useState(false);
-  useLayoutEffect(() => { latest.current = { game, mode, onSelect, onUnavailable, interactionDisabled }; scene.current?.setGame(game); scene.current?.setMode(mode); }, [game, mode, onSelect, onUnavailable, interactionDisabled]);
+  useLayoutEffect(() => { latest.current = { game, mode, onSelect, onUnavailable, interactionDisabled,selectedPropertyId }; scene.current?.setGame(game); scene.current?.setMode(mode);scene.current?.setSelection(selectedPropertyId); }, [game, mode, onSelect, onUnavailable, interactionDisabled,selectedPropertyId]);
   const frame=()=>{const element=host.current,board=element?.closest('.play-board');if(!element||!board||!immersive)return;const origin=element.getBoundingClientRect();scene.current?.setFraming([...board.querySelectorAll<HTMLElement>('.game-occluder')].filter(el=>getComputedStyle(el).visibility!=='hidden'&&el.offsetWidth>0).map(el=>{const r=el.getBoundingClientRect();return {left:r.left-origin.left,top:r.top-origin.top,right:r.right-origin.left,bottom:r.bottom-origin.top};}));};
   useLayoutEffect(()=>{const id=requestAnimationFrame(frame);return()=>cancelAnimationFrame(id);},[framingKey]);
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function ThreeBoard({ game, mode, onSelect, onUnavailable, immers
     const lost = (event: Event) => { event.preventDefault(); setError(true); scene.current?.setVisible(false); latest.current.onUnavailable?.(); };
     try {
       scene.current = new TabletopScene(element, latest.current.game, immersive);
-      scene.current.setMode(latest.current.mode); motion();
+      scene.current.setMode(latest.current.mode);scene.current.setSelection(latest.current.selectedPropertyId); motion();
       scene.current.renderer.domElement.addEventListener('pointerup', select);
       scene.current.renderer.domElement.addEventListener('webglcontextlost', lost);
       observer = new ResizeObserver(resize); observer.observe(element);if(immersive)element.closest('.play-board')?.querySelectorAll('.game-occluder').forEach(el=>observer!.observe(el));

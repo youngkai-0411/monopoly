@@ -1,5 +1,5 @@
 {
-  "testedAt": "2026-10-04T05:45:25.179Z",
+  "testedAt": "2026-10-04T07:44:32.590Z",
   "url": "http://127.0.0.1:5173",
   "browser": "154.0.8037.97",
   "environment": "Windows desktop Chrome; mobile viewport/touch emulation, NOT physical Android/iPhone",
@@ -17,8 +17,8 @@
       "fullBoardFits": true,
       "canvasCount": 1,
       "overlaysOutsideBoard": true,
-      "drawCalls": 125,
-      "triangles": 7274,
+      "drawCalls": 135,
+      "triangles": 8876,
       "overlaysFit": true,
       "pageScroll": false,
       "primaryHeight": 48
@@ -36,8 +36,8 @@
       "fullBoardFits": true,
       "canvasCount": 1,
       "overlaysOutsideBoard": true,
-      "drawCalls": 125,
-      "triangles": 7274,
+      "drawCalls": 135,
+      "triangles": 8876,
       "overlaysFit": true,
       "pageScroll": false,
       "primaryHeight": 48
@@ -55,8 +55,8 @@
       "fullBoardFits": true,
       "canvasCount": 1,
       "overlaysOutsideBoard": true,
-      "drawCalls": 125,
-      "triangles": 7274,
+      "drawCalls": 135,
+      "triangles": 8876,
       "overlaysFit": true,
       "pageScroll": false,
       "primaryHeight": 48
@@ -74,8 +74,8 @@
       "fullBoardFits": true,
       "canvasCount": 1,
       "overlaysOutsideBoard": true,
-      "drawCalls": 125,
-      "triangles": 7274,
+      "drawCalls": 135,
+      "triangles": 8876,
       "overlaysFit": true,
       "pageScroll": false,
       "primaryHeight": 48
@@ -93,8 +93,8 @@
       "fullBoardFits": true,
       "canvasCount": 1,
       "overlaysOutsideBoard": true,
-      "drawCalls": 125,
-      "triangles": 7274,
+      "drawCalls": 135,
+      "triangles": 8876,
       "overlaysFit": true,
       "pageScroll": false,
       "primaryHeight": 48
@@ -112,8 +112,8 @@
       "fullBoardFits": true,
       "canvasCount": 1,
       "overlaysOutsideBoard": true,
-      "drawCalls": 125,
-      "triangles": 7274,
+      "drawCalls": 135,
+      "triangles": 8876,
       "overlaysFit": true,
       "pageScroll": false,
       "primaryHeight": 48
@@ -131,8 +131,8 @@
       "fullBoardFits": true,
       "canvasCount": 1,
       "overlaysOutsideBoard": true,
-      "drawCalls": 125,
-      "triangles": 7274,
+      "drawCalls": 135,
+      "triangles": 8876,
       "overlaysFit": true,
       "pageScroll": false,
       "primaryHeight": 48

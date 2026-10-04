@@ -1,0 +1,118 @@
+{
+  "baseline": true,
+  "viewport": {
+    "width": 852,
+    "height": 393
+  },
+  "deviceScaleFactor": 2,
+  "rendererDprCap": 1.5,
+  "checks": [
+    "world/context/detail shared selection and close"
+  ],
+  "viewports": [],
+  "metrics": [
+    {
+      "name": "overview-mobile",
+      "calls": 109,
+      "triangles": 6926,
+      "memory": null
+    },
+    {
+      "name": "follow-mobile",
+      "calls": 44,
+      "triangles": 4694,
+      "memory": null
+    },
+    {
+      "name": "owned-developed-mobile",
+      "calls": 128,
+      "triangles": 8136,
+      "memory": null
+    },
+    {
+      "name": "hotel-follow-mobile",
+      "calls": 71,
+      "triangles": 6466,
+      "memory": null
+    },
+    {
+      "name": "hotel-four-overview-mobile",
+      "calls": 128,
+      "triangles": 8136,
+      "memory": null
+    },
+    {
+      "name": "hotel-four-follow-mobile",
+      "calls": 93,
+      "triangles": 7530,
+      "memory": null
+    },
+    {
+      "name": "unowned-mobile",
+      "calls": 109,
+      "triangles": 6926,
+      "memory": null
+    },
+    {
+      "name": "selected-mobile",
+      "calls": 109,
+      "triangles": 6926,
+      "memory": null
+    },
+    {
+      "name": "selected-detail-mobile",
+      "calls": 109,
+      "triangles": 6926,
+      "memory": null
+    },
+    {
+      "name": "destination-mobile",
+      "calls": 46,
+      "triangles": 4698,
+      "memory": null
+    },
+    {
+      "name": "destination-overview-mobile",
+      "calls": 109,
+      "triangles": 6926,
+      "memory": null
+    },
+    {
+      "name": "formation-1-mobile",
+      "calls": 57,
+      "triangles": 5296,
+      "memory": null
+    },
+    {
+      "name": "formation-2-mobile",
+      "calls": 68,
+      "triangles": 5826,
+      "memory": null
+    },
+    {
+      "name": "formation-3-mobile",
+      "calls": 68,
+      "triangles": 5826,
+      "memory": null
+    },
+    {
+      "name": "formation-4-mobile",
+      "calls": 79,
+      "triangles": 6360,
+      "memory": null
+    },
+    {
+      "name": "railroad-mobile",
+      "calls": 109,
+      "triangles": 6926,
+      "memory": null
+    },
+    {
+      "name": "utility-mobile",
+      "calls": 109,
+      "triangles": 6926,
+      "memory": null
+    }
+  ],
+  "errors": []
+}

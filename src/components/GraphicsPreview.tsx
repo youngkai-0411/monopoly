@@ -25,11 +25,11 @@ function initialDemo(): Demo {
 function advanceDemo(demo: Demo): Demo {
   const { game, phase } = demo;
   if (phase === 'FOCUS') return { ...demo, phase: 'ROLLING', game: { ...game, phase: 'ROLLING' } };
-  if (phase === 'ROLLING') return { ...demo, phase: 'MOVING', remaining: game.dice!.total, game: { ...game, phase: 'MOVING' } };
+  if (phase === 'ROLLING') return { ...demo, phase: 'MOVING', remaining: game.dice!.total, game: { ...game, phase: 'MOVING',movement:{remaining:game.dice!.total,direction:1} } };
   if (phase === 'MOVING') {
     const remaining = demo.remaining - 1;
     return { ...demo, remaining, phase: remaining ? 'MOVING' : 'LANDING', game: { ...game,
-      phase: remaining ? 'MOVING' : 'OPTIONAL_ACTIONS',
+      phase: remaining ? 'MOVING' : 'RESOLVING_TILE',movement:remaining?{remaining,direction:1}:null,
       players: game.players.map(player => player.id === game.currentPlayerId ? { ...player, position: (player.position + 1) % BOARD.length } : player) } };
   }
   if (phase === 'LANDING') return { ...demo, phase: 'RETURNING' };
@@ -67,7 +67,7 @@ export default function GraphicsPreview() {
       </div>)}
     </div><a className="icon-button preview-exit" href="/" aria-label="Trở về màn hình chơi">↩</a></header>
     <div className="game-stage three-stage">
-      <Suspense fallback={<div className="three-loading">Đang dựng bàn cờ…</div>}><ThreeBoard game={demo.game} mode={mode} onSelect={setSelected}/></Suspense>
+      <Suspense fallback={<div className="three-loading">Đang dựng bàn cờ…</div>}><ThreeBoard game={demo.game} mode={mode} selectedPropertyId={selected===null?null:BOARD[selected].propertyId??null} onSelect={setSelected}/></Suspense>
       <aside className="three-status" aria-live="polite"><span className="three-kicker">VIỆT NAM · 40 Ô</span>
         <strong>{demo.phase === 'OVERVIEW' && mode === 'follow' ? 'Cận cảnh nhân vật' : phaseCopy[demo.phase]}</strong><p>{label}</p><small>{property?.landmark ?? '40 ô · Bốn góc đặc biệt'}</small>
       </aside>

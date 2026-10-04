@@ -1,0 +1,1004 @@
+# TASK — AUDIT 3D VISUAL SYSTEM
+## Tỷ Phú Việt Nam — 3D Palette, Materials, Lighting & Readability
+
+Bạn đang tiếp tục phát triển Web Board Game **“Tỷ Phú Việt Nam”**.
+
+Visual System V3 cho phần UI đã được hoàn thành.
+
+Bước tiếp theo là đánh giá:
+
+> **3D Palette + Materials + Lighting + Gameplay Readability**
+
+## QUAN TRỌNG
+
+Task này **CHỈ LÀ AUDIT**.
+
+KHÔNG:
+
+- thay đổi màu;
+- chỉnh material;
+- chỉnh lighting;
+- chỉnh Three.js scene;
+- chỉnh camera;
+- chỉnh Game Engine;
+- chỉnh gameplay;
+- refactor renderer;
+- tự quyết định palette mới.
+
+Mục tiêu duy nhất:
+
+> Đọc source hiện tại và tạo một tài liệu mô tả chính xác hệ thống visual 3D đang được sử dụng.
+
+Output chính:
+
+`3d-visual-reference.md`
+
+---
+
+# 1. AUDIT SOURCE
+
+Inspect toàn bộ code liên quan đến rendering 3D.
+
+Tìm các phần liên quan:
+
+- Three.js Scene
+- Renderer
+- Materials
+- Geometry
+- Board
+- Property Tiles
+- Special Tiles
+- Ground
+- Grass
+- Roads
+- Paths
+- Water
+- Trees
+- Buildings
+- Landmarks
+- Roofs
+- Windows
+- Property Group strips
+- Ownership indicators
+- Player Tokens
+- Active Tile
+- Destination highlight
+- Upgrade models
+- Lighting
+- Shadows
+- Fog nếu có
+- Tone Mapping
+- Exposure
+- Canvas Atlas / Texture generation
+
+Không chỉ search HEX.
+
+Cần kiểm tra cả:
+
+```text
+THREE.Color
+MeshStandardMaterial
+MeshBasicMaterial
+MeshPhongMaterial
+MeshLambertMaterial
+CanvasTexture
+SpriteMaterial
+ShaderMaterial
+CSS colors liên quan 3D overlay
+```
+
+nếu project đang sử dụng.
+
+---
+
+# 2. KHÔNG SUY ĐOÁN
+
+Chỉ report những gì source thực sự đang sử dụng.
+
+Nếu một category không tồn tại:
+
+ghi:
+
+> Not currently implemented.
+
+Ví dụ nếu game không có Water:
+
+```text
+Water
+Status: Not currently implemented.
+```
+
+Không tự tạo palette cho component chưa tồn tại.
+
+---
+
+# 3. GLOBAL 3D PALETTE
+
+Tạo section:
+
+# Global 3D Palette
+
+Liệt kê tất cả màu chính đang được dùng trong Game World.
+
+Format:
+
+| Element | Color | Source | Notes |
+|---|---|---|---|
+| Background | #XXXXXX | file:line/component | ... |
+| Grass | #XXXXXX | ... | ... |
+| Property Tile | #XXXXXX | ... | ... |
+| Road | #XXXXXX | ... | ... |
+| Stone | #XXXXXX | ... | ... |
+| Building Wall | #XXXXXX | ... | ... |
+| Roof | #XXXXXX | ... | ... |
+
+Nếu element có nhiều màu:
+
+liệt kê tất cả.
+
+---
+
+# 4. ENVIRONMENT PALETTE
+
+Audit riêng environment.
+
+Bao gồm nếu tồn tại:
+
+## Background / World
+
+- Scene background
+- World background
+- Fog
+
+## Ground
+
+- Grass
+- Dirt
+- Stone
+- Pavement
+- Sand
+- Path
+- Road
+
+## Nature
+
+- Tree trunk
+- Leaves
+- Bushes
+- Decorative plants
+
+## Water
+
+- Water
+- River
+- Sea
+
+## Decoration
+
+- Rocks
+- Benches
+- Lamps
+- Signs
+- Decorative props
+
+Với mỗi màu ghi:
+
+```text
+Element:
+HEX/RGB:
+Material:
+Opacity:
+Usage:
+Source:
+```
+
+---
+
+# 5. BOARD PALETTE
+
+Audit riêng phần Board.
+
+Bao gồm:
+
+- Base board.
+- Tile base.
+- Property tile.
+- Corner tile.
+- Special tile.
+- Tile border.
+- Tile side.
+- Board side.
+- Board trim.
+- Path/road giữa board nếu có.
+
+Xác định:
+
+> Property có đủ visual separation khỏi environment hay không?
+
+Nhưng CHƯA thay đổi.
+
+Chỉ ghi observation.
+
+---
+
+# 6. PROPERTY GROUP COLORS
+
+Report chính xác 8 Property Group colors hiện tại.
+
+Format:
+
+| Group | Current Color | Usage |
+|---|---|---|
+| Miền Tây | #... | ... |
+| Phương Nam | #... | ... |
+| Cao Nguyên | #... | ... |
+| Duyên Hải | #... | ... |
+| Di Sản | #... | ... |
+| Miền Trung Bắc | #... | ... |
+| Miền Bắc | #... | ... |
+| Đô Thị | #... | ... |
+
+Xác định màu đang được apply vào:
+
+- strip;
+- tile;
+- border;
+- label;
+- building;
+- texture;
+
+hoặc component nào khác.
+
+Không giả định.
+
+---
+
+# 7. PLAYER COLORS
+
+Report Player Colors hiện tại.
+
+Format:
+
+| Player | Color | Token | HUD | Ownership |
+|---|---|---|---|---|
+| Player 1 | #... | ✓/✗ | ✓/✗ | ✓/✗ |
+| Player 2 | #... | ✓/✗ | ✓/✗ | ✓/✗ |
+| Player 3 | #... | ✓/✗ | ✓/✗ | ✓/✗ |
+| Player 4 | #... | ✓/✗ | ✓/✗ | ✓/✗ |
+
+Kiểm tra xem cùng một Player có đang sử dụng nhiều HEX khác nhau không.
+
+Nếu có:
+
+report rõ.
+
+---
+
+# 8. OWNERSHIP VISUALIZATION
+
+Xác định chính xác game đang thể hiện:
+
+> Property này thuộc Player nào
+
+bằng cách nào.
+
+Ví dụ có thể là:
+
+- colored marker;
+- ring;
+- flag;
+- border;
+- token;
+- icon;
+- building color;
+- texture.
+
+Report:
+
+```text
+Ownership Indicator
+
+Type:
+Color source:
+Size:
+Position:
+Material:
+Visibility:
+Source file:
+```
+
+Đánh giá sơ bộ:
+
+- dễ thấy từ camera far?
+- medium?
+- close?
+
+Chỉ observation.
+
+Không chỉnh.
+
+---
+
+# 9. PROPERTY GROUP VS PLAYER OWNERSHIP
+
+Đây là phần rất quan trọng.
+
+Kiểm tra xem:
+
+**Group Color**
+
+và:
+
+**Player Color**
+
+có được thể hiện bằng hai visual channel khác nhau không.
+
+Ví dụ tốt:
+
+```text
+Group
+→ colored strip
+
+Owner
+→ colored marker
+```
+
+Potential problem:
+
+```text
+Group
+→ tile color
+
+Owner
+→ cũng thay tile color
+```
+
+Nếu có conflict, ghi rõ.
+
+---
+
+# 10. BUILDING PALETTE
+
+Audit building/landmark models.
+
+Liệt kê:
+
+- Wall
+- Roof
+- Window
+- Door
+- Foundation
+- Decorative parts
+
+Nếu nhiều building dùng palette khác nhau:
+
+group theo category.
+
+Ví dụ:
+
+```text
+Generic Building
+
+Wall:
+Roof:
+Window:
+Door:
+
+
+Landmark — Cầu Rồng
+
+Main:
+Accent:
+Secondary:
+```
+
+Không cần liệt kê từng vertex/material nếu quá chi tiết.
+
+Tập trung vào màu có ảnh hưởng visual.
+
+---
+
+# 11. LANDMARK PALETTE
+
+Kiểm tra Landmark có:
+
+- palette riêng từng Landmark;
+- palette dùng chung;
+- procedural palette;
+
+hay không.
+
+Report cách implementation hoạt động.
+
+Xác định Landmark có đang cạnh tranh quá mạnh với:
+
+- Property Group Color;
+- Player Token;
+- Active Tile;
+
+hay không.
+
+Chỉ observation.
+
+---
+
+# 12. UPGRADE VISUAL
+
+Nếu Lv.1–Lv.3 đã có representation 3D:
+
+report:
+
+```text
+Lv.0
+Visual:
+
+Lv.1
+Visual:
+
+Lv.2
+Visual:
+
+Lv.3
+Visual:
+```
+
+Bao gồm:
+
+- model;
+- scale;
+- color;
+- material;
+- placement.
+
+Nếu chưa có:
+
+ghi rõ:
+
+> Upgrade 3D visualization not currently implemented.
+
+---
+
+# 13. ACTIVE TILE / DESTINATION
+
+Audit visual dùng cho:
+
+- Current Tile
+- Selected Tile
+- Destination Tile
+- Tile being resolved
+
+Report:
+
+```text
+Color:
+Material:
+Ring:
+Glow:
+Emissive:
+Animation:
+Opacity:
+Duration:
+```
+
+Nếu Gold đang dùng:
+
+ghi chính xác HEX.
+
+Kiểm tra nó có conflict với Group Yellow hoặc Player Yellow không.
+
+Chưa sửa.
+
+---
+
+# 14. PLAYER TOKEN MATERIAL
+
+Với mỗi Player Token report:
+
+```text
+Base Color
+Material Type
+Roughness
+Metalness
+Emissive
+Opacity
+Shadow
+Scale
+```
+
+Nếu token dùng chung material factory:
+
+report factory thay vì duplicate.
+
+---
+
+# 15. MATERIAL AUDIT
+
+Tạo bảng tổng hợp Material.
+
+Ví dụ:
+
+| Element | Material | Roughness | Metalness | Emissive | Transparent |
+|---|---|---:|---:|---|---|
+| Property | Standard | .8 | 0 | none | false |
+| Roof | Standard | ... | ... | ... | ... |
+| Token | Standard | ... | ... | ... | ... |
+
+Chỉ report values thực tế.
+
+Không invent default nếu source không set.
+
+Nếu Three.js default được dùng:
+
+ghi:
+
+> Uses Three.js default value.
+
+---
+
+# 16. LIGHTING
+
+Audit toàn bộ Lighting setup.
+
+Report:
+
+## Ambient Light
+
+```text
+Type:
+Color:
+Intensity:
+```
+
+## Hemisphere Light
+
+nếu có:
+
+```text
+Sky Color:
+Ground Color:
+Intensity:
+```
+
+## Directional Light
+
+```text
+Color:
+Intensity:
+Position:
+Cast Shadow:
+```
+
+## Point/Spot Lights
+
+nếu có.
+
+---
+
+# 17. SHADOW
+
+Report:
+
+```text
+Renderer shadowMap:
+Enabled:
+Type:
+
+Directional Shadow:
+Map Size:
+Camera Bounds:
+Bias:
+Normal Bias:
+Radius:
+```
+
+nếu được cấu hình.
+
+Xác định:
+
+- Objects nào castShadow.
+- Objects nào receiveShadow.
+
+Không chỉnh.
+
+---
+
+# 18. RENDERER
+
+Report renderer settings:
+
+```text
+antialias
+alpha
+pixelRatio
+outputColorSpace
+toneMapping
+toneMappingExposure
+physicallyCorrectLights/useLegacyLights nếu applicable
+```
+
+Report đúng implementation hiện tại.
+
+---
+
+# 19. COLOR MANAGEMENT
+
+Kiểm tra project đang sử dụng:
+
+- sRGB;
+- Linear;
+- texture color space;
+- tone mapping;
+
+như thế nào.
+
+Nếu không có custom configuration:
+
+ghi rõ.
+
+Điều này quan trọng vì cùng HEX có thể hiển thị khác dưới renderer configuration khác nhau.
+
+---
+
+# 20. CANVAS ATLAS / TEXTURE
+
+Audit Canvas Atlas nếu Board text được render vào CanvasTexture.
+
+Report:
+
+```text
+Atlas Size:
+Tile Texture Size:
+Background:
+Property Name Color:
+Price Color:
+Group Color:
+Font:
+Font Weight:
+Text Alignment:
+Pixel Ratio handling:
+Texture filtering:
+Color Space:
+```
+
+Nếu Canvas và Three.js đang sử dụng color pipeline khác nhau:
+
+ghi observation.
+
+---
+
+# 21. GAMEPLAY READABILITY CHECK
+
+Không chỉ report code.
+
+Dựa trên implementation hiện tại, đánh giá sơ bộ 5 layer:
+
+## Layer 1 — Environment
+
+Có đủ calm để làm background không?
+
+## Layer 2 — Board
+
+Board có tách khỏi Environment không?
+
+## Layer 3 — Property Groups
+
+8 Group có nhận diện được không?
+
+## Layer 4 — Player / Ownership
+
+Player và ownership có nổi trên board không?
+
+## Layer 5 — Gameplay Focus
+
+Current Player / Destination / Selected Tile có nổi bật nhất khi cần không?
+
+Chấm:
+
+```text
+Good
+Acceptable
+Needs Review
+Problematic
+```
+
+và giải thích ngắn.
+
+Không thay code.
+
+---
+
+# 22. COLOR COLLISION CHECK
+
+Tìm các trường hợp màu có thể cạnh tranh.
+
+Đặc biệt:
+
+### Player 3 Mint/Green
+vs
+Grass / Environment
+
+### Player 4 Yellow
+vs
+Gold Active Tile
+vs
+Yellow Property Group
+
+### Player 2 Blue
+vs
+Blue Property Groups
+vs
+Teal Roofs
+
+### Red Player
+vs
+Red Property Group
+vs
+Danger UI
+
+Report từng collision tiềm năng.
+
+Không tự đổi màu.
+
+---
+
+# 23. CAMERA DISTANCE CHECK
+
+Đánh giá readability tại ba mức.
+
+## FAR / OVERVIEW
+
+Người chơi cần nhận ra:
+
+- Board.
+- Player position.
+- Property Groups.
+- Selected/Destination.
+
+Không cần đọc detail.
+
+## MEDIUM / FOLLOW
+
+Người chơi cần nhận ra:
+
+- Property.
+- Token.
+- Ownership.
+- Group.
+- Upgrade.
+
+## CLOSE / PROPERTY
+
+Người chơi cần nhận ra:
+
+- Full Property Name.
+- Landmark.
+- Owner.
+- Level.
+- Selected state.
+
+Report element nào không đạt mục tiêu.
+
+---
+
+# 24. SCREENSHOTS
+
+Nếu môi trường Agent hỗ trợ browser/screenshot:
+
+Capture ít nhất:
+
+### Screenshot A
+
+Mobile Landscape — Board Overview.
+
+### Screenshot B
+
+Mobile Landscape — Follow Player / Medium Camera.
+
+### Screenshot C
+
+Mobile Landscape — Property Close View.
+
+### Screenshot D
+
+Owned Property.
+
+### Screenshot E
+
+Selected/Destination Property.
+
+Nếu có thể:
+
+### Screenshot F
+
+Property có Landmark/building phức tạp.
+
+Không chỉnh visual chỉ để screenshot đẹp hơn.
+
+Screenshot phải phản ánh implementation hiện tại.
+
+---
+
+# 25. VIEWPORT
+
+Ưu tiên screenshot ở:
+
+```text
+852 × 393
+```
+
+hoặc viewport Mobile Landscape gần tương đương.
+
+Có thể thêm:
+
+```text
+932 × 430
+```
+
+nếu cần.
+
+Không chỉ screenshot desktop.
+
+---
+
+# 26. OUTPUT FILE
+
+Tạo:
+
+`3d-visual-reference.md`
+
+Cấu trúc:
+
+```text
+# Tỷ Phú Việt Nam — 3D Visual Reference
+
+## 1. Renderer
+## 2. Lighting
+## 3. Shadows
+## 4. Color Management
+## 5. Environment Palette
+## 6. Board Palette
+## 7. Property Group Palette
+## 8. Player Palette
+## 9. Ownership Visualization
+## 10. Building Palette
+## 11. Landmark Palette
+## 12. Upgrade Visualization
+## 13. Active / Selected / Destination
+## 14. Material Inventory
+## 15. Canvas Atlas
+## 16. Camera Readability
+## 17. Color Collision Analysis
+## 18. Gameplay Visual Hierarchy
+## 19. Current Issues
+## 20. Source Map
+```
+
+---
+
+# 27. SOURCE MAP
+
+Ở cuối tài liệu phải có:
+
+```text
+Feature
+→ File
+→ Relevant function/component
+```
+
+Ví dụ:
+
+```text
+Grass Material
+→ src/game/renderer/environment.ts
+→ createGrassMaterial()
+
+Player Token
+→ src/game/renderer/playerToken.ts
+→ createPlayerToken()
+
+Property Atlas
+→ src/game/renderer/propertyAtlas.ts
+→ createPropertyTexture()
+```
+
+Không cần line number nếu code thay đổi thường xuyên.
+
+Nhưng function/component phải được ghi rõ nếu có.
+
+---
+
+# 28. CURRENT ISSUES
+
+Ở cuối report tạo bảng:
+
+| Issue | Severity | Evidence | Needs Review |
+|---|---|---|---|
+| Player green gần grass | Medium | ... | Yes |
+| Yellow group gần active gold | ... | ... | ... |
+
+Severity chỉ dùng:
+
+```text
+Low
+Medium
+High
+```
+
+Không đưa solution ở bước này trừ khi cần giải thích issue.
+
+Chúng ta sẽ quyết định solution ở task sau.
+
+---
+
+# 29. KHÔNG ĐƯA RA PALETTE MỚI
+
+Đây là yêu cầu quan trọng.
+
+KHÔNG tự tạo:
+
+- New Grass Color.
+- New Tile Color.
+- New Player Color.
+- New Group Color.
+- New Lighting.
+- New Material values.
+
+Task tiếp theo mới là:
+
+> 3D PALETTE V2 DESIGN
+
+Task hiện tại chỉ:
+
+> AUDIT CURRENT STATE.
+
+---
+
+# 30. KHÔNG MODIFY SOURCE
+
+Không thay đổi production source trong quá trình audit.
+
+Chỉ được:
+
+- đọc source;
+- chạy game;
+- chạy build/test nếu cần;
+- capture screenshot;
+- tạo `3d-visual-reference.md`.
+
+Nếu cần script tạm để inspect value:
+
+có thể tạo temporary tooling nhưng không commit vào production architecture.
+
+---
+
+# 31. FINAL RESPONSE
+
+Sau khi hoàn thành, trả về:
+
+## Files Created
+
+`3d-visual-reference.md`
+
+## Screenshots
+
+Danh sách screenshot đã capture.
+
+## Summary
+
+Tóm tắt ngắn:
+
+- Environment
+- Board
+- Property Groups
+- Players
+- Lighting
+- Material
+- Major collisions
+
+## Important
+
+KHÔNG sửa các vấn đề vừa tìm thấy.
+
+DỪNG sau audit.
+
+Chờ review và quyết định **3D Palette V2**.

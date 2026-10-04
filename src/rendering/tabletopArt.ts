@@ -107,18 +107,42 @@ export class TabletopArt {
     const mesh = new THREE.Mesh(this.roofGeometry, this.material(color)); mesh.rotation.y = Math.PI / 4;
     mesh.position.y = y; mesh.scale.set(w, h, w); parent.add(mesh); return mesh;
   }
-  house(level: number, color: string) {
+  ownerFlag() {
+    const group=new THREE.Group();
+    this.box(group,0,.018,0,.12,.035,.12,WORLD.house.flagPole);
+    this.box(group,0,.24,0,.026,.48,.026,WORLD.house.flagPole);
+    // Unlit color preserves the identity shared with the HUD, independent of lighting.
+    const banner=new THREE.Mesh(this.boxGeometry,new THREE.MeshBasicMaterial({color:WORLD.tile.paper}));
+    banner.position.set(.12,.40,0);banner.scale.set(.24,.15,.025);group.add(banner);
+    this.box(group,.12,.48,0,.25,.016,.035,WORLD.tile.paper);
+    return {group,banner};
+  }
+  house(level: number) {
     const group = new THREE.Group();
-    if(level>1&&level<5) {
-      for(let i=0;i<level;i++){const model=this.house(1,color);model.scale.setScalar(.43);model.position.x=(i-(level-1)/2)*.21;group.add(model);}return group;
+    if(level<5) {
+      // Same-sized houses: development increases the cluster, not tiny repetitions.
+      const slots=level===1?[[0,0]]:level===2?[[-.16,0],[.16,0]]:level===3?[[-.16,-.15],[.16,-.15],[0,.16]]:[[-.16,-.15],[.16,-.15],[-.16,.15],[.16,.15]];
+      this.shadow(group,.75,.72);
+      for(const [x,z] of slots){
+        const home=new THREE.Group();home.position.set(x,0,z);
+        this.box(home,0,.12,0,.26,.24,.25,WORLD.house.wall);
+        this.roof(home,.29,.23,.16,WORLD.landmark.trainRoof);
+        this.box(home,0,.08,.132,.065,.15,.012,WORLD.house.door);
+        this.box(home,.135,.15,0,.012,.065,.08,WORLD.house.window);
+        group.add(home);
+      }
+      return group;
     }
-    const height = level===5?.85:.32;
-    this.shadow(group, .9);
-    this.box(group, 0, height / 2, 0, .46, height, .43, WORLD.house.wall);
-    this.roof(group, height + .10, .42, .24, level===5?WORLD.house.hotelRoof:color);
+    const height = .57;
+    this.shadow(group, .78);
+    this.box(group, 0, height / 2, 0, .52, height, .43, WORLD.house.wall);
+    this.roof(group, height + .08, .46, .19, WORLD.house.hotelRoof);
     this.box(group, -.09, .12, .22, .10, .23, .015, WORLD.house.door);
-    for (let i = 0; i < level; i++) this.box(group, .237, .13 + i * .16, .03, .012, .075, .11, WORLD.house.window);
-    if (level === 5) { this.box(group, .15, height + .28, 0, .024, .27, .024, WORLD.house.flagPole); this.box(group, .23, height + .37, 0, .15, .10, .012, WORLD.house.flag); }
+    for (let i = 0; i < 3; i++) {
+      this.box(group,.267,.12+i*.17,.03,.012,.075,.11,WORLD.house.window);
+      this.box(group,.11,.12+i*.17,.221,.075,.075,.012,WORLD.house.window);
+    }
+    this.box(group,0,.51,.224,.24,.035,.012,WORLD.house.flag);
     return group;
   }
   landmark(kind:'RAILROAD'|'UTILITY'|'JAIL',water=false) {

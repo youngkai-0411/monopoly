@@ -23,6 +23,18 @@ export const WORLD = {
   shadow:{ center:'#21443b65', edge:'#21443b00' },
 } as const;
 
+export const GAMEPLAY_VISUAL = {
+  selection: WORLD.focus.destination,
+  destination: WORLD.focus.gold,
+  ringEdge: WORLD.focus.active,
+  inactiveRingOpacity:.52,
+  activeRingOpacity:.95,
+  turnPulseMs:700,
+  arrivalMs:650,
+  stepMs:400,
+  stepBounce:.055,
+} as const;
+
 /** One bridge at startup: CSS and Canvas/Three.js consume the same UI values. */
 export function installVisualTokens(root: HTMLElement) {
   for (const [name,color] of Object.entries(UI_COLORS)) root.style.setProperty('--color-'+name,color);

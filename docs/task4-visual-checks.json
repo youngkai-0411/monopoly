@@ -1,0 +1,399 @@
+{
+  "baseline": false,
+  "viewport": {
+    "width": 852,
+    "height": 393
+  },
+  "deviceScaleFactor": 2,
+  "rendererDprCap": 1.5,
+  "checks": [
+    "square platform: follow screenshots at all four board corners",
+    "world/context/detail shared selection and close",
+    "all four active players remain identifiable without reordering formation",
+    "real canvas raycast shares selected ID",
+    "assets → detail → close selection lifecycle",
+    "owner transfer updates actual instance color",
+    "backward target and jail teleport clear stale destination",
+    "occupancy 1/2/3/4 across four sides and corners",
+    "levels 0–5 preserve house counts and owner flag",
+    "ownership removal/re-add: stable GPU memory after warm-up (12 cycles)",
+    "10 remounts: one canvas, no errors",
+    "owned hotels + four players, selection and destination at all five required mobile viewports",
+    "portrait orientation fallback",
+    "arrival fades, finite effects return to idle"
+  ],
+  "viewports": [
+    {
+      "width": 568,
+      "height": 320,
+      "drawCalls": 116,
+      "triangles": 7262,
+      "idle": true
+    },
+    {
+      "width": 667,
+      "height": 375,
+      "drawCalls": 116,
+      "triangles": 7262,
+      "idle": true
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "drawCalls": 116,
+      "triangles": 7262,
+      "idle": true
+    },
+    {
+      "width": 852,
+      "height": 393,
+      "drawCalls": 116,
+      "triangles": 7262,
+      "idle": true
+    },
+    {
+      "width": 896,
+      "height": 414,
+      "drawCalls": 116,
+      "triangles": 7262,
+      "idle": true
+    },
+    {
+      "width": 915,
+      "height": 412,
+      "drawCalls": 116,
+      "triangles": 7262,
+      "idle": true
+    },
+    {
+      "width": 932,
+      "height": 430,
+      "drawCalls": 116,
+      "triangles": 7262,
+      "idle": true
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "drawCalls": 116,
+      "triangles": 7262,
+      "idle": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "drawCalls": 116,
+      "triangles": 7262,
+      "idle": true
+    }
+  ],
+  "metrics": [
+    {
+      "name": "overview-mobile",
+      "calls": 116,
+      "triangles": 7262,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "follow-mobile",
+      "calls": 44,
+      "triangles": 4718,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "platform-corner-0-mobile",
+      "calls": 44,
+      "triangles": 4718,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "platform-corner-10-mobile",
+      "calls": 70,
+      "triangles": 5572,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "platform-corner-20-mobile",
+      "calls": 58,
+      "triangles": 5436,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "platform-corner-30-mobile",
+      "calls": 62,
+      "triangles": 5464,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "owned-developed-mobile",
+      "calls": 148,
+      "triangles": 9140,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "hotel-follow-mobile",
+      "calls": 80,
+      "triangles": 7134,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "hotel-four-overview-mobile",
+      "calls": 156,
+      "triangles": 9236,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "hotel-four-follow-mobile",
+      "calls": 106,
+      "triangles": 8390,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "unowned-mobile",
+      "calls": 116,
+      "triangles": 7262,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "selected-mobile",
+      "calls": 117,
+      "triangles": 7270,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "selected-detail-mobile",
+      "calls": 117,
+      "triangles": 7270,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "destination-mobile",
+      "calls": 47,
+      "triangles": 4774,
+      "memory": {
+        "geometries": 12,
+        "textures": 2
+      }
+    },
+    {
+      "name": "destination-overview-mobile",
+      "calls": 118,
+      "triangles": 7294,
+      "memory": {
+        "geometries": 12,
+        "textures": 2
+      }
+    },
+    {
+      "name": "formation-1-mobile",
+      "calls": 58,
+      "triangles": 5436,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "formation-2-mobile",
+      "calls": 71,
+      "triangles": 6062,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "formation-3-mobile",
+      "calls": 71,
+      "triangles": 6062,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "formation-4-mobile",
+      "calls": 84,
+      "triangles": 6692,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "railroad-mobile",
+      "calls": 117,
+      "triangles": 7270,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "utility-mobile",
+      "calls": 117,
+      "triangles": 7270,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "crowded-active-1-mobile",
+      "calls": 106,
+      "triangles": 8390,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "crowded-active-2-mobile",
+      "calls": 108,
+      "triangles": 8414,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "crowded-active-3-mobile",
+      "calls": 108,
+      "triangles": 8414,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "crowded-active-4-mobile",
+      "calls": 107,
+      "triangles": 8402,
+      "memory": {
+        "geometries": 11,
+        "textures": 2
+      }
+    },
+    {
+      "name": "level-0-mobile",
+      "calls": 49,
+      "triangles": 6086,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "level-1-mobile",
+      "calls": 59,
+      "triangles": 6178,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "level-2-mobile",
+      "calls": 59,
+      "triangles": 6266,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "level-3-mobile",
+      "calls": 59,
+      "triangles": 6354,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "level-4-mobile",
+      "calls": 59,
+      "triangles": 6442,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "level-5-mobile",
+      "calls": 61,
+      "triangles": 6322,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "viewport-568",
+      "calls": 116,
+      "triangles": 7262,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "viewport-852",
+      "calls": 116,
+      "triangles": 7262,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    },
+    {
+      "name": "viewport-932",
+      "calls": 116,
+      "triangles": 7262,
+      "memory": {
+        "geometries": 10,
+        "textures": 2
+      }
+    }
+  ],
+  "errors": []
+}
